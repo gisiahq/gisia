@@ -22,7 +22,7 @@ class Projects::IssuesController < Projects::ApplicationController
       title_or_description_i_cont: params[:search]
     }.compact
 
-    @issues = @project.namespace.work_items.where(type: 'Issue')
+    @issues = @project.issues_visible_to(current_user)
                      .ransack(search_params)
                      .result(distinct: true)
 

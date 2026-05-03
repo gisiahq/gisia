@@ -24,6 +24,7 @@ class Project < ApplicationRecord
   include Projects::MergeRequests
   include Projects::HasProtectedRefs
   include Projects::HasBoard
+  include Projects::HasIssues
   include WithUploads
 
   belongs_to :namespace, autosave: true, class_name: 'Namespaces::ProjectNamespace',
