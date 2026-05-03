@@ -32,6 +32,10 @@ module API
         render json: { message: error.message }, status: :unprocessable_entity
       end
 
+      def can?(user, action, subject = :global)
+        Ability.allowed?(user, action, subject)
+      end
+
     end
   end
 end
