@@ -22,10 +22,14 @@ class Projects::ApplicationController < ApplicationController
 
   private
 
+  def require_project_member!
+    forbidden! unless @project&.team&.member?(current_user)
+  end
+
   def authenticate_unless_public!
     return if @project&.public?
 
-    authenticate_user!
+    head :not_found unless current_user
   end
 
   def authorize_project_access!

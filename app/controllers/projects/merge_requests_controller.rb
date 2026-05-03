@@ -11,12 +11,17 @@
 
 class Projects::MergeRequestsController < Projects::ApplicationController
   include Projects::MergeRequestNotifiable
+  include Projects::MergeRequestAuthorizable
   include Projects::ItemLinkFindable
+  before_action :authenticate_user!, only: %i[new create edit update merge]
+  before_action :require_project_member!, only: %i[new create edit update merge]
   before_action :define_new_vars, only: %i[new edit]
   before_action :set_mr, only: %i[show commits diffs pipelines edit update merge search_links]
   before_action :set_counts, only: [:index]
+  before_action :authorize_create_merge_request!, only: %i[new create]
+  before_action :authorize_read_merge_request!, only: %i[show commits diffs pipelines search_links]
+  before_action :authorize_update_merge_request!, only: %i[edit update merge]
   before_action :set_notification_author, only: [:update]
-  before_action :check_mr_author_authorization, only: [:update]
   before_action :check_mr_open, only: [:edit]
 
   def index
@@ -201,15 +206,6 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   def set_notification_author
     @merge_request.notification_author = current_user
     @merge_request.activity_author = current_user
-  end
-
-  def check_mr_author_authorization
-    unless @merge_request.author == current_user
-      respond_to do |format|
-        format.html { redirect_to namespace_project_merge_request_path(@merge_request.target_project.namespace.parent.full_path, @merge_request.target_project.path, @merge_request), alert: 'You are not authorized to update this merge request.' }
-        format.json { render json: { error: 'You are not authorized to update this merge request.' }, status: :forbidden }
-      end
-    end
   end
 
   def check_mr_open
