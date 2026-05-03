@@ -8,7 +8,7 @@ class Admin::JobsController < Admin::ApplicationController
     @jobs = @jobs.where(status: params[:status]) if params[:status].present?
     @jobs = @jobs.joins(:runner).where(ci_runners: { id: params[:runner_id] }) if params[:runner_id].present?
     @jobs = @jobs.joins(:project).where(projects: { name: params[:project] }) if params[:project].present?
-    
+
     @jobs_count = @jobs.count
     @jobs = @jobs.page(params[:page]).per(25)
     @running_count = Ci::Build.running.count

@@ -15,11 +15,11 @@
   / Card header with title and edit button
   %div{ class: 'mb-3 flex items-center justify-between' }
     %h3{ class: 'text-sm font-semibold text-slate-900' }= title
-    %div{ class: 'relative' }
-      %button{ class: 'inline-flex items-center px-2 py-1 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 font-medium rounded transition-colors', data: { action: 'click->user-select-dropdown#toggleDropdown' } }
-        Edit
-      / User search dropdown
-      = render 'shared/assignees/user_search_droplist', field_type: field_type
+    - if current_user
+      %div{ class: 'relative' }
+        %button{ class: 'inline-flex items-center px-2 py-1 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 font-medium rounded transition-colors', data: { action: 'click->user-select-dropdown#toggleDropdown' } }
+          Edit
+        = render 'shared/assignees/user_search_droplist', field_type: field_type
 
   / Selected users display area
   = render 'shared/assignees/selected_users_turbo', resource: resource, resource_type: resource_type, users: users, field_type: field_type, avatar_color: avatar_color, empty_icon: empty_icon, empty_message: empty_message

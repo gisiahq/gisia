@@ -25,18 +25,19 @@
                   %span.text-gray-700= @issue.updated_by.name
                   = time_ago_in_words(@issue.updated_at)
                   ago
-          .issue-actions.flex.gap-1.5.items-end
-            = link_to edit_namespace_project_issue_path(@project.namespace.parent.full_path, @project.path, @issue), class: "inline-flex items-center px-2 py-1 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500" do
-              = icon("pencil", class: "w-3 h-3 mr-1")
-              = _('Edit')
-            - if @issue.opened?
-              = button_to close_namespace_project_issue_path(@project.namespace.parent.full_path, @project.path, @issue), method: :patch, class: "inline-flex items-center px-2 py-1 text-xs font-medium text-red-700 bg-white border border-red-300 rounded hover:bg-red-50 focus:outline-none focus:ring-1 focus:ring-red-500" do
-                = icon("x", class: "w-3 h-3 mr-1")
-                = _('Close')
-            - elsif @issue.closed?
-              = button_to reopen_namespace_project_issue_path(@project.namespace.parent.full_path, @project.path, @issue), method: :patch, class: "inline-flex items-center px-2 py-1 text-xs font-medium text-green-700 bg-white border border-green-300 rounded hover:bg-green-50 focus:outline-none focus:ring-1 focus:ring-green-500" do
-                = icon("arrow-clockwise", class: "w-3 h-3 mr-1")
-                = _('Reopen')
+          - if current_user
+            .issue-actions.flex.gap-1.5.items-end
+              = link_to edit_namespace_project_issue_path(@project.namespace.parent.full_path, @project.path, @issue), class: "inline-flex items-center px-2 py-1 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500" do
+                = icon("pencil", class: "w-3 h-3 mr-1")
+                = _('Edit')
+              - if @issue.opened?
+                = button_to close_namespace_project_issue_path(@project.namespace.parent.full_path, @project.path, @issue), method: :patch, class: "inline-flex items-center px-2 py-1 text-xs font-medium text-red-700 bg-white border border-red-300 rounded hover:bg-red-50 focus:outline-none focus:ring-1 focus:ring-red-500" do
+                  = icon("x", class: "w-3 h-3 mr-1")
+                  = _('Close')
+              - elsif @issue.closed?
+                = button_to reopen_namespace_project_issue_path(@project.namespace.parent.full_path, @project.path, @issue), method: :patch, class: "inline-flex items-center px-2 py-1 text-xs font-medium text-green-700 bg-white border border-green-300 rounded hover:bg-green-50 focus:outline-none focus:ring-1 focus:ring-green-500" do
+                  = icon("arrow-clockwise", class: "w-3 h-3 mr-1")
+                  = _('Reopen')
 
       .issue-content
         .flex.gap-4

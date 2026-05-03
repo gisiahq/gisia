@@ -66,11 +66,11 @@ class Projects::JobsController < Projects::ApplicationController
   end
 
   def authorize_read_build!
-    forbidden! unless current_user.can?(:read_build, @project)
+    forbidden! unless can?(current_user, :read_build, @project)
   end
 
   def authorize_update_build!
-    forbidden! unless current_user.can?(:update_build, @project)
+    forbidden! unless can?(current_user, :update_build, @project)
   end
 
   def raw_send_params

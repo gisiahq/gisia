@@ -19,6 +19,13 @@ class ApplicationController < ActionController::Base
     Ability.allowed?(user, action, subject)
   end
 
+  def forbidden!
+    respond_to do |format|
+      format.html { redirect_to new_user_session_path }
+      format.any { head :forbidden }
+    end
+  end
+
   def render_404
     respond_to do |format|
       format.html { render file: Rails.root.join("public/404.html"), status: :not_found, layout: false }

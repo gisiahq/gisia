@@ -10,5 +10,6 @@
           - stage = stage_data[:stage]
           - issues = stage_data[:issues]
           = render 'projects/boards/stage_column', stage: stage, issues: issues, project: @project
-        = button_to board_stages_path(@board), method: :post, id: 'add-stage-button', class: 'flex-shrink-0 w-12 h-12 bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg hover:border-slate-400 text-slate-600 transition-colors flex items-center justify-center', remote: true do
-          = icon 'plus', class: 'w-5 h-5'
+        - if current_user
+          = button_to board_stages_path(@board), method: :post, id: 'add-stage-button', class: 'flex-shrink-0 w-12 h-12 bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg hover:border-slate-400 text-slate-600 transition-colors flex items-center justify-center', remote: true do
+            = icon 'plus', class: 'w-5 h-5'

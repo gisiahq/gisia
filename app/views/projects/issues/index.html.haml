@@ -20,9 +20,10 @@
 
         - if @issues&.any?
           %div{ class: 'pb-2' }
-            = link_to new_project_issue_path(@project), class: 'inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-all duration-200' do
-              = icon 'plus', class: 'w-4 h-4'
-              %span= _('New issue')
+            - if current_user
+              = link_to new_project_issue_path(@project), class: 'inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-all duration-200' do
+                = icon 'plus', class: 'w-4 h-4'
+                %span= _('New issue')
 
     %div{ class: 'bg-gray-50 rounded-lg p-4 mb-6' }
       = form_tag project_issues_path(@project), method: :get, local: true, class: 'flex flex-wrap gap-4 items-end' do
@@ -72,6 +73,7 @@
         %h3{ class: 'text-lg font-semibold text-slate-900 mb-2' }= _('Track tasks, bugs, and feature requests with ease')
         %p{ class: 'text-slate-500 max-w-sm mx-auto leading-relaxed mb-6' }
           = _('Organize your workflow and track progress effectively.')
-        = link_to new_project_issue_path(@project), class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200' do
-          = icon 'plus', class: 'w-4 h-4'
-          %span= _('New issue')
+        - if current_user
+          = link_to new_project_issue_path(@project), class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200' do
+            = icon 'plus', class: 'w-4 h-4'
+            %span= _('New issue')

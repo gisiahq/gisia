@@ -14,6 +14,8 @@ module StageIssuesFilterable
   end
 
   def can_edit_board?
+    return false unless current_user
+
     access_level = @project.team.max_member_access(current_user.id)
     access_level >= Gitlab::Access::MAINTAINER
   end

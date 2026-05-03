@@ -5,8 +5,9 @@
   %div{ class: 'flex items-center gap-2 mb-3' }
     %h2{ class: 'text-lg font-semibold text-slate-900' }
       Linked items
-    %button{ type: 'button', class: 'inline-flex items-center px-1.5 py-1 text-slate-500 border border-slate-300 rounded hover:bg-slate-50', data: { action: 'click->link-item-form#toggleForm' } }
-      = icon 'plus', class: 'w-3 h-3'
+    - if current_user
+      %button{ type: 'button', class: 'inline-flex items-center px-1.5 py-1 text-slate-500 border border-slate-300 rounded hover:bg-slate-50', data: { action: 'click->link-item-form#toggleForm' } }
+        = icon 'plus', class: 'w-3 h-3'
 
   %div{ id: 'linked-items-container', class: "#{link_records.empty? ? 'hidden ' : ''}border border-slate-200 rounded-lg divide-y divide-slate-200", data: { 'link-item-form-target': 'container' } }
     %div{ class: 'hidden px-3 py-2.5', data: { 'link-item-form-target': 'form' } }

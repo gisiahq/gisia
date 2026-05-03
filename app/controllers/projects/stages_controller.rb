@@ -90,6 +90,8 @@ class Projects::StagesController < Projects::ApplicationController
   end
 
   def authorize_maintainer
+    return redirect_to new_user_session_path unless current_user
+
     access_level = @project.team.max_member_access(current_user.id)
     redirect_to root_path unless access_level >= Gitlab::Access::MAINTAINER
   end

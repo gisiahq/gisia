@@ -20,9 +20,10 @@
 
         - if @epics&.any?
           %div{ class: 'pb-2' }
-            = link_to new_namespace_project_epic_path(@project.namespace.parent.full_path, @project.namespace.path), class: 'inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-all duration-200' do
-              = icon 'plus', class: 'w-4 h-4'
-              %span New epic
+            - if current_user
+              = link_to new_namespace_project_epic_path(@project.namespace.parent.full_path, @project.namespace.path), class: 'inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-all duration-200' do
+                = icon 'plus', class: 'w-4 h-4'
+                %span New epic
 
     / -- Search Filter --
     %div{ class: 'bg-gray-50 rounded-lg p-4 mb-6' }
@@ -73,6 +74,7 @@
         %h3{ class: 'text-lg font-semibold text-slate-900 mb-2' } Organize large features and initiatives
         %p{ class: 'text-slate-500 max-w-sm mx-auto leading-relaxed mb-6' }
           Track high-level work that spans multiple issues and teams.
-        = link_to new_namespace_project_epic_path(@project.namespace.parent.full_path, @project.namespace.path), class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200' do
-          = icon 'plus', class: 'w-4 h-4'
-          %span New epic
+        - if current_user
+          = link_to new_namespace_project_epic_path(@project.namespace.parent.full_path, @project.namespace.path), class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200' do
+            = icon 'plus', class: 'w-4 h-4'
+            %span New epic
