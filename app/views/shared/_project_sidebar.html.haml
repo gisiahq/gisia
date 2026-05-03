@@ -3,8 +3,9 @@
     = link_to root_path, class: 'flex items-center gap-2 font-bold text-gray-800 hover:text-blue-600' do
       = image_tag 'logo.png', alt: 'Gisia Logo', class: 'h-9 w-9'
       %span{class: 'text-sm'} Gisia
-    = link_to users_settings_profile_path, class: 'w-8 h-8 rounded-full border-2 border-gray-200 hover:border-blue-400 overflow-hidden flex items-center justify-center' do
-      = render 'shared/user_avatar', user: current_user, size: 32, css_class: 'w-full h-full rounded-full object-cover'
+    - if current_user
+      = link_to users_settings_profile_path, class: 'w-8 h-8 rounded-full border-2 border-gray-200 hover:border-blue-400 overflow-hidden flex items-center justify-center' do
+        = render 'shared/user_avatar', user: current_user, size: 32, css_class: 'w-full h-full rounded-full object-cover'
 
   %div{class: 'flex-1 overflow-y-auto px-4 py-6 sidebar-scroll'}
     %div{class: 'mb-6'}

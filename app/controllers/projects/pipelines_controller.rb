@@ -65,10 +65,10 @@ class Projects::PipelinesController < Projects::ApplicationController
   end
 
   def authorize_read_pipeline!
-    forbidden! unless current_user.can?(:read_pipeline, @project)
+    forbidden! unless can?(current_user, :read_pipeline, @project)
   end
 
   def authorize_create_pipeline!
-    forbidden! unless current_user.can?(:create_pipeline, @project)
+    forbidden! unless can?(current_user, :create_pipeline, @project)
   end
 end
