@@ -7,6 +7,7 @@ class Projects::IssuesController < Projects::ApplicationController
   before_action :authorize_read_issues!, only: [:index, :search_users, :search_epics, :search_links]
   before_action :authorize_create_issue!, only: [:new, :create]
   before_action :set_issue, only: [:show, :edit, :update, :destroy, :close, :reopen, :move_stage, :link_labels, :unlink_label, :search_labels, :search_links]
+  before_action :check_issue_visibility!, only: [:show, :edit, :update, :destroy, :close, :reopen, :move_stage, :link_labels, :unlink_label, :search_labels, :search_links]
   before_action :authorize_read_issuable!, only: [:show, :search_labels]
   before_action :authorize_update_issuable!, only: [:edit, :update, :close, :reopen, :move_stage, :link_labels, :unlink_label]
   before_action :authorize_destroy_issuable!, only: [:destroy]
@@ -201,6 +202,10 @@ class Projects::IssuesController < Projects::ApplicationController
   def set_counts
     @opened_count = @project.namespace.work_items.where(type: 'Issue', state_id: WorkItems::HasState::STATE_ID_MAP['opened']).count
     @closed_count = @project.namespace.work_items.where(type: 'Issue', state_id: WorkItems::HasState::STATE_ID_MAP['closed']).count
+  end
+
+  def check_issue_visibility!
+    head :not_found if @issue.confidential? && !can?(current_user, :read_issue, @issue)
   end
 
   def filter_by_labels(issues, labels_param)
