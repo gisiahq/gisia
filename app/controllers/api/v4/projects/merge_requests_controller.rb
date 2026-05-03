@@ -7,13 +7,13 @@ module API
         include ::Projects::MergeRequestAuthorizable
         include ::Projects::MergeRequestNotifiable
 
+        before_action :require_project_member!, only: [:create, :update, :destroy]
         before_action :find_merge_request!, only: [:show, :update, :destroy]
         before_action :authorize_read_merge_requests!, only: [:index]
         before_action :authorize_create_merge_request!, only: [:create]
         before_action :authorize_read_merge_request!, only: [:show]
         before_action :authorize_update_merge_request!, only: [:update]
         before_action :authorize_destroy_merge_request!, only: [:destroy]
-        before_action :authorize_author!, only: [:update, :destroy]
         before_action :set_notification_author, only: [:update]
 
         def index
@@ -102,10 +102,6 @@ module API
             .includes(:author, :assignees, :reviewers, :metrics, target_project: { namespace: :parent })
             .find_by(iid: params[:merge_request_iid])
           not_found! unless @merge_request
-        end
-
-        def authorize_author!
-          forbidden! unless @merge_request.author == current_user
         end
 
         def handle_assignees(assignee_ids)

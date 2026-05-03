@@ -14,6 +14,10 @@ module API
       def authenticate_unless_public_read!
         authenticate! unless @project&.public? && request.get?
       end
+
+      def require_project_member!
+        forbidden! unless @project&.team&.member?(current_user)
+      end
     end
   end
 end
