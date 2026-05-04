@@ -73,6 +73,6 @@ module Issuable
 
     return unless @previous_assignee_ids && assignees.map(&:id).sort != @previous_assignee_ids
 
-    NotificationService.new.reassigned_work_item(self, notification_author, User.where(id: @previous_assignee_ids))
+    NotifyJobs::WorkItems::ReassignedWorkItemJob.set(wait: 2.seconds).perform_later(self.id, notification_author.id, @previous_assignee_ids)
   end
 end
