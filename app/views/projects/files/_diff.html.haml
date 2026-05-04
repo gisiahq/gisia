@@ -12,7 +12,7 @@
             %div{ class: 'flex items-center justify-between' }
               %div{ class: 'flex items-center gap-2 flex-1 min-w-0' }
                 = icon 'file-text', class: 'w-4 h-4 text-slate-500 flex-shrink-0'
-                %span{ class: 'font-mono text-xs text-slate-900 truncate' }= file.file_path
+                %span{ class: 'font-mono text-xs text-slate-900 truncate', title: file.file_path }= file.file_path
                 - if file.new_file?
                   %span{ class: 'px-1.5 py-0.5 bg-green-100 text-green-700 text-xs rounded' } N
                 - elsif file.deleted_file?
