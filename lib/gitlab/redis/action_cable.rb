@@ -8,11 +8,17 @@
 
 module Gitlab
   module Redis
-    class MemoryStoreTraceChunks < ::Gitlab::Redis::Wrapper
-      # The data we store on TraceChunks used to be stored on SharedState.
+    class ActionCable < ::Gitlab::Redis::Wrapper
       class << self
+        # The data we store on ActionCable used to be stored on SharedState.
         def config_fallback
           SharedState
+        end
+
+        def active?
+          return super if config_file_name
+
+          false
         end
       end
     end
