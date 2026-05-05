@@ -30,7 +30,7 @@ module LegacyBulkInsert
       return if rows.empty?
 
       keys = rows.first.keys
-      columns = keys.map { |key| connection.quote_column_name(key) }
+      columns = keys.map { |key| adapter_class.quote_column_name(key) }
 
       disable_quote = Array(disable_quote).to_set
       tuples = rows.map do |row|
@@ -39,10 +39,10 @@ module LegacyBulkInsert
         end
       end
 
-      sql = <<-EOF
+      sql = <<-SQL
         INSERT INTO #{table} (#{columns.join(', ')})
         VALUES #{tuples.map { |tuple| "(#{tuple.join(', ')})" }.join(', ')}
-      EOF
+      SQL
 
       sql = "#{sql} ON CONFLICT DO NOTHING" if on_conflict == :do_nothing
 

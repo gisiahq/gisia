@@ -8,14 +8,15 @@
 
 module DiffPositionableNote
   extend ActiveSupport::Concern
+  include Gitlab::Utils::StrongMemoize
 
   included do
     before_validation :set_original_position, on: :create
     before_validation :update_position, on: :create, if: :should_update_position?, unless: :importing?
 
-    serialize :original_position, coder: PositionCoder # rubocop:disable Cop/ActiveRecordSerialize
-    serialize :position, coder: PositionCoder # rubocop:disable Cop/ActiveRecordSerialize
-    serialize :change_position, coder: PositionCoder # rubocop:disable Cop/ActiveRecordSerialize
+    serialize :original_position, type: Gitlab::Diff::Position # rubocop:disable Cop/ActiveRecordSerialize
+    serialize :position, type: Gitlab::Diff::Position # rubocop:disable Cop/ActiveRecordSerialize
+    serialize :change_position, type: Gitlab::Diff::Position # rubocop:disable Cop/ActiveRecordSerialize
 
     validate :diff_refs_match_commit, if: :for_commit?
     validates :position, json_schema: { filename: "position", hash_conversion: true }
@@ -25,7 +26,7 @@ module DiffPositionableNote
     define_method "#{meth}=" do |new_position|
       if new_position.is_a?(String)
         new_position = begin
-          Gitlab::Json.parse(new_position)
+          Gitlab::Json.safe_parse(new_position)
         rescue StandardError
           nil
         end
@@ -109,6 +110,22 @@ module DiffPositionableNote
     errors.add(:commit_id, 'does not match the diff refs')
   end
 
+  def sync_keep_around_commits
+    return if async_keep_around_refs?
+
+    repository.keep_around(*shas, source: "#{noteable_type}/#{self.class.name}")
+  end
+
+  def enqueue_keep_around_commits
+    return unless async_keep_around_refs?
+
+    MergeRequests::KeepAroundRefsWorker.perform_async(
+      [project.id],
+      shas,
+      "#{noteable_type}/#{self.class.name}"
+    )
+  end
+
   def keep_around_commits
     repository.keep_around(*shas, source: "#{noteable_type}/#{self.class.name}")
   end
@@ -116,6 +133,11 @@ module DiffPositionableNote
   def repository
     noteable.respond_to?(:repository) ? noteable.repository : project.repository
   end
+
+  def async_keep_around_refs?
+    Feature.enabled?(:async_keep_around_refs_for_merge_request_diffs, project, type: :gitlab_com_derisk)
+  end
+  strong_memoize_attr :async_keep_around_refs?
 
   def shas
     [

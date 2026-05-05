@@ -29,7 +29,7 @@ module TokenAuthenticatable
 
     def add_authentication_token_field(token_field, options = {})
       if token_authenticatable_fields.include?(token_field)
-        return
+        raise ArgumentError, "#{token_field} already configured via add_authentication_token_field"
       end
 
       token_authenticatable_fields.push(token_field)
@@ -79,6 +79,10 @@ module TokenAuthenticatable
       # Resets the token, but only saves when the database is in read & write mode
       mod.define_method("reset_#{token_field}!") do
         strategy.reset_token!(self)
+      end
+
+      mod.define_method("rewrite_#{token_field}") do
+        strategy.write_new_token(self)
       end
 
       mod.define_method("#{token_field}_matches?") do |other_token|

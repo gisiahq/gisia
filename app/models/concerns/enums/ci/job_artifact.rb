@@ -14,6 +14,7 @@ module Enums
       REPORT_FILE_TYPES = {
         sast: %w[sast],
         secret_detection: %w[secret_detection],
+        sarif: %w[sarif],
         test: %w[junit],
         accessibility: %w[accessibility],
         coverage: %w[cobertura jacoco],
@@ -42,6 +43,7 @@ module Enums
         load_performance: 'load-performance.json',
         metrics: 'metrics.txt',
         lsif: 'lsif.json',
+        scip: 'index.scip',
         dotenv: '.env',
         cobertura: 'cobertura-coverage.xml',
         jacoco: 'jacoco-coverage.xml',
@@ -53,7 +55,8 @@ module Enums
         api_fuzzing: 'gl-api-fuzzing-report.json',
         cyclonedx: 'gl-sbom.cdx.json',
         annotations: 'gl-annotations.json',
-        repository_xray: 'gl-repository-xray.json'
+        repository_xray: 'gl-repository-xray.json',
+        sarif: 'gl-sarif-report.sarif'
       }.freeze
 
       INTERNAL_TYPES = {
@@ -72,6 +75,7 @@ module Enums
         jacoco: :gzip,
         cluster_applications: :gzip, # DEPRECATED: https://gitlab.com/gitlab-org/gitlab/-/issues/361094
         lsif: :zip,
+        scip: :zip,
         cyclonedx: :gzip,
         annotations: :gzip,
         repository_xray: :gzip,
@@ -98,7 +102,8 @@ module Enums
         requirements: :raw,
         requirements_v2: :raw,
         coverage_fuzzing: :raw,
-        api_fuzzing: :raw
+        api_fuzzing: :raw,
+        sarif: :raw
       }.freeze
 
       DOWNLOADABLE_TYPES = %w[
@@ -115,6 +120,7 @@ module Enums
         junit
         license_scanning
         lsif
+        scip
         metrics
         performance
         browser_performance
@@ -125,6 +131,7 @@ module Enums
         requirements_v2
         cluster_image_scanning
         cyclonedx
+        sarif
       ].freeze
 
       def self.non_erasable_file_types
@@ -190,7 +197,9 @@ module Enums
           requirements_v2: 29, ## EE-specific
           annotations: 30,
           repository_xray: 31, ## EE-specific
-          jacoco: 32
+          jacoco: 32,
+          scip: 33, # SCIP data for code navigation
+          sarif: 34 ## EE-specific
         }
       end
 

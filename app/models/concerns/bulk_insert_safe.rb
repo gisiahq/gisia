@@ -58,7 +58,9 @@ module BulkInsertSafe
 
   class_methods do
     def insert_all_proxy_class
-      @insert_all_proxy_class = self
+      @insert_all_proxy_class ||= Class.new(self) do
+        attr_readonly :created_at
+      end
     end
 
     def set_callback(name, *args)
@@ -184,13 +186,14 @@ module BulkInsertSafe
         items.each_slice(batch_size).flat_map do |item_batch|
           attributes = _bulk_insert_item_attributes(item_batch, validate, &handle_attributes)
 
-          ::ActiveRecord::InsertAll.execute(
-            insert_all_proxy_class.all,
-                attributes,
+          ActiveRecord::InsertAll
+              .new(
+                insert_all_proxy_class.all, connection, attributes,
                 on_duplicate: on_duplicate,
                 returning: returning,
                 unique_by: unique_by
               )
+              .execute
               .cast_values(insert_all_proxy_class.attribute_types).to_a
         end
       end

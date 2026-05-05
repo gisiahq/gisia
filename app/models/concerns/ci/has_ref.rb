@@ -14,7 +14,7 @@ module Ci
     extend ActiveSupport::Concern
 
     def branch?
-      !tag? && !merge_request?
+      !tag? && !merge_request? && !workload?
     end
 
     def git_ref
@@ -22,7 +22,13 @@ module Ci
         Gitlab::Git::BRANCH_REF_PREFIX + ref.to_s
       elsif tag?
         Gitlab::Git::TAG_REF_PREFIX + ref.to_s
+      elsif workload?
+        ref
       end
+    end
+
+    def workload?
+      ::Ci::Workloads::Workload.workload_ref?(ref)
     end
 
     # A slugified version of the build ref, suitable for inclusion in URLs and

@@ -41,6 +41,29 @@ module Featurable
     'public' => PUBLIC
   }).freeze
 
+  PAGES_ACCESS_LEVELS_BY_PROJECT_VISIBILITY = {
+    Gitlab::VisibilityLevel::PRIVATE => [
+      DISABLED,
+      PRIVATE,
+      PUBLIC
+      # 'Enabled' is not allowed for private projects
+      # because 'private' and 'enabled' pages access control settings have the same effect
+    ].freeze,
+    Gitlab::VisibilityLevel::INTERNAL => [
+      DISABLED,
+      PRIVATE,
+      ENABLED,
+      PUBLIC
+    ].freeze,
+    Gitlab::VisibilityLevel::PUBLIC => [
+      DISABLED,
+      PRIVATE,
+      ENABLED
+      # 'Public' is not allowed for public projects
+      # because 'enabled' and 'public' pages access control settings have the same effect
+    ].freeze
+  }.freeze
+
   class_methods do
     def set_available_features(available_features = [])
       @available_features ||= []
@@ -66,8 +89,8 @@ module Featurable
     end
 
     def quoted_access_level_column(feature)
-      attribute = connection.quote_column_name(access_level_attribute(feature))
-      table = connection.quote_table_name(table_name)
+      attribute = adapter_class.quote_column_name(access_level_attribute(feature))
+      table = adapter_class.quote_table_name(table_name)
 
       "#{table}.#{attribute}"
     end

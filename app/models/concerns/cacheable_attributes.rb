@@ -96,4 +96,3 @@ module CacheableAttributes
     )
   end
 end
-

@@ -19,7 +19,15 @@
 #   class Profile < ApplicationRecord
 #     include Sanitizable
 #
+#     # Sanitize name and description on every validation
 #     sanitizes! :name, :description
+#
+#     # Conditional sanitization: options are passed through to
+#     # before_validation and validates_each callbacks.
+#     # Supports :if and :unless options for conditional execution.
+#     sanitizes! :target_url, if: -> { should_sanitize? }
+#   end
+# end
 
 module Sanitizable
   extend ActiveSupport::Concern
@@ -35,9 +43,9 @@ module Sanitizable
       CGI.unescapeHTML(Sanitize.fragment(input))
     end
 
-    def sanitizes!(*attrs)
+    def sanitizes!(*attrs, **options)
       instance_eval do
-        before_validation do
+        before_validation(**options) do
           attrs.each do |attr|
             input = public_send(attr) # rubocop: disable GitlabSecurity/PublicSend
 
@@ -45,7 +53,7 @@ module Sanitizable
           end
         end
 
-        validates_each(*attrs) do |record, attr, input|
+        validates_each(*attrs, **options) do |record, attr, input|
           # We reject pre-escaped HTML fragments as invalid to avoid saving them
           # to the database.
           unless input.to_s == CGI.unescapeHTML(input.to_s)

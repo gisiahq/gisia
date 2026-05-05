@@ -17,14 +17,13 @@ module HasUserType
     service_user: 4,
     ghost: 5,
     project_bot: 6,
-    migration_bot: 7,
+    # 7: Deprecated migration_bot type (removed)
     security_bot: 8,
     automation_bot: 9,
     security_policy_bot: 10,
     admin_bot: 11,
-    suggested_reviewers_bot: 12,
     service_account: 13,
-    llm_bot: 14,
+    # 14: Deprecated llm_bot type (removed)
     placeholder: 15,
     duo_code_review_bot: 16,
     import_user: 17
@@ -35,14 +34,11 @@ module HasUserType
     project_bot
     support_bot
     visual_review_bot
-    migration_bot
     security_bot
     automation_bot
     security_policy_bot
     admin_bot
-    suggested_reviewers_bot
     service_account
-    llm_bot
     duo_code_review_bot
   ].freeze
 
@@ -65,6 +61,10 @@ module HasUserType
     scope :human_or_service_user, -> { where(user_type: %i[human service_user]) }
     scope :resource_access_token_bot, -> { where(user_type: 'project_bot') }
     scope :service_accounts, -> { where(user_type: 'service_account') }
+    scope :service_accounts_without_composite_identity, -> do
+      where(user_type: 'service_account', composite_identity_enforced: false)
+    end
+    scope :with_user_types, ->(user_types) { where(user_type: user_types) }
     scope :without_placeholders, -> { where.not(user_type: 'placeholder') }
 
     validates :user_type, presence: true
@@ -81,14 +81,19 @@ module HasUserType
   def redacted_name(viewing_user)
     return self.name unless self.project_bot?
 
-    return self.name if self.groups.any? && viewing_user&.can?(:read_group, self.groups.first)
+    cache_key = "redacted_name:#{self.class}:#{self.id}:#{viewing_user&.id}"
 
-    return self.name if viewing_user&.can?(:read_project, self.projects.first)
-
-    # If the requester does not have permission to read the project bot name,
-    # the API returns an arbitrary string. UI changes will be addressed in a follow up issue:
-    # https://gitlab.com/gitlab-org/gitlab/-/issues/346058
-    '****'
+    Gitlab::SafeRequestStore.fetch(cache_key) do
+      if (self.groups.any? && viewing_user&.can?(:read_group, self.groups.first)) ||
+          viewing_user&.can?(:read_project, self.projects.first)
+        self.name
+      else
+        # If the requester does not have permission to read the project bot name,
+        # the API returns an arbitrary string. UI changes will be addressed in a follow up issue:
+        # https://gitlab.com/gitlab-org/gitlab/-/issues/346058
+        '****'
+      end
+    end
   end
 
   def resource_bot_resource
