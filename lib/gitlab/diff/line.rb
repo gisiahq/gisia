@@ -16,7 +16,7 @@ module Gitlab
 
       attr_reader :marker_ranges
       attr_writer :text, :rich_text
-      attr_accessor :index, :old_pos, :new_pos, :line_code, :type, :embedded_image
+      attr_accessor :index, :old_pos, :new_pos, :line_code, :type, :embedded_image, :expanded
 
       def initialize(text, type, index, old_pos, new_pos, parent_file: nil, line_code: nil, rich_text: nil)
         @text = text
@@ -102,11 +102,7 @@ module Gitlab
       end
 
       def match?
-        if Feature.enabled?(:diff_line_match, Feature.current_request)
-          type.to_s == 'match'
-        else
-          type == :match
-        end
+        type.to_s == 'match'
       end
 
       def discussable?
@@ -115,6 +111,10 @@ module Gitlab
 
       def suggestible?
         !removed?
+      end
+
+      def expanded?
+        expanded || false
       end
 
       def rich_text
@@ -145,11 +145,9 @@ module Gitlab
       def id(file_hash)
         return if meta?
 
-        hash = file_hash[0..8]
+        return "line_#{file_hash}_A#{new_pos}" if added?
 
-        return "line_#{hash}_A#{new_pos}" if added?
-
-        "line_#{hash}_#{old_pos}"
+        "line_#{file_hash}_#{old_pos}"
       end
 
       def legacy_id(file_path)

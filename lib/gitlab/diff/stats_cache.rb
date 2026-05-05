@@ -5,7 +5,7 @@
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
 # ======================================================
-#
+
 module Gitlab
   module Diff
     class StatsCache

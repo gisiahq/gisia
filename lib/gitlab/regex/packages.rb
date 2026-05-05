@@ -21,6 +21,14 @@ module Gitlab
 
       API_PATH_REGEX = %r{^/api/v\d+/(projects/[^/]+/|groups?/[^/]+/-/)?packages/[A-Za-z]+}
 
+      def cargo_package_name_regex
+        @cargo_package_name_regex ||= /\A[a-zA-Z][a-zA-Z0-9\-_]{0,63}\z/
+      end
+
+      def cargo_package_normalized_name_regex
+        @cargo_package_normalized_name_regex ||= /\A[a-z0-9-]+\z/
+      end
+
       def conan_package_reference_regex
         @conan_package_reference_regex ||= %r{\A[A-Za-z0-9]+\z}
       end
@@ -35,6 +43,14 @@ module Gitlab
         # - "scm" or "scm_folder": the commit ID for the repository system (Git or SVN): SHA-1 Hash 40 Characters
         # according to https://docs.conan.io/2.10/reference/conanfile/attributes.html#revision-mode
         @conan_revision_regex_v2 ||= %r/\A(?:\h{32}|\h{40})\z/
+      end
+
+      # The revision format depends on the Conan protocol version:
+      # - v1: always "0" (revisions not supported)
+      # - v2: either MD5 hash (32 hex chars) or SCM commit ID (40 hex chars)
+      #   per https://docs.conan.io/2.10/reference/conanfile/attributes.html#revision-mode
+      def conan_revision_regex_combined
+        @conan_revision_regex_combined ||= %r{\A(?:0|\h{32}|\h{40})\z}
       end
 
       def conan_recipe_user_channel_regex
