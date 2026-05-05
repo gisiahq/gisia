@@ -46,12 +46,12 @@ module Gitlab
           @load_balancer.pool.query_cache_enabled
         end
 
+        def clear_query_cache
+          # We let rails manage the query cache lifecycle for primary connection pools, so we make this a no-op
+        end
+
         def connection
-          if Gem::Version.new(Rails.version) >= Gem::Version.new('7.2')
-            @load_balancer.pool.lease_connection
-          else
-            @load_balancer.pool.connection
-          end
+          @load_balancer.pool.lease_connection
         end
 
         def disconnect!(timeout: 120)

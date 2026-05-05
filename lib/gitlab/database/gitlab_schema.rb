@@ -33,8 +33,7 @@ module Gitlab
       # It maps table names prefixes to gitlab_schemas.
       # The order of keys matter. Prefixes that contain other prefixes should come first.
       IMPLICIT_GITLAB_SCHEMAS = {
-        '_test_gitlab_main_clusterwide_' => :gitlab_main_clusterwide,
-        '_test_gitlab_main_cell_' => :gitlab_main_cell,
+        '_test_gitlab_main_org_' => :gitlab_main_org,
         '_test_gitlab_main_' => :gitlab_main,
         '_test_gitlab_ci_' => :gitlab_ci,
         '_test_gitlab_sec_' => :gitlab_sec,
@@ -42,6 +41,8 @@ module Gitlab
         '_test_gitlab_embedding_' => :gitlab_embedding,
         '_test_gitlab_geo_' => :gitlab_geo,
         '_test_gitlab_pm_' => :gitlab_pm,
+        '_test_gitlab_shared_org_' => :gitlab_shared_org,
+        '_test_gitlab_shared_cell_local_' => :gitlab_shared_cell_local,
         '_test_' => :gitlab_shared,
         'pg_' => :gitlab_internal
       }.freeze
@@ -87,7 +88,8 @@ module Gitlab
         # rubocop:disable Gitlab/DocumentationLinks/HardcodedUrl
         self.table_schema(name) || raise(
           UnknownSchemaError,
-          "Could not find gitlab schema for table #{name}: Any new or deleted tables must be added to the database dictionary " \
+          "Could not find gitlab schema for table #{name}: Any new or deleted tables must be added to the database dictionary. " \
+          "Use `bin/rake gitlab:db:dictionary:generate` to create a new dictionary file. " \
           "See https://docs.gitlab.com/ee/development/database/database_dictionary.html"
         )
         # rubocop:enable Gitlab/DocumentationLinks/HardcodedUrl
@@ -101,7 +103,8 @@ module Gitlab
         Gitlab::Database.all_gitlab_schemas[schema.to_s].sharding_root_tables
       end
 
-      def self.cross_joins_allowed?(table_schemas, all_tables)
+      def self.cross_joins_allowed?(all_tables)
+        table_schemas = table_schemas!(all_tables)
         return true unless table_schemas.many?
 
         table_schemas.any? do |schema|
@@ -112,7 +115,9 @@ module Gitlab
         end
       end
 
-      def self.cross_transactions_allowed?(table_schemas, all_tables)
+      def self.cross_transactions_allowed?(all_tables, additional_schemas: nil)
+        table_schemas = table_schemas!(all_tables)
+        table_schemas += additional_schemas if additional_schemas
         return true unless table_schemas.many?
 
         table_schemas.any? do |schema|
@@ -123,7 +128,8 @@ module Gitlab
         end
       end
 
-      def self.cross_foreign_key_allowed?(table_schemas, all_tables)
+      def self.cross_foreign_key_allowed?(all_tables)
+        table_schemas = table_schemas!(all_tables)
         return true if table_schemas.one?
 
         table_schemas.any? do |schema|

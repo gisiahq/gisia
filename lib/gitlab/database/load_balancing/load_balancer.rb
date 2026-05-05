@@ -68,6 +68,7 @@ module Gitlab
 
             begin
               connection = host.connection
+
               return yield connection
             rescue StandardError => error
               if primary_only?
@@ -125,12 +126,7 @@ module Gitlab
           transaction_open = nil
 
           # Retry only once when in a transaction (see https://gitlab.com/gitlab-org/gitlab/-/issues/220242)
-          connection =
-            if Gem::Version.new(Rails.version) >= Gem::Version.new('7.2')
-              pool.lease_connection
-            else
-              pool.connection
-            end
+          connection = pool.lease_connection
 
           attempts = connection.transaction_open? ? 1 : 3
 
@@ -172,13 +168,42 @@ module Gitlab
         end
 
         # Releases the host and connection for the current thread.
-        def release_host
-          if host = request_cache[CACHE_KEY]
-            host.disable_query_cache!
-            host.release_connection
+        # force: true will release connections from all the hosts - reference: https://gitlab.com/gitlab-org/gitlab/-/work_items/588806
+        def release_host(force: false)
+          hosts_force_released = 0
+          hosts_force_query_cache_cleared = 0
+
+          @host_list.hosts.each do |host|
+            if host == request_cache[CACHE_KEY]
+              clear_cache_and_release_host(host)
+              request_cache.delete(CACHE_KEY)
+            elsif force && Feature.enabled?(:load_balancer_force_release_hosts, Feature.current_request)
+              can_force_release = host.respond_to?(:pool) && host.pool.present? &&
+                (host.pool.active_connection? || !host.pool.query_cache.empty?)
+
+              next unless can_force_release
+
+              hosts_force_released += 1
+              hosts_force_query_cache_cleared += 1 unless host.pool.query_cache.empty?
+              clear_cache_and_release_host(host)
+            end
           end
 
-          request_cache.delete(CACHE_KEY)
+          return unless can_log_force_released_hosts?(hosts_force_released, hosts_force_query_cache_cleared)
+
+          ::Gitlab::Database::LoadBalancing::Logger.warn(
+            event: :force_released_hosts,
+            message: 'Released connections from hosts outside request cache',
+            hosts_force_released: hosts_force_released,
+            hosts_force_query_cache_cleared: hosts_force_query_cache_cleared,
+            load_balancer_name: name
+          )
+        end
+
+        def clear_cache_and_release_host(host)
+          host.disable_query_cache!
+          host.clear_query_cache
+          host.release_connection
         end
 
         def release_primary_connection
@@ -347,6 +372,12 @@ module Gitlab
         end
 
         private
+
+        def can_log_force_released_hosts?(hosts_force_released, hosts_force_query_cache_cleared)
+          return false unless Feature.enabled?(:log_force_released_hosts, Feature.current_request)
+
+          hosts_force_released > 0 || hosts_force_query_cache_cleared > 0
+        end
 
         def ensure_caching!
           return unless Rails.application.executor.active?

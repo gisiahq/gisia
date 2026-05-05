@@ -13,7 +13,7 @@ module Gitlab
       class Host
         attr_reader :pool, :last_checked_at, :intervals, :load_balancer, :host, :port
 
-        delegate :connection, :release_connection, :enable_query_cache!, :disable_query_cache!, :query_cache_enabled, to: :pool
+        delegate :release_connection, :enable_query_cache!, :disable_query_cache!, :query_cache_enabled, :clear_query_cache, :discarded?, to: :pool
 
         CONNECTION_ERRORS = [
           ActionView::Template::Error,
@@ -85,14 +85,18 @@ module Gitlab
           @intervals = (interval..(interval * 2)).step(0.5).to_a
         end
 
+        def connection
+          pool.lease_connection
+        end
+
         # Disconnects the pool, once all connections are no longer in use.
         #
         # timeout - The time after which the pool should be forcefully
         #           disconnected.
         def disconnect!(timeout: 120)
-          start_time = ::Gitlab::Metrics::System.monotonic_time
+          start_time = ::Gitlab::Utils::System.monotonic_time
 
-          while (::Gitlab::Metrics::System.monotonic_time - start_time) <= timeout
+          while (::Gitlab::Utils::System.monotonic_time - start_time) <= timeout
             return if try_disconnect
 
             sleep(2)
@@ -134,6 +138,10 @@ module Gitlab
 
         # Returns true if the host is online.
         def online?
+          # Avoid using a discarded connection pool because attempting
+          # to use it will fail. After the main process forks, all of
+          # its connection pools are discarded from Rails' ForkTracker.
+          return false if discarded?
           return @online unless check_replica_status?
 
           was_online = @online
@@ -276,10 +284,12 @@ module Gitlab
         end
 
         def query_and_release(...)
-          if low_timeout_for_host_queries?
-            query_and_release_fast_timeout(...)
-          else
-            query_and_release_old(...)
+          pool.disable_query_cache do
+            if low_timeout_for_host_queries?
+              query_and_release_fast_timeout(...)
+            else
+              query_and_release_old(...)
+            end
           end
         end
 

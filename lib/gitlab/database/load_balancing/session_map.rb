@@ -20,7 +20,7 @@ module Gitlab
         end
 
         # models - Array<ActiveRecord::Base>
-        def self.with_sessions(models)
+        def self.with_sessions(models = Gitlab::Database::LoadBalancing.base_models)
           dbs = models.map { |m| m.load_balancer.name }.uniq
           dbs.each { |db| cached_instance.validate_db_name(db) }
           ScopedSessions.new(dbs, cached_instance.session_map)
@@ -46,7 +46,7 @@ module Gitlab
         attr_reader :session_map
 
         def initialize
-          @session_map = Gitlab::Database.all_database_names.to_h do |k|
+          @session_map = Gitlab::Database::LoadBalancing.all_database_names.to_h do |k|
             [k.to_sym, Gitlab::Database::LoadBalancing::Session.new]
           end
 
@@ -71,7 +71,7 @@ module Gitlab
             # 2. In the case of derailed test in memory-on-boot job, the runtime is unknown.
             # 3. `scripts/regenerate-schema` which runs in RAILS_ENV=test
             Gitlab::ErrorTracking.track_exception(
-              InvalidLoadBalancerNameError.new("Using #{db} load balancer in #{Gitlab::Runtime.safe_identify}.")
+              InvalidLoadBalancerNameError.new("Using #{db} load balancer")
             )
 
             return
@@ -80,7 +80,7 @@ module Gitlab
           return if session_map[db]
 
           # All other load balancer names are invalid and should raise an error
-          raise InvalidLoadBalancerNameError, "Invalid load balancer name #{db} in #{Gitlab::Runtime.safe_identify}."
+          raise InvalidLoadBalancerNameError, "Invalid load balancer name #{db}."
         end
       end
 

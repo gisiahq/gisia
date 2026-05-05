@@ -45,13 +45,13 @@ module Gitlab
           @load_balancer = load_balancer
         end
 
-        def select_all(arel, name = nil, binds = [], preparable: nil, async: false)
+        def select_all(arel, ...)
           if arel.respond_to?(:locked) && arel.locked
             # SELECT ... FOR UPDATE queries should be sent to the primary.
             current_session.write!
-            write_using_load_balancer(:select_all, arel, name, binds)
+            write_using_load_balancer(:select_all, arel, ...)
           else
-            read_using_load_balancer(:select_all, arel, name, binds)
+            read_using_load_balancer(:select_all, arel, ...)
           end
         end
 
@@ -68,20 +68,20 @@ module Gitlab
           end
         end
 
-        def schema_cache(*args, **kwargs, &block)
+        def schema_cache(...)
           # Ignore primary stickiness for schema_cache queries and always use replicas
           @load_balancer.read do |connection|
-            connection.schema_cache(*args, **kwargs, &block)
+            connection.schema_cache(...)
           end
         end
 
-        def transaction(*args, **kwargs, &block)
+        def transaction(...)
           if current_session.fallback_to_replicas_for_ambiguous_queries?
             track_read_only_transaction!
-            read_using_load_balancer(:transaction, *args, **kwargs, &block)
+            read_using_load_balancer(:transaction, ...)
           else
             current_session.write!
-            write_using_load_balancer(:transaction, *args, **kwargs, &block)
+            write_using_load_balancer(:transaction, ...)
           end
 
         ensure
