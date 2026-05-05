@@ -81,6 +81,10 @@ module Authn
         encrypted_strategy == :optional
       end
 
+      def encrypted_field
+        @encrypted_field ||= "#{@token_field}_encrypted"
+      end
+
       protected
 
       def get_encrypted_token(token_owner_record)
@@ -105,9 +109,7 @@ module Authn
       end
 
       def find_by_encrypted_token(token, unscoped)
-        encrypted_value = encode(token)
-        token_encrypted_with_static_iv = Gitlab::CryptoHelper.aes256_gcm_encrypt(token)
-        relation(unscoped).find_by(encrypted_field => [encrypted_value, token_encrypted_with_static_iv]) # rubocop:disable CodeReuse/ActiveRecord: -- This is meant to be used in AR models.
+        finder_class.new(self, token, unscoped).execute
       end
 
       def insecure_strategy
@@ -126,8 +128,14 @@ module Authn
         token.present? && matches_prefix?(token_owner_record, token)
       end
 
-      def encrypted_field
-        @encrypted_field ||= "#{@token_field}_encrypted"
+      def finder_class
+        @finder_class ||=
+          options[:encrypted_token_finder].try do |name|
+            raise ArgumentError, 'Please provider the finder class name in String type.' unless name.is_a?(String)
+
+            name.safe_constantize
+          end
+        @finder_class ||= Authn::TokenField::Finders::BaseEncrypted
       end
     end
   end

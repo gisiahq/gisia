@@ -16,7 +16,7 @@ module Authn
         BASE64_PAYLOAD_LENGTH_HOLDER_BYTES = 2
         CRC_BYTES = 7
         VALID_ROUTING_KEYS = %i[c g o p u t].freeze
-        REQUIRED_ROUTING_KEYS = %i[o].freeze
+        REQUIRED_ANY_ROUTING_KEYS = %i[c o].freeze
         MAXIMUM_SIZE_OF_ROUTING_PAYLOAD = 159
         DEFAULT_ROUTING_PAYLOAD_HASH =
           {
@@ -29,6 +29,10 @@ module Authn
 
         def self.random_bytes(length)
           SecureRandom.random_bytes(length)
+        end
+
+        def self.crc_of(encoded)
+          Zlib.crc32(encoded).to_s(36).rjust(CRC_BYTES, '0')
         end
 
         attr_reader :token_owner_record, :routing_payload, :prefix
@@ -57,8 +61,8 @@ module Authn
         end
 
         def routing_hash
-          routing_payload
-            .merge(DEFAULT_ROUTING_PAYLOAD_HASH)
+          DEFAULT_ROUTING_PAYLOAD_HASH
+            .merge(routing_payload)
             .transform_values { |generator| format_value(generator.call(token_owner_record)) }
             .compact_blank
             .sort
@@ -84,15 +88,13 @@ module Authn
         end
 
         def append_crc(encoded_payload)
-          crc = Zlib.crc32(encoded_payload).to_s(36).rjust(CRC_BYTES, '0')
-          "#{encoded_payload}#{crc}"
+          "#{encoded_payload}#{self.class.crc_of(encoded_payload)}"
         end
 
         def check_required_routing_keys!
-          missing_keys = REQUIRED_ROUTING_KEYS - routing_payload.keys
-          return if missing_keys.empty?
+          return if (REQUIRED_ANY_ROUTING_KEYS & routing_payload.keys).any?
 
-          raise MissingRequiredRoutingKeys, missing_keys_error_message(missing_keys)
+          raise MissingRequiredRoutingKeys, missing_required_routing_keys_error_message
         end
 
         def check_invalid_routing_keys!
@@ -108,9 +110,8 @@ module Authn
           raise PayloadTooLarge, payload_size_error_message(payload.size)
         end
 
-        def missing_keys_error_message(missing_keys)
-          "Missing required routing keys: #{missing_keys.map(&:inspect).join(', ')}. " \
-            "Required routing keys are: #{REQUIRED_ROUTING_KEYS.map(&:inspect).join(', ')}."
+        def missing_required_routing_keys_error_message
+          "At least one routing key must be present: #{REQUIRED_ANY_ROUTING_KEYS.map(&:inspect).join(' or ')}."
         end
 
         def invalid_keys_error_message(invalid_keys)
