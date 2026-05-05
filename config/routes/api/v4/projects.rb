@@ -9,10 +9,7 @@ resources :projects, only: [:index, :show, :create, :update, :destroy] do
   resources :members, only: [:index, :show, :create, :update, :destroy], param: :user_id, controller: 'projects/members'
   resources :merge_requests, only: [:index, :show, :create, :update, :destroy],
     param: :merge_request_iid, controller: 'projects/merge_requests'
-  resources :pipelines, only: [:index, :show, :destroy], controller: 'projects/pipelines' do
-    collection do
-      post :pipeline, action: :create
-    end
+  resources :pipelines, only: [:index, :show, :create, :destroy], controller: 'projects/pipelines' do
     member do
       post :retry
       post :cancel

@@ -79,7 +79,7 @@ curl "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/pipelin
 ### Create a Pipeline
 
 ```bash
-curl -X POST "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/pipelines/pipeline" \
+curl -X POST "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/pipelines" \
   -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"ref": "main"}'
