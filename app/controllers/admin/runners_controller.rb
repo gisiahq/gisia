@@ -84,7 +84,7 @@ class Admin::RunnersController < Admin::ApplicationController
 
   def runner_params
     params.require(:runner).permit(:description, :run_untagged, :maximum_timeout).merge(
-      tags: params.dig(:runner, :tags).split(',').map(&:strip),
+      tag_list: params.dig(:runner, :tags).to_s.split(',').map(&:strip),
       active: params.dig(:runner, :paused) != "1"
     )
   end

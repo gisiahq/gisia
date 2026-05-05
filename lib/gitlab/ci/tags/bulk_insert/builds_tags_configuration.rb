@@ -4,6 +4,9 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025-present Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module Gitlab
@@ -28,13 +31,12 @@ module Gitlab
           end
 
           def unique_by
-            [:tag_id, :build_id, :partition_id]
+            [:tag_id, :build_id]
           end
 
           def attributes_map(job)
             {
               build_id: job.id,
-              partition_id: job.partition_id,
               project_id: job.project_id
             }
           end

@@ -13,6 +13,7 @@ module Ci
   class Build < Processable
     extend MethodOverrideGuard
     include Ci::HasRef
+    include Ci::Taggable
     include Ci::Contextable
     include Ci::HasBuildStatus
     include Ci::Builds::Queueable
@@ -362,10 +363,6 @@ module Ci
           project: project
         })
       end
-    end
-
-    def tag_list
-      []
     end
 
     protected
