@@ -15,7 +15,8 @@ class Projects::JobsController < Projects::ApplicationController
 
   before_action :authorize_read_build!
   before_action :authorize_update_build!, only: [:retry]
-  before_action :job, only: [:show, :raw, :retry]
+  before_action :authorize_cancel_build!, only: [:cancel]
+  before_action :job, only: [:show, :raw, :retry, :cancel]
 
   def index
     @jobs = project.builds
@@ -25,6 +26,15 @@ class Projects::JobsController < Projects::ApplicationController
   end
 
   def show; end
+
+  def cancel
+    if @job.cancelable?
+      @job.cancel!
+      redirect_to namespace_project_job_path(project.namespace.parent.full_path, project.path, @job), notice: _('Job was successfully canceled.')
+    else
+      redirect_to namespace_project_job_path(project.namespace.parent.full_path, project.path, @job), alert: _('Job cannot be canceled.')
+    end
+  end
 
   def retry
     new_job = @job.retry!(current_user)
@@ -71,6 +81,10 @@ class Projects::JobsController < Projects::ApplicationController
 
   def authorize_update_build!
     forbidden! unless can?(current_user, :update_build, @project)
+  end
+
+  def authorize_cancel_build!
+    forbidden! unless can?(current_user, :cancel_build, @project)
   end
 
   def raw_send_params
