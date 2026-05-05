@@ -14,6 +14,7 @@ module Gitlab
           class Associations < Chain::Base
             include Gitlab::Allowable
             include Chain::Helpers
+            include ::Gitlab::Utils::StrongMemoize
 
             def perform!
               assign_pipeline_variables
@@ -27,7 +28,9 @@ module Gitlab
             private
 
             def assign_pipeline_variables
-              @pipeline.variables_attributes = variables_attributes
+              Gitlab::Ci::Pipeline::Build::PipelineVariablesArtifactBuilder.new(@pipeline, variables_attributes).run
+            rescue ActiveModel::ValidationError => e
+              error("Failed to build pipeline variables: #{e}", failure_reason: :config_error)
             end
 
             def assign_source_pipeline
@@ -47,6 +50,7 @@ module Gitlab
               variables = apply_permissions(variables)
               validate_uniqueness(variables)
             end
+            strong_memoize_attr :variables_attributes
 
             def apply_permissions(variables)
               # On demand DAST validation pipelines are created by the GitLab backend.
@@ -62,7 +66,26 @@ module Gitlab
               # the variables are provided from the outside and those should be guarded.
               return variables if @command.creates_child_pipeline?
 
-              if variables.present? && !can?(@command.current_user, :set_pipeline_variables, @command.project)
+              # If the trigger token belongs to a user that has permissions to set pipeline variables,
+              # we allow all other variables in the variables[]= REST API param, including TRIGGER_PAYLOAD if exists.
+              # If the trigger token belongs to a user that does NOT have permissions to set pipeline variables:
+              #   - if variables other than TRIGGER_PAYLOAD are specified, we return an error.
+              #   - if only TRIGGER_PAYLOAD is specified, we allow it.
+              # See https://gitlab.com/gitlab-org/gitlab/-/issues/557381
+              # The trigger_api_request flag is explicitly set by PipelineTriggerService to identify
+              # requests from the trigger API where CI_JOB_TOKEN is used (to support source: :pipeline).
+              source = @command.source.to_sym
+              trigger_api_source = source == :trigger || (source == :pipeline && @command.trigger_api_request)
+              user_defined_variables = if trigger_api_source
+                                         # This variable is defined by GitLab when triggering via the API,
+                                         # so it should be allowlisted.
+                                         variables.reject { |v| v[:key] == 'TRIGGER_PAYLOAD' }
+                                       else
+                                         variables
+                                       end
+
+              if user_defined_variables.present? && !can?(@command.current_user, :set_pipeline_variables,
+                @command.project)
                 error("Insufficient permissions to set pipeline variables")
                 variables = []
               end

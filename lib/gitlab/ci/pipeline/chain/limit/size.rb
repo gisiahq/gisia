@@ -40,7 +40,7 @@ module Gitlab
 
             def log_attrs
               {
-                jobs_count: pipeline.statuses.count,
+                jobs_count: command.current_pipeline_size,
                 pipeline_source: pipeline.source,
                 plan: project.actual_plan_name,
                 project_id: project.id,

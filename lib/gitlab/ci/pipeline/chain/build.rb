@@ -20,10 +20,13 @@ module Gitlab
               before_sha: @command.before_sha,
               source_sha: @command.source_sha,
               target_sha: @command.target_sha,
-              tag: @command.tag_exists?,
-              user: @command.current_user,
-              merge_request: @command.merge_request
-            )
+              tag: @command.tag?,
+              trigger: @command.trigger,
+              user: Gitlab::Auth::Identity.resolve_composite_identity_actor(@command.current_user),
+              pipeline_schedule: @command.schedule,
+              merge_request: @command.merge_request,
+              external_pull_request: @command.external_pull_request,
+              locked: @command.project.default_pipeline_lock)
           end
 
           def break?

@@ -13,13 +13,15 @@ module Gitlab
         Command = Struct.new(
           :source, :project, :current_user,
           :origin_ref, :checkout_sha, :after_sha, :before_sha, :source_sha, :target_sha,
-          :schedule, :merge_request, :external_pull_request,
+          :trigger, :schedule, :merge_request, :external_pull_request,
           :ignore_skip_ci, :save_incompleted,
           :seeds_block, :variables_attributes, :push_options,
-          :chat_data, :allow_mirror_update, :bridge, :content, :dry_run, :linting, :logger, :pipeline_policy_context,
+          :chat_data, :mirror_update, :bridge, :content, :dry_run, :linting, :logger,
+          :pipeline_policy_context, :scan_execution_policy_context_block,
+          :duo_workflow_definition, :scan_profile_eligibility_service, :trigger_api_request,
           # These attributes are set by Chains during processing:
           :config_content, :yaml_processor_result, :workflow_rules_result, :pipeline_seed,
-          :pipeline_config, :partition_id, :inputs, :gitaly_context,
+          :pipeline_config, :partition_id, :inputs, :gitaly_context, :pipeline_creation_forced_to_continue,
           keyword_init: true
         ) do
           include Gitlab::Utils::StrongMemoize
@@ -36,33 +38,40 @@ module Gitlab
             linting
           end
 
-          def branch_exists?
-            strong_memoize(:is_branch) do
-              branch_ref? && project.repository.branch_exists?(ref)
-            end
+          def branch?
+            ref_resolver.branch?
           end
 
-          def tag_exists?
-            strong_memoize(:is_tag) do
-              tag_ref? && project.repository.tag_exists?(ref)
-            end
+          def tag?
+            ref_resolver.tag?
           end
 
-          def merge_request_ref_exists?
-            check_merge_request_ref
+          def merge_request_ref?
+            ref_resolver.merge_request?
+          end
+
+          def workload?
+            ref_resolver.workload?
+          end
+
+          def ondemand_dast_scan?
+            source&.to_sym == :ondemand_dast_scan
           end
 
           def ref
-            strong_memoize(:ref) do
-              Gitlab::Git.ref_name(origin_ref)
-            end
+            Gitlab::Git.ref_name(origin_ref)
           end
+          strong_memoize_attr :ref
+
+          def ref_exists?
+            resolved_ref.present?
+          end
+          strong_memoize_attr :ref_exists?
 
           def sha
-            strong_memoize(:sha) do
-              project.commit(origin_sha || origin_ref).try(:id)
-            end
+            project.commit(origin_sha || resolved_ref).try(:id)
           end
+          strong_memoize_attr :sha
 
           def origin_sha
             checkout_sha || after_sha
@@ -74,14 +83,12 @@ module Gitlab
 
           def protected_ref?
             strong_memoize(:protected_ref) do
-              project.protected_for?(origin_ref)
+              project.protected_for?(resolved_ref)
             end
           end
 
           def ambiguous_ref?
-            strong_memoize(:ambiguous_ref) do
-              project.repository.ambiguous_ref?(origin_ref)
-            end
+            ref_resolver.ambiguous?
           end
 
           def parent_pipeline
@@ -103,6 +110,20 @@ module Gitlab
           def logger
             self[:logger] ||= ::Gitlab::Ci::Pipeline::Logger.new(project: project)
           end
+
+          def current_pipeline_size
+            # The `pipeline_seed` attribute is assigned after the Seed step.
+            # And, the seed is populated when calling the `pipeline_seed.stages` method in Populate.
+            # So, there is no guarantee that `pipeline_seed` will return a meaningful result.
+            # If it does not, it's not important, we can just return 0.
+            # This is also the reason why we don't "strong memoize" this method.
+            pipeline_seed&.size || 0
+          end
+
+          def jobs_count_in_alive_pipelines
+            project.all_pipelines.jobs_count_in_alive_pipelines
+          end
+          strong_memoize_attr :jobs_count_in_alive_pipelines
 
           def observe_step_duration(step_class, duration)
             step = step_class.name.underscore.parameterize(separator: '_')
@@ -129,10 +150,8 @@ module Gitlab
           end
 
           def observe_jobs_count_in_alive_pipelines
-            jobs_count = project.all_pipelines.jobs_count_in_alive_pipelines
-
             metrics.active_jobs_histogram
-              .observe({ plan: project.actual_plan_name }, jobs_count)
+              .observe({ plan: project.actual_plan_name }, jobs_count_in_alive_pipelines + current_pipeline_size)
           end
 
           def increment_pipeline_failure_reason_counter(reason)
@@ -142,36 +161,18 @@ module Gitlab
 
           private
 
-          # Verifies that origin_ref is a fully qualified tag reference (refs/tags/<tag-name>)
-          #
-          # Fallbacks to `true` for backward compatibility reasons
-          # if origin_ref is a short ref
-          def tag_ref?
-            return true if full_git_ref_name_unavailable?
-
-            Gitlab::Git.tag_ref?(origin_ref).present?
+          def resolved_ref
+            ref_resolver.resolved_ref
           end
+          strong_memoize_attr :resolved_ref
 
-          # Verifies that origin_ref is a fully qualified branch reference (refs/heads/<branch-name>)
-          #
-          # Fallbacks to `true` for backward compatibility reasons
-          # if origin_ref is a short ref
-          def branch_ref?
-            return true if full_git_ref_name_unavailable?
-
-            Gitlab::Git.branch_ref?(origin_ref).present?
+          def ref_resolver
+            Gitlab::Git::RefResolver.new(project.repository, origin_ref)
           end
-
-          def full_git_ref_name_unavailable?
-            ref == origin_ref
-          end
+          strong_memoize_attr :ref_resolver
 
           def gitlab_org_project?
             project.full_path == 'gitlab-org/gitlab'
-          end
-
-          def check_merge_request_ref
-            MergeRequest.merge_request_ref?(origin_ref) && project.repository.ref_exists?(origin_ref)
           end
         end
       end

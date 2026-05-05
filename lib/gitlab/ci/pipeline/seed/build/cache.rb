@@ -57,25 +57,55 @@ module Gitlab
               return unless @key.is_a?(Hash)
 
               @key[:prefix] ||= @custom_key_prefix.to_s
-              [@key[:prefix], files_digest].select(&:present?).join('-')
+              [@key[:prefix], cache_key_digest].select(&:present?).join('-')
             end
 
-            def files_digest
-              hash_of_the_latest_changes || 'default'
+            def cache_key_digest
+              return hash_of_file_contents || 'default' if @key[:files]
+              return hash_of_the_latest_changes || 'default' if @key[:files_commits]
+
+              'default'
+            end
+
+            def hash_of_file_contents
+              expanded_paths = expand_file_patterns(files)
+              return unless expanded_paths.any?
+
+              blob_references = expanded_paths.map { |path| [@pipeline.sha, path] }
+              content_hashes = @pipeline.project.repository
+                .blobs_at(blob_references, blob_size_limit: 0)
+                .map(&:id)
+
+              digest_from_hashes(content_hashes)
             end
 
             def hash_of_the_latest_changes
-              ids = files.map { |path| last_commit_id_for_path(path) }
-              ids = ids.compact.sort.uniq
+              commit_ids = files_commits_files.map { |path| last_commit_id_for_path(path) }
+              digest_from_hashes(commit_ids)
+            end
 
-              Digest::SHA1.hexdigest(ids.join('-')) if ids.any?
+            def digest_from_hashes(hashes)
+              hashes = hashes.compact.sort.uniq
+              Digest::SHA1.hexdigest(hashes.join('-')) if hashes.any?
             end
 
             def files
-              @key[:files]
-                .to_a
-                .select(&:present?)
-                .uniq
+              @key[:files].to_a.select(&:present?).uniq
+            end
+
+            def files_commits_files
+              @key[:files_commits].to_a.select(&:present?).uniq
+            end
+
+            def expand_file_patterns(patterns)
+              @expanded_patterns ||= {}
+              @expanded_patterns[patterns] ||= patterns.flat_map do |pattern|
+                if pattern.include?('*')
+                  @pipeline.project.repository.search_files_by_wildcard_path(pattern, @pipeline.sha)
+                else
+                  pattern
+                end
+              end.compact.uniq
             end
 
             def last_commit_id_for_path(path)

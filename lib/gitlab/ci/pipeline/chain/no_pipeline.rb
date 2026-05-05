@@ -10,26 +10,28 @@ module Gitlab
   module Ci
     module Pipeline
       module Chain
-        class CancelPendingPipelines < Chain::Base
+        class NoPipeline < Chain::Base
+          include Chain::Helpers
+
           def perform!
-            cancellation_worker_class.perform_async(pipeline.id, { 'partition_id' => pipeline.partition_id })
+            return if Feature.disabled?(:ci_no_pipeline_push_option, project)
+
+            handle_pipeline_failure(:filtered_by_no_pipeline) if no_pipeline?
           end
 
           def break?
-            false
+            Feature.enabled?(:ci_no_pipeline_push_option, project) && no_pipeline?
           end
 
           private
 
-          def cancellation_worker_class
-            if pipeline.schedule?
-              ::Ci::LowUrgencyCancelRedundantPipelinesWorker
-            else
-              ::Ci::CancelRedundantPipelinesWorker
-            end
+          def no_pipeline?
+            @command.push_options.no_pipeline?
           end
         end
       end
     end
   end
 end
+
+Gitlab::Ci::Pipeline::Chain::NoPipeline.prepend_mod

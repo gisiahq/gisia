@@ -29,6 +29,7 @@ module Gitlab
               # Example: With Pipeline Execution Policies we want to inject policy
               # jobs even if the project pipeline is filtered out by workflow:rules.
               @command.yaml_processor_result&.clear_jobs!
+              @command.pipeline_creation_forced_to_continue = true
 
               return
             end
@@ -61,7 +62,7 @@ module Gitlab
 
           def global_context
             Gitlab::Ci::Build::Context::Global.new(
-              @pipeline, yaml_variables: @command.yaml_processor_result.root_variables)
+              @pipeline, yaml_variables: @command.yaml_processor_result.root_variables, logger: logger)
           end
 
           def has_workflow_rules?

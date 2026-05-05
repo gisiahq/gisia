@@ -44,7 +44,13 @@ module Gitlab
         end
 
         def instrument_once_with_sql(operation, &block)
-          yield if block_given?
+          op_start_db_counters = current_db_counter_payload
+
+          result = instrument(operation, once: true, &block)
+
+          observe_sql_counters(operation, op_start_db_counters, current_db_counter_payload, once: true)
+
+          result
         end
 
         def observe(operation, value, once: false)
@@ -72,8 +78,11 @@ module Gitlab
             )
 
             if pipeline.persisted?
-              attributes[:pipeline_builds_tags_count] = pipeline.tags_count
-              attributes[:pipeline_builds_distinct_tags_count] = pipeline.distinct_tags_count
+              taggable_statuses(pipeline).flat_map(&:tag_list).tap do |tag_list|
+                attributes[:pipeline_builds_tags_count] = tag_list.count
+                attributes[:pipeline_builds_distinct_tags_count] = tag_list.uniq.count
+              end
+
               attributes[:pipeline_id] = pipeline.id
             end
 
@@ -138,6 +147,11 @@ module Gitlab
 
         def current_db_counter_payload
           ::Gitlab::Metrics::Subscribers::ActiveRecord.db_counter_payload
+        end
+
+        def taggable_statuses(pipeline)
+          # NOTE: tag_list is already cached in memory from the build creation step
+          pipeline.stages.flat_map(&:statuses).select { |status| status.respond_to?(:tag_list=) }
         end
       end
     end

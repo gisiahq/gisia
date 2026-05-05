@@ -10,16 +10,13 @@ module Gitlab
   module Ci
     module Pipeline
       module Chain
-        module Pipeline
-          # After pipeline has been successfully created we can start processing it.
-          class Process < Chain::Base
-            def perform!
-              ::Ci::InitialPipelineProcessWorker.perform_async(pipeline.id)
-            end
+        class TriggerBuildHooks < Chain::Base
+          def perform!
+            ::Ci::ExecutePipelineBuildHooksWorker.perform_async(pipeline.id)
+          end
 
-            def break?
-              false
-            end
+          def break?
+            false
           end
         end
       end

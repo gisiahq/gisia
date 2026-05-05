@@ -70,7 +70,7 @@ module Gitlab
 
           def global_context
             Gitlab::Ci::Build::Context::Global.new(
-              pipeline, yaml_variables: @command.pipeline_seed.root_variables)
+              pipeline, yaml_variables: @command.pipeline_seed.root_variables, logger: logger)
           end
 
           def assign_to_metadata(attributes)
@@ -82,3 +82,5 @@ module Gitlab
     end
   end
 end
+
+Gitlab::Ci::Pipeline::Chain::PopulateMetadata.prepend_mod
