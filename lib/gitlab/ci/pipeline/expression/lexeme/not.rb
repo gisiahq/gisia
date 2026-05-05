@@ -11,19 +11,19 @@ module Gitlab
     module Pipeline
       module Expression
         module Lexeme
-          class String < Lexeme::Value
-            PATTERN = /(?:"(?<string>.*?)")|(?:'(?<string>.*?)')/
+          class Not < Lexeme::UnaryOperator
+            PATTERN = /!/
+
+            def self.build(_value, ahead)
+              new(ahead)
+            end
+
+            def self.precedence
+              1 # See: https://ruby-doc.org/core-2.5.0/doc/syntax/precedence_rdoc.html
+            end
 
             def evaluate(variables = {})
-              @value.to_s
-            end
-
-            def inspect
-              @value.inspect
-            end
-
-            def self.build(string)
-              new(string.match(PATTERN)[:string])
+              !@operand.evaluate(variables).present?
             end
           end
         end

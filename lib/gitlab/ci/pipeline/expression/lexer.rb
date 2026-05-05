@@ -18,16 +18,19 @@ module Gitlab
           LEXEMES = [
             Expression::Lexeme::ParenthesisOpen,
             Expression::Lexeme::ParenthesisClose,
+            Expression::Lexeme::Input,
             Expression::Lexeme::Variable,
             Expression::Lexeme::String,
             Expression::Lexeme::Pattern,
             Expression::Lexeme::Null,
+            Expression::Lexeme::Boolean,
             Expression::Lexeme::Equals,
             Expression::Lexeme::Matches,
             Expression::Lexeme::NotEquals,
             Expression::Lexeme::NotMatches,
             Expression::Lexeme::And,
-            Expression::Lexeme::Or
+            Expression::Lexeme::Or,
+            Expression::Lexeme::Not
           ].freeze
 
           def self.lexemes

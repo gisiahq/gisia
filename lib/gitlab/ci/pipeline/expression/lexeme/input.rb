@@ -11,22 +11,23 @@ module Gitlab
     module Pipeline
       module Expression
         module Lexeme
-          class Equals < Lexeme::LogicalOperator
-            PATTERN = /==/
+          class Input < Lexeme::Value
+            PATTERN = /\$\[\[\s*inputs\.(?<name>[\w-]+)\s*\]\]/
+
+            def self.build(string)
+              new(string.match(PATTERN)[:name])
+            end
 
             def evaluate(variables = {})
-              left_value = @left.evaluate(variables)
-              right_value = @right.evaluate(variables)
+              inputs = variables[:inputs] || {}
 
-              compare_with_coercion(left_value, right_value)
+              inputs = inputs.with_indifferent_access unless inputs.is_a?(ActiveSupport::HashWithIndifferentAccess)
+
+              inputs.fetch(@value, nil)
             end
 
-            def self.build(_value, behind, ahead)
-              new(behind, ahead)
-            end
-
-            def self.precedence
-              10 # See: https://ruby-doc.org/core-2.5.0/doc/syntax/precedence_rdoc.html
+            def inspect
+              "$[[ inputs.#{@value} ]]"
             end
           end
         end

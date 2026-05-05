@@ -11,19 +11,19 @@ module Gitlab
     module Pipeline
       module Expression
         module Lexeme
-          class String < Lexeme::Value
-            PATTERN = /(?:"(?<string>.*?)")|(?:'(?<string>.*?)')/
+          class Boolean < Lexeme::Value
+            PATTERN = /\b(?:true|false)\b/
 
-            def evaluate(variables = {})
-              @value.to_s
+            def self.build(string)
+              new(string == 'true')
+            end
+
+            def evaluate(_variables = {})
+              @value
             end
 
             def inspect
-              @value.inspect
-            end
-
-            def self.build(string)
-              new(string.match(PATTERN)[:string])
+              @value.to_s
             end
           end
         end
