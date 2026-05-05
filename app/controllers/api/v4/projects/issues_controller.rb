@@ -89,9 +89,9 @@ module API
         def handle_state_event
           case params[:state_event]
           when 'close'
-            @issue.close(current_user) unless @issue.closed?
+            @issue.close!(current_user) unless @issue.closed?
           when 'reopen'
-            @issue.reopen unless @issue.opened?
+            @issue.reopen! unless @issue.opened?
           end
         end
 
