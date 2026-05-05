@@ -9,31 +9,11 @@
 module Gitlab::UsageDataCounters
   class CiTemplateUniqueCounter
     PREFIX = 'ci_templates'
-    MIGRATED_REDIS_HLL_EVENTS = %w[
-      p_ci_templates_5_minute_production_app
-      p_ci_templates_android
-      p_ci_templates_android_fastlane
-      p_ci_templates_android_latest
-      p_ci_templates_aws_cf_provision_and_deploy_ec2
-      p_ci_templates_bash
-      p_ci_templates_c
-      p_ci_templates_chef
-      p_ci_templates_clojure
-      p_ci_templates_code_quality
-      p_ci_templates_composer
-      p_ci_templates_implicit_auto_devops
-      p_ci_templates_implicit_jobs_dast_default_branch_deploy
-    ].freeze
 
     class << self
       def track_unique_project_event(project:, template:, config_source:, user:)
         expanded_template_name = expand_template_name(template)
         return unless expanded_template_name
-
-        event_name = ci_template_event_name(expanded_template_name, config_source)
-        unless MIGRATED_REDIS_HLL_EVENTS.include?(event_name)
-          Gitlab::UsageDataCounters::HLLRedisCounter.track_event(event_name, values: project.id)
-        end
 
         namespace = project.namespace
         implicit = config_source.to_s == 'auto_devops_source'

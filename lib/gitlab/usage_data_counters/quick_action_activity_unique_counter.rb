@@ -20,11 +20,16 @@ module Gitlab
           remove_email_single
           q
           status
+          ship
+          run_pipeline
+          approve
+          submit_review
+          unapprove
         ].freeze
 
         # Tracks the quick action with name `name`.
         # `args` is expected to be a single string, will be split internally when necessary.
-        def track_unique_action(name, args:, user:, project:)
+        def track_unique_action(name, args:, user:, project:, additional_properties: nil)
           return unless user
 
           args ||= ''
@@ -35,7 +40,7 @@ module Gitlab
               "i_quickactions_#{name}",
               user: user,
               project: project,
-              additional_properties: prepare_additional_properties(name, args)
+              additional_properties: additional_properties || prepare_additional_properties(name, args)
             )
           else
             # Legacy event implementation. Migrate existing events to internal events.
@@ -57,7 +62,7 @@ module Gitlab
             event_name_for_copy_metadata(args)
           when 'remove_reviewer'
             'unassign_reviewer'
-          when 'request_review', 'reviewer'
+          when 'request_review', 'assign_reviewer', 'reviewer'
             'assign_reviewer'
           when 'spend', 'spent'
             event_name_for_spend(args)
