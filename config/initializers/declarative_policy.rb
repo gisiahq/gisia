@@ -31,10 +31,8 @@ module ClassForClassCache
   end
 end
 
-Rails.application.config.to_prepare do
-  DeclarativePolicy.configure do
-    named_policy :global, GlobalPolicy
-  end
+DeclarativePolicy.configure do
+  named_policy :global, ::GlobalPolicy
 end
 
 DeclarativePolicy.prepend(ClassForClassCache)

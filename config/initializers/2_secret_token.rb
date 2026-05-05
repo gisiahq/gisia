@@ -138,7 +138,7 @@ class SecretsInitializer
       backup_path = backup_pathname.join("#{File.basename(secrets_file_path)}.orig.#{Time.now.to_i}")
 
       warn "Creating a backup of secrets file #{secrets_file_path} at #{backup_path}"
-      FileUtils.cp(secrets_file_path, backup_path)
+      FileUtils.mv(secrets_file_path, backup_path)
     end
 
     File.write(

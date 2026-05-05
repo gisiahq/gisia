@@ -18,6 +18,7 @@ module ObjectStorage
   UnknownStoreError = Class.new(StandardError)
   ObjectStorageUnavailable = Class.new(StandardError)
   MissingFinalStorePathRootId = Class.new(StandardError)
+  InvalidHashFunction = Class.new(StandardError)
 
   class ExclusiveLeaseTaken < StandardError
     def initialize(lease_key)
@@ -67,6 +68,9 @@ module ObjectStorage
   end
 
   TMP_UPLOAD_PATH = 'tmp/uploads'
+
+  SUPPORTED_HASH_FUNCTIONS = %w[md5 sha1 sha256 sha512].freeze
+  SUPPORTED_HASH_FUNCTIONS_FIPS = (SUPPORTED_HASH_FUNCTIONS - %w[md5]).freeze
 
   module Store
     LOCAL = 1
@@ -203,6 +207,7 @@ module ObjectStorage
       def workhorse_authorize(
         has_length:,
         maximum_size: nil,
+        upload_hash_functions: nil,
         use_final_store_path: false,
         final_store_path_config: {})
         {}.tap do |hash|
@@ -217,7 +222,16 @@ module ObjectStorage
             hash[:TempPath] = workhorse_local_upload_path
           end
 
-          hash[:UploadHashFunctions] = %w[sha1 sha256 sha512] if ::Gitlab::FIPS.enabled?
+          # If UploadHashFunctions is not specified, all available functions
+          # will be used: md5, sha1, sha256, sha512.
+          if upload_hash_functions.present?
+            validate_hash_functions!(upload_hash_functions)
+
+            hash[:UploadHashFunctions] = upload_hash_functions
+          elsif ::Gitlab::FIPS.enabled?
+            hash[:UploadHashFunctions] = SUPPORTED_HASH_FUNCTIONS_FIPS
+          end
+
           hash[:MaximumSize] = maximum_size if maximum_size.present?
         end
       end
@@ -273,6 +287,17 @@ module ObjectStorage
           path
         )
       end
+
+      private
+
+      def validate_hash_functions!(requested_functions)
+        supported_functions = ::Gitlab::FIPS.enabled? ? SUPPORTED_HASH_FUNCTIONS_FIPS : SUPPORTED_HASH_FUNCTIONS
+        invalid_functions = requested_functions - supported_functions
+
+        return unless invalid_functions.present?
+
+        raise InvalidHashFunction, "Unsupported hash functions: #{invalid_functions.join(', ')}"
+      end
     end
 
     class OpenFile
@@ -284,19 +309,17 @@ module ObjectStorage
       # Even though :size is not in IO_METHODS, we do need it.
       def_delegators :@file, :size
 
-      def initialize(file)
+      def initialize(file, original_filename: nil)
         @file = file
+        @original_filename = original_filename
       end
 
       def file_path
         @file.path
       end
 
-      # CarrierWave#cache! calls filename, which calls original_filename
       def original_filename
-        return File.basename(file_path) if file_path.present?
-
-        nil
+        @original_filename || File.basename(file_path) if file_path.present?
       end
     end
 
@@ -359,7 +382,7 @@ module ObjectStorage
     end
 
     def use_open_file(unlink_early: true)
-      Tempfile.open(path) do |file|
+      Tempfile.open(filename) do |file|
         file.unlink if unlink_early
         file.binmode
 
@@ -373,7 +396,7 @@ module ObjectStorage
 
         file.seek(0, IO::SEEK_SET)
 
-        yield OpenFile.new(file)
+        yield OpenFile.new(file, original_filename: filename)
       ensure
         file.unlink unless unlink_early
       end
@@ -407,6 +430,14 @@ module ObjectStorage
     # [1]: https://github.com/fog/fog-aws/blob/daa50bb3717a462baf4d04d0e0cbfc18baacb541/lib/fog/aws/models/storage/file.rb#L152-L159
     def fog_public
       nil
+    end
+
+    # Disable sending x-amz-acl headers entirely. Modern S3 buckets default to
+    # "Bucket Owner Enforced" which disables ACLs and rejects requests that
+    # include an x-amz-acl header with AccessControlListNotSupported.
+    # See https://gitlab.com/gitlab-org/gitlab/-/work_items/396349
+    def fog_acl
+      false
     end
 
     def delete_migrated_file(migrated_file)
