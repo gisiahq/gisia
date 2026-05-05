@@ -33,20 +33,15 @@ module Gitlab
             [:tag_id, :runner_id, :runner_type]
           end
 
-          # Todo override
           def attributes_map(runner)
             {
               runner_id: runner.id,
               runner_type: runner.runner_type,
-              sharding_key_id: runner.sharding_key_id,
+              organization_id: runner.organization_id
             }
           end
 
-          def polymorphic_taggings?
-            true
-          end
-
-          def monomorphic_taggings?(_runner)
+          def uses_taggings?
             true
           end
         end

@@ -21,7 +21,7 @@ module Gitlab
 
         TROUBLESHOOTING_URL = Rails.application.routes.url_helpers.help_page_url('user/project/releases/_index.md', anchor: 'gitlab-cli-version-requirement')
         GLAB_REQUIRED_VERSION = '1.58.0'
-        GLAB_WARNING_MESSAGE = "Warning: release-cli will not be supported after 19.0. Please use glab version >= #{GLAB_REQUIRED_VERSION}. Troubleshooting: #{TROUBLESHOOTING_URL}".freeze
+        GLAB_WARNING_MESSAGE = "Warning: release-cli will not be supported after 20.0. Please use glab version >= #{GLAB_REQUIRED_VERSION}. Troubleshooting: #{TROUBLESHOOTING_URL}".freeze
 
         GLAB_ENV_SET_UNIX = 'export GITLAB_HOST=$CI_SERVER_URL'
         GLAB_ENV_SET_WINDOWS = '$$env:GITLAB_HOST = $$env:CI_SERVER_URL'
@@ -34,12 +34,22 @@ module Gitlab
         GLAB_NO_CLOSE_MILESTONE_FLAG = '--no-close-milestone' # disables closing the milestone after creating the release
 
         GLAB_CA_CERT_FILENAME = 'ca_cert_for_releasing_with_glab.pem'
+
+        # This approach was inherited from
+        # https://gitlab.com/gitlab-org/release-cli/-/blob/v0.24.0/internal/app/http_client.go
+        # We check if ADDITIONAL_CA_CERT_BUNDLE contains inline certificate content or is a file path.
+        # - If it contains newlines, it's inline certificate content and we write it to a temporary file
+        # - If it doesn't contain newlines, it's a file path and we use it directly
         GLAB_CA_CERT_CONFIG_UNIX = <<~BASH.chomp.freeze
           if [ -n "$ADDITIONAL_CA_CERT_BUNDLE" ]; then
             echo "Setting CA certificate for $CI_SERVER_FQDN"
 
-            echo "$ADDITIONAL_CA_CERT_BUNDLE" > "#{GLAB_CA_CERT_FILENAME}"
-            glab config set ca_cert "#{GLAB_CA_CERT_FILENAME}" --host "$CI_SERVER_FQDN"
+            if echo "$ADDITIONAL_CA_CERT_BUNDLE" | grep -q $'\\n'; then
+              echo "$ADDITIONAL_CA_CERT_BUNDLE" > "#{GLAB_CA_CERT_FILENAME}"
+              glab config set ca_cert "#{GLAB_CA_CERT_FILENAME}" --host "$CI_SERVER_FQDN"
+            else
+              glab config set ca_cert "$ADDITIONAL_CA_CERT_BUNDLE" --host "$CI_SERVER_FQDN"
+            fi
           fi
         BASH
         GLAB_CA_CERT_CLEANUP_UNIX = <<~BASH.chomp.freeze
@@ -51,8 +61,13 @@ module Gitlab
           if ($$env:ADDITIONAL_CA_CERT_BUNDLE) {
             Write-Output "Setting CA certificate for $$env:CI_SERVER_FQDN"
 
-            "$$env:ADDITIONAL_CA_CERT_BUNDLE" > "#{GLAB_CA_CERT_FILENAME}"
-            glab config set ca_cert "#{GLAB_CA_CERT_FILENAME}" --host "$$env:CI_SERVER_FQDN"
+            if ($$env:ADDITIONAL_CA_CERT_BUNDLE -match "[`r`n]") {
+              "$$env:ADDITIONAL_CA_CERT_BUNDLE" > "#{GLAB_CA_CERT_FILENAME}"
+              glab config set ca_cert "#{GLAB_CA_CERT_FILENAME}" --host "$$env:CI_SERVER_FQDN"
+            }
+            else {
+              glab config set ca_cert "$$env:ADDITIONAL_CA_CERT_BUNDLE" --host "$$env:CI_SERVER_FQDN"
+            }
           }
         POWERSHELL
         GLAB_CA_CERT_CLEANUP_WINDOWS = <<~POWERSHELL.chomp.freeze
@@ -78,24 +93,16 @@ module Gitlab
         end
 
         def script
-          if use_glab_cli?
-            [script_with_glab_cli]
+          if runner_manager&.platform == 'windows'
+            [windows_script]
           else
-            [script_with_release_cli]
+            [unix_script]
           end
         end
 
         private
 
-        def script_with_glab_cli
-          if runner_manager&.platform == 'windows'
-            glab_windows_script
-          else
-            glab_unix_script
-          end
-        end
-
-        def glab_windows_script
+        def windows_script
           <<~POWERSHELL
           if (Get-Command glab -ErrorAction SilentlyContinue) {
             $$glabVersionOutput = (glab --version | Select-Object -First 1) -as [string]
@@ -125,7 +132,7 @@ module Gitlab
           POWERSHELL
         end
 
-        def glab_unix_script
+        def unix_script
           <<~BASH
           if command -v glab &> /dev/null; then
             if [ "$(printf "%s\\n%s" "#{GLAB_REQUIRED_VERSION}" "$(glab --version | grep -oE '[0-9]+\\.[0-9]+\\.[0-9]+')" | sort -V | head -n1)" = "#{GLAB_REQUIRED_VERSION}" ]; then
@@ -210,11 +217,6 @@ module Gitlab
           job.project.catalog_resource
         end
         strong_memoize_attr :catalog_publish?
-
-        def use_glab_cli?
-          ::Feature.enabled?(:ci_glab_for_release, job.project)
-        end
-        strong_memoize_attr :use_glab_cli?
 
         def ci_release_cli_catalog_publish_option?
           ::Feature.enabled?(:ci_release_cli_catalog_publish_option, job.project)

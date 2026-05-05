@@ -24,19 +24,19 @@ module Gitlab
       end
 
       def ancestor_conditions(cte)
-        middle_table[:source_pipeline_id].eq(objects_table[:id]).and(
-          middle_table[:pipeline_id].eq(cte.table[:id])
-        ).and(
-          project_condition
-        )
+        middle_table[:source_pipeline_id].eq(objects_table[:id])
+          .and(middle_table[:source_partition_id].eq(objects_table[:partition_id]))
+          .and(middle_table[:pipeline_id].eq(cte.table[:id]))
+          .and(middle_table[:partition_id].eq(cte.table[:partition_id]))
+          .and(project_condition)
       end
 
       def descendant_conditions(cte)
-        middle_table[:pipeline_id].eq(objects_table[:id]).and(
-          middle_table[:source_pipeline_id].eq(cte.table[:id])
-        ).and(
-          project_condition
-        )
+        middle_table[:pipeline_id].eq(objects_table[:id])
+          .and(middle_table[:partition_id].eq(objects_table[:partition_id]))
+          .and(middle_table[:source_pipeline_id].eq(cte.table[:id]))
+          .and(middle_table[:source_partition_id].eq(cte.table[:partition_id]))
+          .and(project_condition)
       end
 
       def project_condition
@@ -45,6 +45,10 @@ module Gitlab
         when :different then middle_table[:source_project_id].not_eq(middle_table[:project_id])
         else Arel.sql('TRUE')
         end
+      end
+
+      def objects_id_columns
+        [objects_table[:id], objects_table[:partition_id]]
       end
     end
   end

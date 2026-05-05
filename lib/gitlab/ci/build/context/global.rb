@@ -13,8 +13,8 @@ module Gitlab
         class Global < Base
           include Gitlab::Utils::StrongMemoize
 
-          def initialize(pipeline, yaml_variables:)
-            super(pipeline)
+          def initialize(pipeline, yaml_variables:, logger:)
+            super(pipeline, logger: logger)
 
             @yaml_variables = yaml_variables.to_a
           end
@@ -32,12 +32,11 @@ module Gitlab
           private
 
           def stub_build
-            ::Ci::Build.new(build_attributes)
-          end
-
-          def build_attributes
-            pipeline_attributes.merge(
-              yaml_variables: @yaml_variables)
+            ::Ci::Build.fabricate(
+              **pipeline_attributes.merge(
+                yaml_variables: @yaml_variables
+              )
+            )
           end
         end
       end

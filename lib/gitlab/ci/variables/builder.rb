@@ -33,6 +33,10 @@ module Gitlab
 
               # yaml_variables is how we inject dynamic configuration into a workload
               variables.concat(job.yaml_variables)
+
+              variables.concat(
+                user_defined_variables(options: job.options, environment: environment, job_variables: job.manual_variables)
+              )
               next
             end
 
@@ -40,6 +44,7 @@ module Gitlab
             variables.concat(project.predefined_variables)
             variables.concat(pipeline_variables_builder.predefined_variables)
             variables.concat(job.runner.predefined_variables) if job.runnable? && job.runner
+            variables.concat(kubernetes_variables_from_job(environment: environment, job: job))
             variables.concat(job.yaml_variables)
             variables.concat(user_variables(job.user))
             variables.concat(job.dependency_variables) if dependencies
@@ -59,6 +64,12 @@ module Gitlab
 
               # yaml_variables is how we inject dynamic configuration into a workload
               variables.concat(job.yaml_variables)
+              variables.concat(
+                user_defined_variables(
+                  options: job.options, environment: environment, job_variables: job.manual_variables,
+                  expose_project_variables: expose_project_variables, expose_group_variables: expose_group_variables
+                )
+              )
               next
             end
 
@@ -66,6 +77,7 @@ module Gitlab
             variables.concat(project.predefined_variables)
             variables.concat(pipeline_variables_builder.predefined_variables)
             variables.concat(job.runner.predefined_variables) if job.runnable? && job.runner
+            variables.concat(kubernetes_variables_from_job(environment: environment, job: job))
             variables.concat(job.yaml_variables)
             variables.concat(user_variables(job.user))
             variables.concat(job.dependency_variables) if dependencies
@@ -88,6 +100,9 @@ module Gitlab
 
               # yaml_variables is how we inject dynamic configuration into a workload
               variables.concat(job_attr[:yaml_variables])
+
+              # NOTE: We never include user_defined_variables in pipeline_seed as the workload object has not been
+              # persisted yet
               next
             end
 
@@ -95,6 +110,7 @@ module Gitlab
             variables.concat(project.predefined_variables)
             variables.concat(pipeline_variables_builder.predefined_variables)
             # job.runner.predefined_variables: No need because it's not available in the Seed step.
+            variables.concat(kubernetes_variables_from_attr(environment: environment, kubernetes_namespace: kubernetes_namespace))
             variables.concat(job_attr[:yaml_variables])
             variables.concat(user_variables(user))
             # job.dependency_variables: No need because dependencies are not in the Seed step.
@@ -119,6 +135,8 @@ module Gitlab
             # NOTE: deployment_variables will be removed as part of cleanup for
             # https://gitlab.com/groups/gitlab-org/configure/-/epics/8
             # Until then, we need to make both the old and the new KUBECONFIG contexts available
+            collection.concat(deployment_variables(environment, kubernetes_namespace))
+            collection.concat(kubeconfig_variables(environment, kubernetes_namespace, token, collection['KUBECONFIG']&.value))
           end
         end
 
@@ -159,28 +177,32 @@ module Gitlab
           end
         end
 
-        def secret_instance_variables
+        def secret_instance_variables(only: nil)
           strong_memoize(:secret_instance_variables) do
             instance_variables_builder
-              .secret_variables(protected_ref: protected_ref?)
+              .secret_variables(protected_ref: protected_ref?, only: only)
           end
         end
 
-        def secret_group_variables(environment:, include_protected_vars: protected_ref?)
+        def secret_group_variables(environment:, include_protected_vars: protected_ref?, only: nil)
           strong_memoize_with(:secret_group_variables, environment, include_protected_vars) do
             group_variables_builder
               .secret_variables(
                 environment: environment,
-                protected_ref: include_protected_vars)
+                protected_ref: include_protected_vars,
+                only: only
+              )
           end
         end
 
-        def secret_project_variables(environment:, include_protected_vars: protected_ref?)
+        def secret_project_variables(environment:, include_protected_vars: protected_ref?, only: nil)
           strong_memoize_with(:secret_project_variables, environment, include_protected_vars) do
             project_variables_builder
               .secret_variables(
                 environment: environment,
-                protected_ref: include_protected_vars)
+                protected_ref: include_protected_vars,
+                only: only
+              )
           end
         end
 
@@ -232,6 +254,7 @@ module Gitlab
             variables.append(key: 'CI_JOB_NAME_SLUG', value: job_name_slug(job_attr[:name]))
             variables.append(key: 'CI_JOB_GROUP_NAME', value: Gitlab::Utils::Job.group_name(job_attr[:name]))
             variables.append(key: 'CI_JOB_STAGE', value: job_attr[:stage])
+            variables.append(key: 'CI_JOB_MANUAL', value: 'true') if ::Ci::Processable::ACTIONABLE_WHEN.include?(job_attr[:when])
             variables.append(key: 'CI_PIPELINE_TRIGGERED', value: 'true') if trigger
             variables.append(key: 'CI_TRIGGER_SHORT_TOKEN', value: trigger.trigger_short_token) if trigger
             variables.append(key: 'CI_NODE_INDEX', value: job_attr[:options][:instance].to_s) if job_attr[:options]&.include?(:instance)
@@ -279,10 +302,17 @@ module Gitlab
         end
 
         def user_defined_variables(options:, environment:, job_variables: nil, expose_group_variables: protected_ref?, expose_project_variables: protected_ref?) # rubocop:disable Lint/UnusedMethodArgument -- options will be used in EE
+          only = if pipeline.only_workload_variables?
+                   pipeline.workload&.included_ci_variable_names || []
+                 end
+
           Gitlab::Ci::Variables::Collection.new.tap do |variables|
-            variables.concat(secret_instance_variables)
-            # variables.concat(secret_group_variables(environment: environment, include_protected_vars: expose_group_variables))
-            variables.concat(secret_project_variables(environment: environment, include_protected_vars: expose_project_variables))
+            variables.concat(secret_instance_variables(only: only))
+            variables.concat(secret_group_variables(environment: environment, include_protected_vars: expose_group_variables, only: only))
+            variables.concat(secret_project_variables(environment: environment, include_protected_vars: expose_project_variables, only: only))
+
+            next if pipeline.only_workload_variables?
+
             variables.concat(pipeline.variables)
             variables.concat(pipeline_schedule_variables)
             variables.concat(job_variables)
@@ -301,7 +331,7 @@ module Gitlab
 
         def protected_ref?
           strong_memoize(:protected_ref) do
-            project.protected_for?(pipeline.jobs_git_ref)
+            pipeline.protected_ref?
           end
         end
 

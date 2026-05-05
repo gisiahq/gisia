@@ -34,7 +34,7 @@ module Gitlab
           @variables_by_key = Hash.new { |h, k| h[k] = [] }
           @errors = errors
 
-          variables.each { |variable| self.append(variable) }
+          variables.each { |variable| append(variable) }
         end
 
         def append(resource)

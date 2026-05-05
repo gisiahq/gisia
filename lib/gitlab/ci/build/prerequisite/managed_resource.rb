@@ -19,6 +19,7 @@ module Gitlab
 
           def unmet?
             return false unless valid_for_managed_resources?(environment:, build:)
+            return false unless managed_resources_enabled_in_environment_options?(build:)
             return false unless resource_management_enabled?
 
             !managed_resource&.completed?
@@ -37,7 +38,7 @@ module Gitlab
               managed_resource.assign_attributes(
                 status: :completed,
                 template_name: get_template.name,
-                tracked_objects: response.objects.map(&:to_h)
+                tracked_objects: tracked_objects(response.objects)
               )
 
               deletion_strategy = template_yaml['delete_resources']
@@ -50,6 +51,14 @@ module Gitlab
           end
 
           private
+
+          def tracked_objects(objects)
+            defaults = { group: "", namespace: "" }
+
+            objects.map do |obj|
+              defaults.merge(obj.to_h)
+            end
+          end
 
           def resource_management_enabled?
             return false unless environment.cluster_agent.resource_management_enabled?
@@ -90,6 +99,13 @@ module Gitlab
 
           def valid_for_managed_resources?(environment:, build:)
             environment&.cluster_agent && build.user
+          end
+
+          def managed_resources_enabled_in_environment_options?(build:)
+            environment_options = build.options&.dig(:environment) || {}
+
+            is_enabled = environment_options.dig(:kubernetes, :managed_resources, :enabled)
+            is_enabled.nil? || is_enabled
           end
 
           def kas_client

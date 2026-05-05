@@ -38,6 +38,7 @@ module Gitlab
             { name: stage, index: stages.index(stage), builds: seeds }
           end
         end
+        strong_memoize_attr :stages_attributes
 
         def builds
           jobs.map do |name, _|
@@ -51,8 +52,29 @@ module Gitlab
 
         def uses_keyword?(keyword)
           jobs.values.any? do |job|
-            job[keyword].present?
+            job.key?(keyword)
           end
+        end
+
+        def uses_nested_keyword?(path)
+          jobs.values.any? do |job|
+            has_nested_key?(job, *path)
+          end
+        end
+
+        def uses_inputs?
+          return false unless @ci_config
+
+          @ci_config.spec[:inputs].present?
+        end
+
+        def uses_input_rules?
+          return false unless @ci_config
+
+          inputs = @ci_config.spec[:inputs]
+          return false unless inputs.is_a?(Hash)
+
+          inputs.values.any? { |input_spec| input_spec.is_a?(Hash) && input_spec.key?(:rules) }
         end
 
         def included_components
@@ -86,6 +108,18 @@ module Gitlab
 
         private
 
+        def has_nested_key?(hash, *keys)
+          current = hash
+
+          keys.each do |key|
+            return false unless current.is_a?(Hash) && current.key?(key)
+
+            current = current[key]
+          end
+
+          true
+        end
+
         def assign_valid_attributes
           @root_variables = transform_to_array(@ci_config.variables_with_data)
           @root_variables_with_prefill_data = @ci_config.variables_with_prefill_data
@@ -115,6 +149,7 @@ module Gitlab
             when: job[:when] || 'on_success',
             environment: job[:environment_name],
             coverage_regex: job[:coverage],
+            inputs: job[:inputs],
             # yaml_variables is calculated with using job_variables in Seed::Build
             job_variables: transform_to_array(job[:job_variables]),
             root_variables_inheritance: job[:root_variables_inheritance],

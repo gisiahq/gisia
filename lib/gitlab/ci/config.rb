@@ -16,7 +16,11 @@ module Gitlab
 
       ConfigError = Class.new(StandardError)
       TIMEOUT_SECONDS = ENV.fetch('GITLAB_CI_CONFIG_FETCH_TIMEOUT_SECONDS', 30).to_i.clamp(0, 60).seconds
+      OVERRIDE_TIMEOUT_SECONDS = 90.seconds
       TIMEOUT_MESSAGE = 'Request timed out when fetching configuration files.'
+      GITALY_TIMEOUT_SECONDS = ENV.fetch('GITLAB_CI_CONFIG_GITALY_TIMEOUT_SECONDS', 10).to_i.clamp(1, 60)
+      HTTP_OPEN_TIMEOUT_SECONDS = ENV.fetch('GITLAB_CI_CONFIG_HTTP_OPEN_TIMEOUT_SECONDS', 10).to_i.clamp(1, 60)
+      HTTP_READ_TIMEOUT_SECONDS = ENV.fetch('GITLAB_CI_CONFIG_HTTP_READ_TIMEOUT_SECONDS', 30).to_i.clamp(1, 60)
 
       RESCUE_ERRORS = [
         Gitlab::Config::Loader::FormatError,
@@ -25,7 +29,7 @@ module Gitlab
         Config::Yaml::Tags::TagError
       ].freeze
 
-      attr_reader :root, :context, :source_ref_path, :source, :logger, :inject_edge_stages, :pipeline_policy_context
+      attr_reader :root, :context, :source_ref_path, :source, :logger, :inject_edge_stages, :pipeline_policy_context, :spec
 
       # rubocop: disable Metrics/ParameterLists
       def initialize(
@@ -42,10 +46,18 @@ module Gitlab
         @context = self.logger.instrument(:config_build_context, once: true) do
           pipeline ||= ::Ci::Pipeline.new(project: project, sha: sha, ref: ref, user: user, source: source)
 
-          build_context(project: project, pipeline: pipeline, sha: sha, user: user, parent_pipeline: parent_pipeline, pipeline_config: pipeline_config, pipeline_policy_context: pipeline_policy_context)
+          build_context(
+            project: project,
+            pipeline: pipeline,
+            sha: sha,
+            user: user,
+            parent_pipeline: parent_pipeline,
+            pipeline_config: pipeline_config,
+            pipeline_policy_context: pipeline_policy_context
+          )
         end
 
-        @context.set_deadline(TIMEOUT_SECONDS)
+        @context.set_deadline(fetch_timeout(project))
 
         @source = source
 
@@ -139,7 +151,13 @@ module Gitlab
       end
 
       def normalized_jobs
-        @normalized_jobs ||= Ci::Config::Normalizer.new(jobs).normalize_jobs
+        @normalized_jobs ||= Gitlab::Ci::Config::FeatureFlags.with_actor(@project) do
+          normalizer.normalize_jobs
+        end
+      end
+
+      def normalizer_errors
+        normalizer.errors
       end
 
       def included_templates
@@ -162,13 +180,9 @@ module Gitlab
       def expand_config(config, inputs)
         build_config(config, inputs)
 
-      rescue Gitlab::Config::Loader::Yaml::DataTooLargeError => e
+      rescue Gitlab::Config::Loader::Yaml::DataTooLargeError, Gitlab::Ci::Config::External::Context::TimeoutError => e
         track_and_raise_for_dev_exception(e)
         raise Config::ConfigError, e.message
-
-      rescue Gitlab::Ci::Config::External::Context::TimeoutError => e
-        track_and_raise_for_dev_exception(e)
-        raise Config::ConfigError, TIMEOUT_MESSAGE
 
       rescue Gitlab::Ci::Config::Yaml::LoadError => e
         raise Config::ConfigError, e.message
@@ -176,12 +190,28 @@ module Gitlab
 
       def build_config(config, inputs)
         initial_config = logger.instrument(:config_yaml_load, once: true) do
-          yaml_context = Config::Yaml::Context.new(variables: @context.variables)
-          Config::Yaml.load!(config, yaml_context, inputs)
+          yaml_context = Config::Yaml::Context.new(
+            variables: @context.variables
+          )
+          loader = Config::Yaml::Loader.new(config, inputs: inputs, context: yaml_context, external_context: @context)
+          yaml_result = loader.load_uninterpolated_yaml
+
+          # Store spec for later instrumentation before it gets stripped during interpolation
+          @spec = yaml_result.spec
+
+          loader.load.then do |result|
+            raise result.error_class, result.error if !result.valid? && result.error_class.present?
+            raise Config::Yaml::LoadError, result.error unless result.valid?
+
+            result.content
+          end
         end
 
         initial_config = logger.instrument(:config_external_process, once: true) do
-          Config::External::Processor.new(initial_config, @context).perform
+          gitaly_timeout = Feature.enabled?(:ci_config_gitaly_timeout, @project) ? GITALY_TIMEOUT_SECONDS : nil
+          Config::GitalyTimeout.with_timeout(gitaly_timeout) do
+            Config::External::Processor.new(initial_config, @context).perform
+          end
         end
 
         initial_config = logger.instrument(:config_yaml_extend, once: true) do
@@ -207,7 +237,8 @@ module Gitlab
         end
       end
 
-      def build_context(project:, pipeline:, sha:, user:, parent_pipeline:, pipeline_config:, pipeline_policy_context:)
+      def build_context(
+        project:, pipeline:, sha:, user:, parent_pipeline:, pipeline_config:, pipeline_policy_context:)
         Config::External::Context.new(
           project: project,
           pipeline: pipeline,
@@ -225,6 +256,20 @@ module Gitlab
           pipeline
             .variables_builder
             .config_variables
+        end
+      end
+
+      def normalizer
+        @normalizer ||= Ci::Config::Normalizer.new(jobs)
+      end
+
+      def fetch_timeout(project)
+        return TIMEOUT_SECONDS unless project
+
+        if Feature.enabled?(:ci_config_fetch_timeout_override, project.root_namespace, type: :ops)
+          OVERRIDE_TIMEOUT_SECONDS
+        else
+          TIMEOUT_SECONDS
         end
       end
 

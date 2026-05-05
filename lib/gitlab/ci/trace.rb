@@ -289,10 +289,9 @@ module Gitlab
       end
 
       def read_trace_artifact(build)
-        # Todo, sticking
-        # ::Ci::Build
-          # .sticking
-          # .find_caught_up_replica(LOAD_BALANCING_STICKING_NAMESPACE, build.id)
+        ::Ci::Build
+          .sticking
+          .find_caught_up_replica(LOAD_BALANCING_STICKING_NAMESPACE, build.id)
 
         yield
       end

@@ -18,6 +18,7 @@ module Gitlab
       # - ProjectSetting takes care of CI config coming defined in a project.
       #   This can be the project itself, remote or external.
       # - AutoDevops is used as default option if nothing else is found and if AutoDevops is enabled.
+      # - SecurityScanProfile is used when project has Security Scan Profile attached with a matching pipeline trigger.
       # - EE uses SecurityPolicyDefault and it should come last. It is only necessary if no other source is available.
       #   Based on the policy configuration different source can be used.
       STANDARD_SOURCES = [
@@ -34,7 +35,7 @@ module Gitlab
         project:, sha:, custom_content: nil, pipeline_source: nil, pipeline_source_bridge: nil,
         triggered_for_branch: nil, ref: nil, source_branch: nil, pipeline_policy_context: nil, inputs: nil)
 
-        unless pipeline_policy_context&.applying_config_override?
+        unless pipeline_policy_context&.pipeline_execution_context&.applying_config_override?
           @config = find_source(project: project,
             sha: sha,
             custom_content: custom_content,
@@ -59,33 +60,31 @@ module Gitlab
         @config = fallback_config if fallback_config.exists?
       end
 
-      delegate :content, :source, :url, :inputs_for_pipeline_creation, to: :@config, allow_nil: true
+      delegate :content, :source, :url, :inputs_for_pipeline_creation,
+        to: :@config, allow_nil: true
       delegate :internal_include_prepended?, to: :@config
 
       def exists?
         !!@config&.exists?
       end
 
+      def external?
+        [:external_project_source, :remote_source].include?(source)
+      end
+
       private
 
-      def find_source(
-        project:, sha:, custom_content:, pipeline_source:, pipeline_source_bridge:, triggered_for_branch:, ref:,
-        inputs:)
-        STANDARD_SOURCES.each do |source|
-          source_config = source.new(project: project,
-            sha: sha,
-            custom_content: custom_content,
-            pipeline_source: pipeline_source,
-            pipeline_source_bridge: pipeline_source_bridge,
-            triggered_for_branch: triggered_for_branch,
-            ref: ref,
-            inputs: inputs
-          )
-
+      def find_source(**args)
+        standard_sources.each do |source|
+          source_config = source.new(**args)
           return source_config if source_config.exists?
         end
 
         nil
+      end
+
+      def standard_sources
+        STANDARD_SOURCES
       end
     end
   end

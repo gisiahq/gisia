@@ -28,6 +28,7 @@ module Gitlab
 
         def insert!
           return false if tag_list_by_taggable.empty?
+          return true unless config.uses_taggings?
 
           persist_build_tags!
         end
@@ -52,6 +53,7 @@ module Gitlab
         def persist_build_tags!
           all_tags = tag_list_by_taggable.values.flatten.uniq.reject(&:blank?)
           tag_records_by_name = create_tags(all_tags).index_by(&:name)
+
           taggings = build_taggings(tag_records_by_name)
 
           join_model.bulk_insert!(
@@ -66,9 +68,8 @@ module Gitlab
           true
         end
 
-        # rubocop: disable CodeReuse/ActiveRecord
         def create_tags(tags)
-          existing_tag_records = ::Ci::Tag.where(name: tags).to_a
+          existing_tag_records = ::Ci::Tag.named(tags).to_a
           missing_tags = detect_missing_tags(tags, existing_tag_records)
           return existing_tag_records if missing_tags.empty?
 
@@ -78,9 +79,8 @@ module Gitlab
               ::Ci::Tag.insert_all!(tags_attributes)
             end
 
-          ::Ci::Tag.where(name: tags).to_a
+          ::Ci::Tag.named(tags).to_a
         end
-        # rubocop: enable CodeReuse/ActiveRecord
 
         def build_taggings(tag_records_by_name)
           accumulator = []
@@ -102,7 +102,10 @@ module Gitlab
           attributes = { tag_id: tag.id }
           attributes.merge!(config.attributes_map(taggable))
 
-          join_model.new(attributes)
+          join_model.new(attributes).tap do |record|
+            # Copy tag name for tagging if the model supports it
+            record.tag_name = tag.name if record.respond_to?(:tag_name=)
+          end
         end
 
         def detect_missing_tags(tags, tag_records)

@@ -12,6 +12,11 @@ module Gitlab
       class Builder
         class Pipeline
           include Gitlab::Utils::StrongMemoize
+          include GitHelper
+
+          MAX_COMMIT_MESSAGE_SIZE_IN_BYTES = ENV.fetch('GITLAB_CI_MAX_COMMIT_MESSAGE_SIZE_IN_BYTES', 100_000)
+                                                .to_i
+                                                .clamp(0, 1_000_000)
 
           def initialize(pipeline)
             @pipeline = pipeline
@@ -24,6 +29,7 @@ module Gitlab
               variables.concat(predefined_commit_variables) if pipeline.sha.present?
               variables.concat(predefined_commit_tag_variables) if pipeline.tag?
               variables.concat(predefined_merge_request_variables) if pipeline.merge_request?
+              variables.concat(predefined_upstream_variables) if pipeline.source_pipeline&.source_bridge.present?
 
               if pipeline.open_merge_requests_refs.any?
                 variables.append(key: 'CI_OPEN_MERGE_REQUESTS', value: pipeline.open_merge_requests_refs.join(','))
@@ -54,6 +60,10 @@ module Gitlab
               if pipeline.pipeline_schedule
                 variables.append(key: 'CI_PIPELINE_SCHEDULE_DESCRIPTION', value: pipeline.pipeline_schedule.description)
               end
+
+              if pipeline.source_ref_path.present?
+                variables.append(key: 'CI_CONFIG_REF_URI', value: pipeline.ci_config_ref_uri)
+              end
             end
           end
 
@@ -67,12 +77,14 @@ module Gitlab
               variables.append(key: 'CI_COMMIT_REF_NAME', value: pipeline.source_ref)
               variables.append(key: 'CI_COMMIT_REF_SLUG', value: pipeline.source_ref_slug)
               variables.append(key: 'CI_COMMIT_BRANCH', value: pipeline.ref) if pipeline.branch?
-              variables.append(key: 'CI_COMMIT_MESSAGE', value: pipeline.git_commit_message.to_s)
-              variables.append(key: 'CI_COMMIT_TITLE', value: pipeline.git_commit_full_title.to_s)
-              variables.append(key: 'CI_COMMIT_DESCRIPTION', value: pipeline.git_commit_description.to_s)
+              variables.append(key: 'CI_COMMIT_MESSAGE', value: git_commit_message_truncated)
+              variables.append(key: 'CI_COMMIT_MESSAGE_IS_TRUNCATED', value: git_commit_message_truncated?.to_s)
+              variables.append(key: 'CI_COMMIT_TITLE', value: git_commit_title_truncated)
+              variables.append(key: 'CI_COMMIT_DESCRIPTION', value: git_commit_description_truncated)
               variables.append(key: 'CI_COMMIT_REF_PROTECTED', value: (!!pipeline.protected_ref?).to_s)
               variables.append(key: 'CI_COMMIT_TIMESTAMP', value: pipeline.git_commit_timestamp.to_s)
               variables.append(key: 'CI_COMMIT_AUTHOR', value: pipeline.git_author_full_text.to_s)
+              variables.append(key: 'CI_COMMIT_USER_LOGIN', value: pipeline.git_author_login.to_s)
             end
           end
           strong_memoize_attr :predefined_commit_variables
@@ -84,7 +96,12 @@ module Gitlab
               next variables unless git_tag
 
               variables.append(key: 'CI_COMMIT_TAG', value: pipeline.ref)
-              variables.append(key: 'CI_COMMIT_TAG_MESSAGE', value: git_tag.message)
+
+              if Feature.enabled?(:strip_signature_from_ci_commit_tag_message, pipeline.project)
+                variables.append(key: 'CI_COMMIT_TAG_MESSAGE', value: strip_signature(git_tag.message))
+              else
+                variables.append(key: 'CI_COMMIT_TAG_MESSAGE', value: git_tag.message)
+              end
             end
           end
           strong_memoize_attr :predefined_commit_tag_variables
@@ -107,10 +124,46 @@ module Gitlab
           end
           strong_memoize_attr :predefined_merge_request_variables
 
+          def predefined_upstream_variables
+            Gitlab::Ci::Variables::Collection.new.tap do |variables|
+              variables.append(key: 'CI_UPSTREAM_PIPELINE_ID', value: pipeline.source_pipeline.source_pipeline_id.to_s)
+              variables.append(key: 'CI_UPSTREAM_PROJECT_ID', value: pipeline.source_pipeline.source_project_id.to_s)
+              variables.append(key: 'CI_UPSTREAM_JOB_ID', value: pipeline.source_pipeline.source_job_id.to_s)
+            end
+          end
+          strong_memoize_attr :predefined_upstream_variables
+
           def merge_request_diff
             pipeline.merge_request_diff
           end
           strong_memoize_attr :merge_request_diff
+
+          def git_commit_message_truncated
+            return pipeline.git_commit_message.to_s unless git_commit_message_truncated?
+
+            truncate_in_bytes(pipeline.git_commit_message.to_s, MAX_COMMIT_MESSAGE_SIZE_IN_BYTES)
+          end
+
+          def git_commit_title_truncated
+            return pipeline.git_commit_full_title.to_s unless git_commit_message_truncated?
+
+            truncate_in_bytes(pipeline.git_commit_full_title.to_s, MAX_COMMIT_MESSAGE_SIZE_IN_BYTES)
+          end
+
+          def git_commit_description_truncated
+            return pipeline.git_commit_description.to_s unless git_commit_message_truncated?
+
+            truncate_in_bytes(pipeline.git_commit_description.to_s, MAX_COMMIT_MESSAGE_SIZE_IN_BYTES)
+          end
+
+          def git_commit_message_truncated?
+            pipeline.git_commit_message.to_s.bytesize > MAX_COMMIT_MESSAGE_SIZE_IN_BYTES
+          end
+          strong_memoize_attr :git_commit_message_truncated?
+
+          def truncate_in_bytes(text, max_size)
+            text.byteslice(0, max_size)
+          end
         end
       end
     end
