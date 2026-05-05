@@ -87,4 +87,3 @@ class GitRefsFinder
     @next_cursor = records.last.name
   end
 end
-

@@ -65,4 +65,3 @@ module TimeZoneHelper
     time_zone_instance.now.strftime("%-l:%M %p")
   end
 end
-

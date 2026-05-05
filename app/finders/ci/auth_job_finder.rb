@@ -13,15 +13,24 @@ module Ci
     ErasedJobError = Class.new(AuthError)
     DeletedProjectError = Class.new(AuthError)
 
+    class ExpiredJobTokenError < AuthError
+      attr_reader :job
+
+      def initialize(message, job:)
+        super(message)
+        @job = job
+      end
+    end
+
     def initialize(token:)
       @token = token
     end
 
-    def execute!(allow_canceling: false)
+    def execute!
       find_job_by_token.tap do |job|
         next unless job
 
-        validate_job!(job, allow_canceling)
+        validate_job!(job)
 
         job.user.set_ci_job_token_scope!(job) if job.user
       end
@@ -37,14 +46,20 @@ module Ci
     attr_reader :token
 
     def find_job_by_token
-      jwt = ::Ci::JobToken::Jwt.decode(token)
-      if jwt&.job
-        link_composite_identity!(jwt)
-        jwt.job
-      else
-        # TODO: Remove fallback finder when feature flag `ci_job_token_jwt` is removed
-        ::Ci::Build.find_by_token(token)
-      end
+      # TODO: Remove fallback finder when feature flag `ci_job_token_jwt` is removed
+      find_job_by_jwt || find_from_database_token
+    end
+
+    def find_job_by_jwt
+      # Intentionally bypass JWT expiration verification to recover the job identity.
+      # Expiration is checked separately via `jwt.expired?`.
+      jwt = ::Ci::JobToken::Jwt.decode(token, verify_expiration: false)
+      return unless jwt&.job
+
+      raise ExpiredJobTokenError.new('Job token has expired', job: jwt.job) if jwt.expired?
+
+      link_composite_identity!(jwt)
+      jwt.job
     end
 
     def link_composite_identity!(jwt)
@@ -55,8 +70,12 @@ module Ci
       ::Gitlab::Auth::Identity.fabricate(jwt.job.user)&.link!(jwt.scoped_user)
     end
 
-    def validate_job!(job, allow_canceling)
-      validate_running_job!(job, allow_canceling)
+    def find_from_database_token
+      ::Ci::Build.find_by_token(token)
+    end
+
+    def validate_job!(job)
+      validate_executing_job!(job)
       validate_job_not_erased!(job)
       validate_project_presence!(job)
 
@@ -65,8 +84,8 @@ module Ci
       true
     end
 
-    def validate_running_job!(job, allow_canceling)
-      raise NotRunningJobError, 'Job is not running' unless job.running? || (allow_canceling && job.canceling?)
+    def validate_executing_job!(job)
+      raise NotRunningJobError, 'Job is not running' unless Ci::HasStatus::EXECUTING_STATUSES.include?(job.status)
     end
 
     def validate_job_not_erased!(job)

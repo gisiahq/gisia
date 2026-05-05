@@ -9,21 +9,23 @@
 module SendFileUpload
   def send_upload(
     file_upload, send_params: {}, redirect_params: {}, attachment: nil, proxy: false,
-    disposition: 'attachment', ssrf_params: {})
-    content_type = content_type_for(attachment)
-
-    if attachment
+    disposition: 'attachment', ssrf_params: {}, sanitize_content_type: false)
+    if attachment # rubocop:disable Cop/LineBreakAroundConditionalBlock: -- Not a justified complaint
       response_disposition = ActionDispatch::Http::ContentDisposition.format(disposition: disposition,
         filename: attachment)
 
       # Response-Content-Type will not override an existing Content-Type in
       # Google Cloud Storage, so the metadata needs to be cleared on GCS for
       # this to work. However, this override works with AWS.
+      #
+      content_type = content_type_for(attachment, sanitize: sanitize_content_type)
       redirect_params[:query] = { "response-content-disposition" => response_disposition,
                                   "response-content-type" => content_type }
+
       # By default, Rails will send uploads with an extension of .js with a
       # content-type of text/javascript, which will trigger Rails'
       # cross-origin JavaScript protection.
+      #
       send_params[:content_type] = 'text/plain' if File.extname(attachment) == '.js'
 
       send_params.merge!(filename: attachment, disposition: disposition)
@@ -31,7 +33,10 @@ module SendFileUpload
 
     if image_scaling_request?(file_upload)
       location = file_upload.file_storage? ? file_upload.path : file_upload.url
-      headers.store(*Gitlab::Workhorse.send_scaled_image(location, params[:width].to_i, content_type))
+      content_type ||= content_type_for(attachment, sanitize: sanitize_content_type)
+
+      headers.store(*Gitlab::Workhorse.send_scaled_image(location, safe_width, content_type))
+
       head :ok
     elsif file_upload.file_storage?
       send_file file_upload.path, send_params
@@ -47,28 +52,27 @@ module SendFileUpload
     end
   end
 
-  def content_type_for(attachment)
-    return '' unless attachment
-
-    ::Gitlab::Utils::MimeType.from_filename(attachment)
-  end
-
   private
 
+  def content_type_for(attachment, sanitize:)
+    return '' unless attachment
+
+    content_type = ::Gitlab::Utils::MimeType.from_filename(attachment)
+    return content_type unless sanitize
+
+    ::Gitlab::ContentTypes.sanitize_content_type(content_type)
+  end
+
   def image_scaling_request?(file_upload)
-    avatar_safe_for_scaling?(file_upload) || pwa_icon_safe_for_scaling?(file_upload)
-  end
+    return false unless file_upload.try(:image_safe_for_scaling?)
 
-  def pwa_icon_safe_for_scaling?(file_upload)
-    file_upload.try(:image_safe_for_scaling?) &&
-      mounted_as_pwa_icon?(file_upload) &&
-      valid_image_scaling_width?(Appearance::ALLOWED_PWA_ICON_SCALER_WIDTHS)
-  end
-
-  def avatar_safe_for_scaling?(file_upload)
-    file_upload.try(:image_safe_for_scaling?) &&
-      mounted_as_avatar?(file_upload) &&
+    if mounted_as_avatar?(file_upload)
       valid_image_scaling_width?(Avatarable::ALLOWED_IMAGE_SCALER_WIDTHS)
+    elsif mounted_as_pwa_icon?(file_upload)
+      valid_image_scaling_width?(Appearance::ALLOWED_PWA_ICON_SCALER_WIDTHS)
+    else
+      false
+    end
   end
 
   def mounted_as_avatar?(file_upload)
@@ -80,6 +84,13 @@ module SendFileUpload
   end
 
   def valid_image_scaling_width?(allowed_scalar_widths)
-    allowed_scalar_widths.include?(params[:width]&.to_i)
+    allowed_scalar_widths.include?(safe_width)
+  end
+
+  def safe_width
+    width = params[:width]
+    return 0 unless width.is_a?(String) || width.is_a?(Integer)
+
+    width.to_i
   end
 end

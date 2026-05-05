@@ -95,9 +95,9 @@ module ApplicationSettingsHelper
         }
       ),
       form.gitlab_ui_checkbox_component(
-        :global_search_issues_enabled,
-        _("Show issues in global search results"),
-        checkbox_options: { checked: @application_setting.global_search_issues_enabled, multiple: false }
+        :global_search_work_items_enabled,
+        _("Show work items in global search results"),
+        checkbox_options: { checked: @application_setting.global_search_work_items_enabled, multiple: false }
       ),
       form.gitlab_ui_checkbox_component(
         :global_search_merge_requests_enabled,
@@ -115,6 +115,15 @@ module ApplicationSettingsHelper
         checkbox_options: { checked: @application_setting.global_search_users_enabled, multiple: false }
       )
     ]
+  end
+
+  def default_search_scope_options_for_select
+    # Exclude API-only scopes from UI
+    scope_defs = Search::Scopes.scope_definitions(include_api_only: false)
+    sorted_options = scope_defs.to_a.sort_by { |_, definition| definition[:sort] }.map do |scope, definition|
+      [definition[:label].call, scope.to_s]
+    end
+    sorted_options.prepend([_('System default (automatic)'), 'system default'])
   end
 
   def restricted_level_checkboxes(form)
@@ -279,6 +288,7 @@ module ApplicationSettingsHelper
       :asset_proxy_allowlist,
       :static_objects_external_storage_auth_token,
       :static_objects_external_storage_url,
+      :authn_data_retention_cleanup_enabled,
       :authorized_keys_enabled,
       :auto_devops_enabled,
       :auto_devops_domain,
@@ -287,7 +297,6 @@ module ApplicationSettingsHelper
       :allow_bypass_placeholder_confirmation,
       :ci_delete_pipelines_in_seconds_limit_human_readable,
       :ci_job_live_trace_enabled,
-      :ci_partitions_size_limit,
       :concurrent_github_import_jobs_limit,
       :concurrent_bitbucket_import_jobs_limit,
       :concurrent_bitbucket_server_import_jobs_limit,
@@ -370,6 +379,9 @@ module ApplicationSettingsHelper
       :housekeeping_incremental_repack_period,
       :housekeeping_optimize_repository_period,
       :html_emails_enabled,
+      :iframe_rendering_enabled,
+      :iframe_rendering_allowlist,
+      :iframe_rendering_allowlist_raw,
       :import_sources,
       :inactive_resource_access_tokens_delete_after_days,
       :inactive_projects_delete_after_months,
@@ -391,6 +403,10 @@ module ApplicationSettingsHelper
       :max_github_response_json_value_count,
       :max_http_decompressed_size,
       :max_http_response_size_limit,
+      :max_http_response_json_depth,
+      :max_http_response_json_structural_chars,
+      :max_http_response_xml_structural_chars,
+      :max_http_response_csv_structural_chars,
       :max_import_size,
       :max_import_remote_file_size,
       :max_login_attempts,
@@ -415,8 +431,10 @@ module ApplicationSettingsHelper
       :kroki_enabled,
       :kroki_url,
       :kroki_formats,
+      :kroki_diagram_proxy_enabled,
       :plantuml_enabled,
       :plantuml_url,
+      :plantuml_diagram_proxy_enabled,
       :diagramsnet_enabled,
       :diagramsnet_url,
       :pages_extra_deployments_default_expiry_seconds,
@@ -456,6 +474,7 @@ module ApplicationSettingsHelper
       :spam_check_api_key,
       :terminal_max_session_time,
       :terms,
+      :terraform_state_encryption_enabled,
       :throttle_authenticated_api_enabled,
       :throttle_authenticated_api_period_in_seconds,
       :throttle_authenticated_api_requests_per_period,
@@ -508,6 +527,7 @@ module ApplicationSettingsHelper
       :unique_ips_limit_per_user,
       :unique_ips_limit_time_window,
       :usage_ping_enabled,
+      :usage_ping_generation_enabled,
       :usage_ping_features_enabled,
       :use_clickhouse_for_analytics,
       :user_default_external,
@@ -533,6 +553,7 @@ module ApplicationSettingsHelper
       :push_event_activities_limit,
       :custom_http_clone_url_root,
       :snippet_size_limit,
+      :description_and_note_max_size,
       :email_restrictions_enabled,
       :email_restrictions,
       :issues_create_limit,
@@ -540,6 +561,7 @@ module ApplicationSettingsHelper
       :notes_create_limit_allowlist_raw,
       :members_delete_limit,
       :raw_blob_request_limit,
+      :raw_blob_request_limit_unauthenticated,
       :project_import_limit,
       :project_export_limit,
       :project_download_export_limit,
@@ -578,6 +600,7 @@ module ApplicationSettingsHelper
       :group_runner_token_expiration_interval,
       :project_runner_token_expiration_interval,
       :pipeline_limit_per_project_user_sha,
+      :pipeline_limit_per_user,
       :invitation_flow_enforcement,
       :can_create_group,
       :can_create_organization,
@@ -588,7 +611,9 @@ module ApplicationSettingsHelper
       :bulk_import_max_download_file_size,
       :silent_admin_exports_enabled,
       :allow_contribution_mapping_to_admins,
+      :allow_s3_compatible_storage_for_offline_transfer,
       :allow_runner_registration_token,
+      :valid_runner_registrars,
       :user_defaults_to_private_profile,
       :deactivation_email_additional_text,
       :projects_api_rate_limit_unauthenticated,
@@ -601,6 +626,7 @@ module ApplicationSettingsHelper
       :project_api_limit,
       :project_invited_groups_api_limit,
       :projects_api_limit,
+      :project_members_api_limit,
       :create_organization_api_limit,
       :user_contributed_projects_api_limit,
       :user_projects_api_limit,
@@ -632,21 +658,30 @@ module ApplicationSettingsHelper
       :ropc_without_client_credentials,
       :global_search_snippet_titles_enabled,
       :global_search_users_enabled,
-      :global_search_issues_enabled,
+      :global_search_work_items_enabled,
       :global_search_merge_requests_enabled,
       :global_search_block_anonymous_searches_enabled,
       :enable_language_server_restrictions,
       :minimum_language_server_version,
       :vscode_extension_marketplace,
       :vscode_extension_marketplace_enabled,
+      :vscode_extension_marketplace_extension_host_domain,
+      :vscode_extension_marketplace_single_origin_fallback_enabled,
       :reindexing_minimum_index_size,
       :reindexing_minimum_relative_bloat_size,
       :anonymous_searches_allowed,
+      :default_search_scope,
       :git_push_pipeline_limit,
-      :delay_user_account_self_deletion
+      :delay_user_account_self_deletion,
+      :resource_usage_limits,
+      :runner_jobs_request_api_limit,
+      :runner_jobs_patch_trace_api_limit,
+      :runner_jobs_endpoints_api_limit,
+      :background_operations_max_jobs,
+      :enforce_granular_tokens,
+      :granular_tokens_enforced_after
     ].tap do |settings|
       unless Gitlab.com?
-        settings << :resource_usage_limits
         settings << :deactivate_dormant_users
         settings << :deactivate_dormant_users_period
         settings << :nuget_skip_metadata_url_validation
@@ -765,6 +800,11 @@ module ApplicationSettingsHelper
     {
       deletion_adjourned_period: @application_setting[:deletion_adjourned_period]
     }
+  end
+
+  # Overridden in EE
+  def custom_admin_roles_available?
+    false
   end
 end
 

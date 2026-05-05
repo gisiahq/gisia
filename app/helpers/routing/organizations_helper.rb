@@ -29,8 +29,9 @@ module Routing
 
         url_helpers = Gitlab::Application.routes.url_helpers
 
-        # Preserve the original root_url for use in specific circumstances.
+        # Preserve the original root_url and root_path for use in specific circumstances.
         url_helpers.alias_method :unscoped_root_url, :root_url if url_helpers.respond_to?(:root_url)
+        url_helpers.alias_method :unscoped_root_path, :root_path if url_helpers.respond_to?(:root_path)
 
         # Override URL helpers to be Organization context aware.
         route_pairs = find_route_pairs
@@ -89,6 +90,10 @@ module Routing
 
               define_method(method_name) do |*args, **kwargs|
                 current_organization = Routing::OrganizationsHelper::MappedHelpers.current_organization
+
+                # Handle Ruby 2.4+ keyword argument compatibility
+                # If kwargs is empty but last arg is a hash, treat it as kwargs
+                kwargs = args.pop if kwargs.empty? && args.last.is_a?(Hash) && !args.last.frozen?
 
                 if current_organization && current_organization.scoped_paths?
                   kwargs[:organization_path] ||= current_organization.path

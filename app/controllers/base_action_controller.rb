@@ -27,45 +27,19 @@
 # rubocop:disable Gitlab/NamespacedClass -- Base controllers live in the global namespace
 class BaseActionController < ActionController::Base
   extend ContentSecurityPolicyPatch
+  include CurrentOrganization
 
   content_security_policy do |p|
     next if p.directives.blank?
     next unless Gitlab::CurrentSettings.snowplow_enabled? && !Gitlab::CurrentSettings.snowplow_collector_hostname.blank?
 
-    default_connect_src = p.directives['connect-src'] || p.directives['default-src']
-    connect_src_values = Array.wrap(default_connect_src) | [Gitlab::CurrentSettings.snowplow_collector_hostname]
-    p.connect_src(*connect_src_values)
+    append_to_content_security_policy(p, 'connect-src', [Gitlab::CurrentSettings.snowplow_collector_hostname])
   end
 
-  def set_current_organization
-    return if ::Current.organization_assigned
-
-    organization = Gitlab::Current::Organization.new(
-      params: organization_params,
-      user: current_user,
-      session: session,
-      headers: request.headers
-    ).organization
-
-    store_organization_in_session!(organization)
-
-    ::Current.organization = organization
-  end
-
-  private
-
-  def store_organization_in_session!(organization)
-    # rubocop:disable Gitlab/FeatureFlagWithoutActor -- Cannot guarantee an actor is available here
-    return unless Feature.enabled?(:set_current_organization_from_session)
-    # rubocop:enable Gitlab/FeatureFlagWithoutActor
-
-    return unless organization
-    return unless request.format.html?
-
-    session_key = Gitlab::Current::Organization::SESSION_KEY
-    return if session[session_key] == organization.id
-
-    session[session_key] = organization.id
+  def append_to_content_security_policy(policy, directive, values)
+    existing_value = policy.directives[directive] || policy.directives['default-src']
+    new_value = Array.wrap(existing_value) | values
+    policy.directives[directive] = new_value
   end
 end
 # rubocop:enable Gitlab/NamespacedClass

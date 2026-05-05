@@ -7,7 +7,7 @@
 # ======================================================
 
 module AvatarsHelper
-  DEFAULT_AVATAR_PATH = 'no-avatar.png'
+  DEFAULT_AVATAR_PATH = 'no_avatar.png'
 
   # Takes both user and email and returns the avatar_icon by
   # user (preferred) or email.
@@ -55,7 +55,7 @@ module AvatarsHelper
   end
 
   def author_avatar(commit_or_event, options = {})
-    options[:css_class] ||= "gl-hidden sm:gl-inline-block"
+    options[:css_class] ||= "gl-hidden @sm/panel:gl-inline-block"
 
     if Feature.enabled?(:cached_author_avatar_helper, options.delete(:project))
       Gitlab::AvatarCache.by_email(commit_or_event.author_email, commit_or_event.author_name, options) do
