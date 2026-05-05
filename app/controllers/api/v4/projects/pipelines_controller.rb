@@ -10,6 +10,7 @@ module API
         before_action :authorize_destroy_pipeline!, only: [:destroy]
         before_action :pipeline, only: [:show, :retry, :cancel, :destroy]
         before_action :require_ref!, only: [:create]
+        before_action :resolve_and_authorize_ref!, only: [:create]
         before_action :require_cancelable!, only: [:cancel]
 
         def index
@@ -69,11 +70,30 @@ module API
         end
 
         def pipeline_params
-          params.permit(:ref, variables: [:key, :value, :variable_type])
+          @pipeline_params ||= params.permit(:ref, variables: [:key, :value, :variable_type])
         end
 
         def require_ref!
           render json: { message: 'ref is missing' }, status: :bad_request if pipeline_params[:ref].blank?
+        end
+
+        def resolve_and_authorize_ref!
+          ref = pipeline_params[:ref]
+          if @project.repository.ambiguous_ref?(ref)
+            return render json: { message: 'Ref is ambiguous' }, status: :unprocessable_entity
+          elsif @project.repository.branch_exists?(ref)
+            pipeline_params[:ref] = "#{Gitlab::Git::BRANCH_REF_PREFIX}#{ref}"
+          elsif @project.repository.tag_exists?(ref)
+            pipeline_params[:ref] = "#{Gitlab::Git::TAG_REF_PREFIX}#{ref}"
+          end
+
+          access = Gitlab::UserAccess.new(current_user, container: @project)
+
+          if Gitlab::Git.tag_ref?(pipeline_params[:ref])
+            forbidden! unless access.can_create_tag?(Gitlab::Git.ref_name(pipeline_params[:ref]))
+          elsif Gitlab::Git.branch_ref?(pipeline_params[:ref])
+            forbidden! unless access.can_update_branch?(Gitlab::Git.ref_name(pipeline_params[:ref]))
+          end
         end
 
         def require_cancelable!
@@ -86,10 +106,6 @@ module API
 
         def authorize_create_pipeline!
           forbidden! unless current_user.can?(:create_pipeline, @project)
-          if params[:ref].present?
-            access = Gitlab::UserAccess.new(current_user, container: @project)
-            forbidden! unless access.can_push_to_branch?(params[:ref])
-          end
         end
 
         def authorize_update_pipeline!

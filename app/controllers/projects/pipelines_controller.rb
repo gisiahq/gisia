@@ -3,6 +3,7 @@
 class Projects::PipelinesController < Projects::ApplicationController
   before_action :authorize_read_pipeline!
   before_action :authorize_create_pipeline!, only: [:new, :create]
+  before_action :validate_ref_prefix!, only: [:create]
   before_action :pipeline, only: [:show, :jobs]
 
   def index
@@ -56,6 +57,14 @@ class Projects::PipelinesController < Projects::ApplicationController
 
   def pipeline_create_params
     @pipeline_create_params ||= params.permit(:ref)
+  end
+
+  def validate_ref_prefix!
+    ref = pipeline_create_params[:ref]
+    return if Gitlab::Git.branch_ref?(ref) || Gitlab::Git.tag_ref?(ref)
+
+    flash[:alert] = _('ref must include a valid prefix')
+    redirect_to new_project_pipeline_path(@project)
   end
 
   def load_refs

@@ -25,8 +25,11 @@ class ProtectedBranch < ProtectedRef
     matches?(name, protected_refs: project.protected_branches)
   end
 
-  def self.with_access_levels(level)
-    public_send(level)
+  ACTION_SCOPE_MAP = { push: :push, merge: :merge_to }.freeze
+
+  def self.with_access_levels(action)
+    scope_name = ACTION_SCOPE_MAP[action]
+    scope_name ? public_send(scope_name) : all
   end
 
   def self.protected_ref_accessible_to?(ref, user, project:, action:, protected_refs: nil)
