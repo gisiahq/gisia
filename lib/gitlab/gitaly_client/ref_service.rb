@@ -221,9 +221,9 @@ module Gitlab
         messages
       end
 
-      def get_tag_signatures(tag_ids)
+      def get_tag_signatures(tag_ids, timeout: GitalyClient.fast_timeout)
         request = Gitaly::GetTagSignaturesRequest.new(repository: @gitaly_repo, tag_revisions: tag_ids)
-        response = gitaly_client_call(@repository.storage, :ref_service, :get_tag_signatures, request, timeout: GitalyClient.fast_timeout)
+        response = gitaly_client_call(@repository.storage, :ref_service, :get_tag_signatures, request, timeout: timeout)
 
         signatures = Hash.new { |h, k| h[k] = [+''.b, +''.b] }
         current_tag_id = nil
@@ -243,13 +243,14 @@ module Gitlab
       end
 
       # peel_tags slows down the request by a factor of 3-4
-      def list_refs(patterns = [Gitlab::Git::BRANCH_REF_PREFIX], pointing_at_oids: [], peel_tags: false, dynamic_timeout: nil, sort_by: nil, pagination_params: nil)
+      def list_refs(patterns = [Gitlab::Git::BRANCH_REF_PREFIX], pointing_at_oids: [], peel_tags: false, dynamic_timeout: nil, sort_by: nil, pagination_params: nil, ignore_case: false)
         request = Gitaly::ListRefsRequest.new(
           repository: @gitaly_repo,
-          patterns: patterns,
+          patterns: patterns.map { |p| encode_binary(p) },
           pointing_at_oids: pointing_at_oids,
           peel_tags: peel_tags,
-          pagination_params: pagination_params
+          pagination_params: pagination_params,
+          ignore_case: ignore_case
         )
         request.sort_by = Gitlab::GitalyClient::ListRefsSort.new(sort_by).gitaly_sort_by if sort_by
 
@@ -273,7 +274,7 @@ module Gitlab
       end
 
       def consume_list_refs_response(response)
-        response.flat_map { |res| res.references.to_ary }
+        RefCollectionWithNextCursor.new(response)
       end
 
       def sort_local_branches_by_param(sort_by)
@@ -353,9 +354,8 @@ module Gitlab
         # the commit and not the full message. This is ok, since all the
         # code that uses `local_branches` only cares at most about the
         # commit message.
-        # TODO: Once gitaly "takes over" Rugged consider separating the
-        # subject from the message to make it clearer when there's one
-        # available but not the other.
+        # TODO: Consider separating the subject from the message to make it
+        # clearer when there's one available but not the other.
         hash = {
           id: response.commit_id,
           message: message,
