@@ -18,11 +18,22 @@ module Gitlab
       include Gitlab::EncodingHelper
       include Gitlab::Utils::StrongMemoize
 
-      SEARCH_CONTEXT_LINES = 3
       REV_LIST_COMMIT_LIMIT = 2_000
       GITALY_INTERNAL_URL = 'ssh://gitaly/internal.git'
       GITLAB_PROJECTS_TIMEOUT = Gitlab.config.gitlab_shell.git_timeout
       EMPTY_REPOSITORY_CHECKSUM = '0000000000000000000000000000000000000000'
+      DEFAULT_LOG_OPTIONS = {
+        limit: 10,
+        offset: 0,
+        path: nil,
+        author: nil,
+        follow: false,
+        skip_merges: false,
+        after: nil,
+        before: nil,
+        all: false,
+        message_regex: nil
+      }.freeze
 
       NoRepository = Class.new(::Gitlab::Git::BaseError)
       CommitNotFound = Class.new(::Gitlab::Git::BaseError)
@@ -177,6 +188,12 @@ module Gitlab
         end
       end
 
+      def fork_repository(source_repository, branch = nil)
+        wrapped_gitaly_errors do
+          gitaly_repository_client.fork_repository(source_repository, branch)
+        end
+      end
+
       def expire_has_local_branches_cache
         clear_memoization(:has_local_branches)
       end
@@ -275,6 +292,8 @@ module Gitlab
       # This is both the filename of the archive (missing the extension) and the
       # name of the top-level member of the archive under which all files go
       def archive_prefix(ref, sha, project_path, append_sha:, path:)
+        ref = ref.gsub(%r{^refs/(?:heads|tags)/}, '')
+
         append_sha = (ref != sha) if append_sha.nil?
 
         formatted_ref = ref.tr('/', '-')
@@ -370,22 +389,9 @@ module Gitlab
       #     message_regex: 'project'
       #   )
       def log(options)
-        default_options = {
-          limit: 10,
-          offset: 0,
-          path: nil,
-          author: nil,
-          follow: false,
-          skip_merges: false,
-          after: nil,
-          before: nil,
-          all: false,
-          message_regex: nil
-        }
         raise ArgumentError, 'Invalid message_regex pattern' unless valid_message_regex?(options[:message_regex])
 
-        options = default_options.merge(options)
-        options[:offset] ||= 0
+        options = DEFAULT_LOG_OPTIONS.merge(options)
 
         limit = options[:limit]
         if limit == 0 || !limit.is_a?(Integer)
@@ -443,23 +449,20 @@ module Gitlab
         end
       end
 
+      # Returns a hash mapping file paths to their object types (:blob, :tree, or :commit).
+      #
+      # revision_paths - Array of [revision, path] tuples
+      # limit - Maximum bytes to fetch per blob (default: -1 for no limit)
+      #
+      def get_blob_types(revision_paths, limit = -1)
+        gitaly_blob_client.get_blob_types(revision_paths, limit)
+      end
+
       def count_commits(options)
         options = process_count_commits_options(options.dup)
 
         wrapped_gitaly_errors do
-          if options[:left_right]
-            from = options[:from]
-            to = options[:to]
-
-            right_count = gitaly_commit_client
-              .commit_count("#{from}..#{to}", options)
-            left_count = gitaly_commit_client
-              .commit_count("#{to}..#{from}", options)
-
-            [left_count, right_count]
-          else
-            gitaly_commit_client.commit_count(options[:ref], options)
-          end
+          gitaly_commit_client.commit_count(options[:revisions], options)
         end
       end
 
@@ -553,13 +556,13 @@ module Gitlab
         empty_diff_stats
       end
 
-      def find_changed_paths(treeish_objects, merge_commit_diff_mode: nil, find_renames: false)
+      def find_changed_paths(treeish_objects, merge_commit_diff_mode: nil, find_renames: false, diff_filters: nil)
         processed_objects = treeish_objects.compact
 
         return [] if processed_objects.empty?
 
         wrapped_gitaly_errors do
-          gitaly_commit_client.find_changed_paths(processed_objects, merge_commit_diff_mode: merge_commit_diff_mode, find_renames: find_renames)
+          gitaly_commit_client.find_changed_paths(processed_objects, merge_commit_diff_mode: merge_commit_diff_mode, find_renames: find_renames, diff_filters: diff_filters)
         end
       rescue CommandError, TypeError, NoRepository
         []
@@ -614,13 +617,6 @@ module Gitlab
       def submodule_urls_for(ref)
         wrapped_gitaly_errors do
           gitaly_submodule_urls_for(ref)
-        end
-      end
-
-      # Return total commits count accessible from passed ref
-      def commit_count(ref)
-        wrapped_gitaly_errors do
-          gitaly_commit_client.commit_count(ref)
         end
       end
 
@@ -691,13 +687,14 @@ module Gitlab
         end
       end
 
-      def merge(user, source_sha:, target_branch:, message:, target_sha: nil, &block)
+      def merge(user, source_sha:, target_branch:, message:, target_sha: nil, sign: true, &block)
         wrapped_gitaly_errors do
           gitaly_operation_client.user_merge_branch(user,
             source_sha: source_sha,
             target_branch: target_branch,
             message: message,
             target_sha: target_sha,
+            sign: sign,
             &block)
         end
       end
@@ -711,7 +708,8 @@ module Gitlab
         end
       end
 
-      def revert(user:, commit:, branch_name:, message:, start_branch_name:, start_repository:, dry_run: false)
+      # rubocop:disable Metrics/ParameterLists -- all arguments needed
+      def revert(user:, commit:, branch_name:, message:, start_branch_name:, start_repository:, dry_run: false, target_sha: nil, sign: true)
         args = {
           user: user,
           commit: commit,
@@ -719,13 +717,16 @@ module Gitlab
           message: message,
           start_branch_name: start_branch_name,
           start_repository: start_repository,
-          dry_run: dry_run
+          dry_run: dry_run,
+          target_sha: target_sha,
+          sign: sign
         }
 
         wrapped_gitaly_errors do
           gitaly_operation_client.user_revert(**args)
         end
       end
+      # rubocop:enable Metrics/ParameterLists
 
       def cherry_pick(...)
         wrapped_gitaly_errors do
@@ -996,9 +997,9 @@ module Gitlab
         end
       end
 
-      def squash(user, start_sha:, end_sha:, author:, message:)
+      def squash(user, start_sha:, end_sha:, author:, message:, sign: true)
         wrapped_gitaly_errors do
-          gitaly_operation_client.user_squash(user, start_sha, end_sha, author, message)
+          gitaly_operation_client.user_squash(user, start_sha: start_sha, end_sha: end_sha, author: author, message: message, sign: sign)
         end
       end
 
@@ -1008,6 +1009,23 @@ module Gitlab
         end
 
         true
+      end
+
+      # Returns the initial commit (first commit with no parents) for the given ref
+      # @param ref [String] The reference to start from (default: root_ref)
+      # @return [Gitlab::Git::Commit, nil]
+      def initial_commit(ref = nil)
+        ref ||= root_ref
+        return unless ref
+
+        wrapped_gitaly_errors do
+          commits = gitaly_commit_client.list_commits(
+            [ref],
+            reverse: true,
+            pagination_params: { limit: 1 }
+          )
+          commits.first
+        end
       end
 
       # Creates a commit
@@ -1323,19 +1341,9 @@ module Gitlab
 
       def process_count_commits_options(options)
         if options[:from] || options[:to]
-          ref =
-            if options[:left_right] # Compare with merge-base for left-right
-              "#{options[:from]}...#{options[:to]}"
-            else
-              "#{options[:from]}..#{options[:to]}"
-            end
+          revisions = "#{options[:from]}..#{options[:to]}"
 
-          options.merge(ref: ref)
-
-        elsif options[:ref] && options[:left_right]
-          from, to = options[:ref].match(/\A([^\.]*)\.{2,3}([^\.]*)\z/)[1..2]
-
-          options.merge(from: from, to: to)
+          options.merge(revisions: revisions)
         else
           options
         end

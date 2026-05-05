@@ -50,12 +50,6 @@ module Gitlab
         end
       end
 
-      def tag_push?
-        strong_memoize(:tag_push) do
-          Gitlab::Git.tag_ref?(@ref)
-        end
-      end
-
       def modified_paths
         unless branch_updated?
           raise ArgumentError, 'Unable to calculate modified paths!'
@@ -63,6 +57,17 @@ module Gitlab
 
         strong_memoize(:modified_paths) do
           @project.repository.diff_stats(@oldrev, @newrev).paths
+        end
+      end
+
+      def changed_paths
+        unless branch_updated?
+          raise ArgumentError, 'No path changes to compute'
+        end
+
+        strong_memoize(:changed_paths) do
+          commits = [Gitlab::Git::DiffTree.new(@oldrev, @newrev)]
+          @project.repository.find_changed_paths(commits, merge_commit_diff_mode: :all_parents)
         end
       end
     end

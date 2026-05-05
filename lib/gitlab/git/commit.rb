@@ -276,7 +276,11 @@ module Gitlab
       def parent_ids
         return @parent_ids unless @lazy_load_parents
 
-        @parent_ids = @repository.commit(id).parent_ids if @parent_ids.nil? || @parent_ids.empty?
+        if @parent_ids.nil? || @parent_ids.empty?
+          commit = @repository.commit(id)
+
+          @parent_ids = commit&.parent_ids || []
+        end
 
         @parent_ids
       end
@@ -441,9 +445,8 @@ module Gitlab
       def init_from_gitaly(commit)
         @raw_commit = commit
         @id = commit.id
-        # TODO: Once gitaly "takes over" Rugged consider separating the
-        # subject from the message to make it clearer when there's one
-        # available but not the other.
+        # TODO: Consider separating the subject from the message to make it
+        # clearer when there's one available but not the other.
         @message = message_from_gitaly_body
         @author_name = commit.author.name.dup
         @author_email = commit.author.email.dup
@@ -466,11 +469,15 @@ module Gitlab
       # Gitaly provides a UNIX timestamp in author.date.seconds, and a timezone
       # offset in author.timezone. If the latter isn't present, assume UTC.
       def init_date_from_gitaly(author)
-        if author.timezone.present?
-          Time.strptime("#{author.date.seconds} #{author.timezone}", '%s %z')
-        else
-          Time.at(author.date.seconds).utc
-        end
+        return date_in_utc(author) if author.timezone.blank?
+
+        Time.strptime("#{author.date.seconds} #{author.timezone}", '%s %z')
+      rescue ArgumentError
+        date_in_utc(author)
+      end
+
+      def date_in_utc(author)
+        Time.at(author.date.seconds).utc
       end
 
       def serialize_keys

@@ -103,7 +103,7 @@ module Gitlab
         #    as generated.
         def filter_diff_options(options, default_options = {})
           allowed_options = [:ignore_whitespace_change, :max_files, :max_lines,
-                             :limits, :expanded, :collect_all_paths, :generated_files, :offset_index]
+            :limits, :expanded, :collect_all_paths, :generated_files, :offset_index]
 
           if default_options
             actual_defaults = default_options.dup
@@ -260,7 +260,7 @@ module Gitlab
         return @overflow if defined?(@overflow)
 
         # If overflow is not defined, we're
-        # not recieveing a diff from Gitaly
+        # not receiving a diff from Gitaly
         # and overflow has no meaning
         false
       end
@@ -304,8 +304,8 @@ module Gitlab
         @diff = gitaly_diff.try(:patch).present? ? encode!(gitaly_diff.patch) : ''
         @new_path = encode!(gitaly_diff.to_path.dup)
         @old_path = encode!(gitaly_diff.from_path.dup)
-        @a_mode = gitaly_diff.old_mode.to_s(8)
-        @b_mode = gitaly_diff.new_mode.to_s(8)
+        @a_mode = gitaly_diff.old_mode.to_i.to_s(8)
+        @b_mode = gitaly_diff.new_mode.to_i.to_s(8)
         @new_file = Gitlab::Git.blank_ref?(gitaly_diff.from_id)
         @renamed_file = gitaly_diff.from_path != gitaly_diff.to_path
         @deleted_file = Gitlab::Git.blank_ref?(gitaly_diff.to_id)
