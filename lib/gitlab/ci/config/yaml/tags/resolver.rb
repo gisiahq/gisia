@@ -29,9 +29,9 @@ module Gitlab
             def deep_resolve(object)
               case object
               when Array
-                object.map(&method(:resolve_wrapper))
+                object.map(&method(:deep_resolve))
               when Hash
-                object.deep_transform_values(&method(:resolve_wrapper))
+                object.transform_values(&method(:deep_resolve))
               else
                 resolve_wrapper(object)
               end

@@ -22,6 +22,16 @@ module Gitlab
               @params = params
               @context = context
               @errors = []
+              @inputs_only = false
+            end
+
+            def inputs_only!
+              @inputs_only = true
+              self
+            end
+
+            def inputs_only?
+              @inputs_only
             end
 
             def matching?
@@ -91,7 +101,7 @@ module Gitlab
               raise NotImplementedError, 'subclass must implement `validate_context!`'
             end
 
-            def validate_content!
+            def validate_content_presence!
               errors.push("Included file `#{masked_location}` is empty or does not exist!") if content.blank?
             end
 
@@ -108,6 +118,18 @@ module Gitlab
               end
 
               validate_hash!
+              validate_content_keys! if inputs_only?
+            end
+
+            def validate_content_keys!
+              return unless expanded_content_hash
+
+              allowed_keys = %i[inputs]
+              unknown_keys = expanded_content_hash.keys - allowed_keys
+
+              return unless unknown_keys.any?
+
+              errors.push("Header include file `#{masked_location}` contains unknown keys: #{unknown_keys}")
             end
 
             def load_uninterpolated_yaml
@@ -123,7 +145,7 @@ module Gitlab
             def content_result
               context.logger.instrument(:config_file_fetch_content_hash) do
                 ::Gitlab::Ci::Config::Yaml::Loader.new(
-                  content, inputs: content_inputs, context: yaml_context
+                  content, inputs: content_inputs, context: yaml_context, external_context: context
                 ).load
               end
             end
@@ -135,7 +157,8 @@ module Gitlab
 
             def yaml_context_attributes
               {
-                variables: context.variables
+                variables: context.variables,
+                component: context.component_data
               }
             end
 
@@ -154,6 +177,8 @@ module Gitlab
             end
 
             def expand_includes(hash)
+              return hash if inputs_only?
+
               External::Processor.new(hash, context.mutate(expand_context_attrs)).perform
             end
 
@@ -165,6 +190,22 @@ module Gitlab
               strong_memoize(:masked_location) do
                 context.mask_variables_from(location)
               end
+            end
+
+            def log_and_raise_timeout_error
+              log_gitaly_timeout
+
+              raise Context::TimeoutError, 'CI configuration fetch from Gitaly timed out. ' \
+                'This may indicate Gitaly service slowness or an outage.'
+            end
+
+            def log_gitaly_timeout
+              Gitlab::AppJsonLogger.warn(
+                class: self.class.name,
+                message: 'CI config Gitaly request timed out',
+                project_id: context.project&.id,
+                extra: { timeout_s: Config::GITALY_TIMEOUT_SECONDS, location: masked_location }
+              )
             end
           end
         end

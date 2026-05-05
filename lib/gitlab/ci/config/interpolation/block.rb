@@ -20,6 +20,7 @@ module Gitlab
         # they are presented.
         class Block
           MAX_FUNCTIONS = 3
+          SKIP_INTERPOLATION_CONTEXTS = %w[matrix].freeze
 
           attr_reader :data, :ctx, :errors
 
@@ -63,6 +64,12 @@ module Gitlab
           # <access> | <function1> | <function2> | ... <functionN>
           def evaluate!
             data_access, *functions = data.split('|').map(&:strip)
+
+            if skip_interpolation?(data_access)
+              @value = block
+              return
+            end
+
             access = Interpolation::Access.new(data_access, ctx)
 
             return @errors.concat(access.errors) unless access.valid?
@@ -75,6 +82,12 @@ module Gitlab
             else
               @errors.concat(result.errors)
             end
+          end
+
+          def skip_interpolation?(data_access)
+            context_name = data_access.split('.').first
+
+            SKIP_INTERPOLATION_CONTEXTS.include?(context_name)
           end
         end
       end

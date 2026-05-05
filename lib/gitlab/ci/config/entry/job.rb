@@ -18,9 +18,9 @@ module Gitlab
 
           ALLOWED_WHEN = %w[on_success on_failure always manual delayed].freeze
           ALLOWED_KEYS = %i[tags script image services start_in artifacts
-                            cache dependencies before_script after_script hooks
-                            coverage retry parallel timeout
-                            release id_tokens publish pages manual_confirmation run].freeze
+            cache dependencies before_script after_script hooks
+            coverage retry parallel timeout inputs
+            release id_tokens publish pages manual_confirmation run].freeze
 
           PUBLIC_DIR = 'public'
 
@@ -51,6 +51,10 @@ module Gitlab
             validates :start_in, duration: { limit: '1 week' }, if: :delayed?
             validates :start_in, absence: true, if: -> { has_rules? || !delayed? }
 
+            validates :publish,
+              absence: { message: "can only be used within a `pages` job" },
+              unless: -> { config.is_a?(Hash) && pages_job? }
+
             validate on: :composed do
               next unless dependencies.present?
               next unless needs_value.present?
@@ -64,9 +68,25 @@ module Gitlab
               end
             end
 
-            validates :publish,
-              absence: { message: "can only be used within a `pages` job" },
-              unless: -> { config.is_a?(Hash) && pages_job? }
+            validate on: :composed do
+              next unless inputs_defined?
+
+              inputs_spec = inputs_value || {}
+
+              if inputs_spec.size > 50
+                errors.add(:inputs, "has too many entries (maximum 50)")
+                next
+              end
+
+              builder = ::Ci::Inputs::Builder.new(inputs_spec)
+
+              builder.validate_input_params!({})
+
+              builder.errors.each do |error|
+                clean_error = error.sub(' input:', ':')
+                errors.add(:inputs, clean_error)
+              end
+            end
           end
 
           entry :before_script, Entry::Commands,
@@ -147,6 +167,11 @@ module Gitlab
             inherit: false,
             description: 'Pages configuration.'
 
+          entry :inputs, ::Gitlab::Config::Entry::ComposableHash,
+            description: 'Job input parameters.',
+            inherit: false,
+            metadata: { composable_class: ::Gitlab::Ci::Config::Entry::JobInput }
+
           attributes :script, :tags, :when, :dependencies,
             :needs, :retry, :parallel, :start_in,
             :timeout, :release,
@@ -191,7 +216,8 @@ module Gitlab
               publish: publish,
               pages: pages,
               manual_confirmation: self.manual_confirmation,
-              run: run
+              run: run,
+              inputs: inputs_value
             ).compact
           end
 
@@ -215,7 +241,7 @@ module Gitlab
             return artifacts_value unless pages_job?
 
             artifacts = artifacts_value || {}
-            artifacts = artifacts.reverse_merge(paths: [])
+            artifacts[:paths] ||= []
 
             return artifacts if artifacts[:paths].include?(pages_publish_path)
 

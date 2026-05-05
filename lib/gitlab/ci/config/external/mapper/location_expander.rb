@@ -36,8 +36,16 @@ module Gitlab
             def expand_wildcard_paths(location)
               return location unless location[:local].include?('*')
 
-              context.project.repository.search_files_by_wildcard_path(location[:local], context.sha).map do |path|
-                { local: path }
+              paths = context.project.repository.search_files_by_wildcard_path(location[:local], context.sha)
+
+              paths.filter_map do |path|
+                next if context.expandset.any? do |f|
+                  f.location == path &&
+                    f.class.name.demodulize == 'Local' &&
+                    f.context.project == context.project
+                end
+
+                location.merge(local: path)
               end
             end
           end

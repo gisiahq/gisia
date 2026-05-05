@@ -11,10 +11,11 @@ module Gitlab
     class Config
       module Yaml
         class Context
-          attr_reader :variables
+          attr_reader :variables, :component
 
-          def initialize(variables: [])
+          def initialize(variables: [], component: {})
             @variables = variables
+            @component = component
           end
         end
       end

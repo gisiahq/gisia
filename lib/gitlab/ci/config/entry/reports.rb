@@ -20,10 +20,11 @@ module Gitlab
 
           ALLOWED_KEYS =
             %i[junit codequality sast secret_detection dependency_scanning container_scanning
-               dast performance browser_performance load_performance license_scanning metrics lsif
-               dotenv terraform accessibility
-               coverage_fuzzing api_fuzzing cluster_image_scanning
-               requirements requirements_v2 coverage_report cyclonedx annotations repository_xray].freeze
+              dast performance browser_performance load_performance license_scanning metrics lsif
+              dotenv terraform accessibility
+              coverage_fuzzing api_fuzzing cluster_image_scanning
+              requirements requirements_v2 coverage_report cyclonedx annotations repository_xray
+              sarif].freeze
 
           attributes ALLOWED_KEYS
 
@@ -58,6 +59,7 @@ module Gitlab
               validates :cyclonedx, array_of_strings_or_string: true
               validates :annotations, array_of_strings_or_string: true
               validates :repository_xray, array_of_strings_or_string: true
+              validates :sarif, array_of_strings_or_string: true
             end
           end
 

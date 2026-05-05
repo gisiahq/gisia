@@ -16,10 +16,12 @@ module Gitlab
           AVAILABLE_TAGS = [Config::Yaml::Tags::Reference].freeze
           MAX_DOCUMENTS = 2
 
-          def initialize(content, inputs: {}, context: nil)
+          def initialize(content, inputs: {}, context: Config::Yaml::Context.new, external_context: nil, filename: nil)
             @content = content
             @inputs = inputs
             @context = context
+            @external_context = external_context
+            @filename = filename
           end
 
           def load
@@ -27,8 +29,7 @@ module Gitlab
 
             return yaml_result unless yaml_result.valid?
 
-            variables = context&.variables || []
-            interpolator = Interpolation::Interpolator.new(yaml_result, inputs, variables)
+            interpolator = Interpolation::Interpolator.new(yaml_result, inputs, context, external_context)
 
             interpolator.interpolate!
 
@@ -49,7 +50,7 @@ module Gitlab
 
           private
 
-          attr_reader :content, :inputs, :context
+          attr_reader :content, :inputs, :context, :external_context, :filename
 
           def load_yaml!
             ensure_custom_tags
@@ -58,7 +59,8 @@ module Gitlab
               content,
               max_documents: MAX_DOCUMENTS,
               additional_permitted_classes: AVAILABLE_TAGS,
-              reject_empty: true
+              reject_empty: true,
+              filename: filename
             ).load!
           end
 

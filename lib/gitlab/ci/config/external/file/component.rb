@@ -60,26 +60,48 @@ module Gitlab
               errors.push('Unable to use components outside of a project context')
             end
 
-            def validate_content!
+            def validate_content_presence!
               errors.push(component_result.message) unless content.present?
+            end
+
+            override :load_and_validate_expanded_hash!
+            def load_and_validate_expanded_hash!
+              validate_component_spec!
+
+              return if errors.any?
+
+              super
             end
 
             private
 
+            def validate_component_spec!
+              return unless content.present?
+
+              yaml_result = load_uninterpolated_yaml
+              return unless yaml_result.valid? && yaml_result.has_header?
+
+              spec = yaml_result.spec
+              return unless spec.is_a?(Hash) && spec.key?(:include)
+
+              errors.push(
+                "Component `#{masked_location}` cannot use `spec:include`. " \
+                  "This keyword is not supported in components"
+              )
+            end
+
             attr_reader :path, :version
 
-            def content_result
-              context.logger.instrument(:config_component_fetch_content_hash) do
-                super
-              end
-            end
-            strong_memoize_attr :content_result
-
             def component_result
-              ::Ci::Components::FetchService.new(
-                address: location,
-                current_user: context.user
-              ).execute
+              context.logger.instrument(:config_file_fetch_component_content) do
+                ::Ci::Components::FetchService.new(
+                  address: location,
+                  current_user: context.user,
+                  logger: context.logger
+                ).execute
+              end
+            rescue GRPC::DeadlineExceeded
+              log_and_raise_timeout_error
             end
             strong_memoize_attr :component_result
 
@@ -89,8 +111,14 @@ module Gitlab
                 project: component_payload.fetch(:project),
                 sha: component_payload.fetch(:sha),
                 user: context.user,
-                variables: context.variables
+                variables: context.variables,
+                component_data: component_yaml_context
               }
+            end
+
+            override :yaml_context_attributes
+            def yaml_context_attributes
+              super.merge(component: component_yaml_context)
             end
 
             def masked_blob
@@ -117,9 +145,16 @@ module Gitlab
               {
                 project: component_payload.fetch(:project),
                 sha: component_payload.fetch(:sha),
-                name: component_payload.fetch(:name)
+                name: component_payload.fetch(:name),
+                version: component_payload.fetch(:version),
+                reference: component_payload.fetch(:reference)
               }
             end
+
+            def component_yaml_context
+              component_attrs.slice(*Config::Header::Component::ALLOWED_VALUES)
+            end
+            strong_memoize_attr :component_yaml_context
           end
         end
       end
