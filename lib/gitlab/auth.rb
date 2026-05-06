@@ -26,13 +26,17 @@ module Gitlab
     CREATE_RUNNER_SCOPE = :create_runner
     MANAGE_RUNNER_SCOPE = :manage_runner
     MCP_SCOPE = :mcp
+    MCP_ORBIT_SCOPE = :mcp_orbit
+    GRANULAR_SCOPE = :granular
     API_SCOPES = [
       API_SCOPE, READ_API_SCOPE,
       READ_USER_SCOPE,
       CREATE_RUNNER_SCOPE, MANAGE_RUNNER_SCOPE,
       K8S_PROXY_SCOPE,
       SELF_ROTATE_SCOPE,
-      MCP_SCOPE
+      MCP_SCOPE,
+      MCP_ORBIT_SCOPE,
+      GRANULAR_SCOPE
     ].freeze
 
     # Scopes for Duo
@@ -114,6 +118,8 @@ module Gitlab
 
     CI_JOB_USER = 'gitlab-ci-token'
 
+    extend Gitlab::InternalEventsTracking
+
     class << self
       prepend_mod_with('Gitlab::Auth') # rubocop: disable Cop/InjectEnterpriseEditionModule
 
@@ -160,7 +166,7 @@ module Gitlab
       # different mechanisms, as in `.find_for_git_client`. This may lead to
       # unwanted access locks when the value provided for `password` was actually
       # a PAT, deploy token, etc.
-      def find_with_user_password(login, password, increment_failed_attempts: false)
+      def find_with_user_password(login, password, increment_failed_attempts: false, request: nil)
         # Avoid resource intensive checks if login credentials are not provided
         return unless login.present? && password.present?
 
@@ -173,30 +179,31 @@ module Gitlab
 
           break if user && !user.can_log_in_with_non_expired_password?
 
-          authenticators = []
-
-          if user
-            authenticators << Gitlab::Auth::OAuth::Provider.authentication(user, 'database')
-
-            # Add authenticators for all identities if user is not nil
-            user&.identities&.each do |identity|
-              authenticators << Gitlab::Auth::OAuth::Provider.authentication(user, identity.provider)
+          authenticated_user, authenticator =
+            if Feature.enabled?(:cache_find_with_user_password, Feature.current_request)
+              # Avoid redundant bcrypt when Rack::Attack and the controller both
+              # authenticate the same request (e.g. throttle_authenticated_git_http).
+              cache_key = "find_with_user_password:#{login}:#{Digest::SHA256.hexdigest(password)}"
+              Gitlab::SafeRequestStore.fetch(cache_key) do
+                find_user_from_authenticators(user, login, password)
+              end
+            else
+              find_user_from_authenticators(user, login, password)
             end
-          else
-            # If no user is provided, try LDAP.
-            #   LDAP users are only authenticated via LDAP
-            authenticators << Gitlab::Auth::Ldap::Authentication
-          end
 
-          authenticators.compact!
-
-          # return found user that was authenticated first for given login credentials
-          authenticated_user = authenticators.find do |auth|
-            authenticated_user = auth.login(login, password)
-            break authenticated_user if authenticated_user
-          end
-
+          # Side effects must run on every call, not just cache misses
           user_auth_attempt!(user, success: !!authenticated_user) if increment_failed_attempts
+
+          # Increase our visibility of authentication methods
+          if !!authenticated_user
+            # To mitigate the risk of large log volume we will log
+            # only when request is present, and use a Feature Flag with
+            # the request actor.
+            if request.present? && Feature.enabled?(:log_find_with_user_password, Feature.current_request)
+              log_authentication('Gitlab::Auth find_with_user_password succeeded',
+                authenticated_user, authenticator, request: request)
+            end
+          end
 
           authenticated_user
         end
@@ -263,17 +270,24 @@ module Gitlab
         Gitlab::Auth::Result.new(nil, project, :ci, build_authentication_abilities)
       end
 
-      def user_with_password_for_git(login, password)
-        if Feature.enabled?(:prevent_token_prefixed_password_fallback_sessionless, :instance) &&
-            password.present? &&
-            Authn::AgnosticTokenIdentifier.token?(password)
-          return
-        end
+      def user_with_password_for_git(login, password, request: nil)
+        # Prevent LDAP and database authentication attempts when password is a token
+        return if password.present? && Authn::AgnosticTokenIdentifier.token?(password)
 
-        user = find_with_user_password(login, password)
+        user = find_with_user_password(login, password, request: request)
         return unless user
 
-        verifier = TwoFactorAuthVerifier.new(user)
+        if user.ldap_user? &&
+            Gitlab::CurrentSettings.password_authentication_enabled_for_git? &&
+            Gitlab::Auth::Ldap::Config.prevent_ldap_sign_in?
+          track_internal_event(
+            'authenticate_to_ldap_with_git_over_https_when_prevent_ldap_sign_in_is_enabled',
+            user: user,
+            category: name
+          )
+        end
+
+        verifier = TwoFactorAuthVerifier.new(user, treat_email_otp_as_2fa: true)
 
         if user.two_factor_enabled? || verifier.two_factor_authentication_enforced?
           raise Gitlab::Auth::MissingPersonalAccessTokenError
@@ -283,19 +297,19 @@ module Gitlab
       end
 
       def oauth_access_token_check(password)
-        if password.present?
-          token = OauthAccessToken.by_token(password)
+        return unless password.present?
 
-          if valid_oauth_token?(token)
-            identity = ::Gitlab::Auth::Identity.link_from_oauth_token(token)
-            return if identity && !identity.valid?
+        # Try IAM JWT first (if enabled and looks like JWT) or fallback to Doorkeeper OAuth tokens
+        token = Authn::Tokens::IamOauthToken.from_jwt(password) || OauthAccessToken.by_token(password)
 
-            resource_owner_id = identity&.composite? ? identity.scoped_user.id : token.resource_owner_id
-            user = User.id_in(resource_owner_id).first
-            return unless user && user.can_log_in_with_non_expired_password?
+        if valid_oauth_token?(token)
+          identity = ::Gitlab::Auth::Identity.link_from_oauth_token(token)
+          return if identity && !identity.valid?
 
-            Gitlab::Auth::Result.new(user, nil, :oauth, abilities_for_scopes(token.scopes))
-          end
+          user = User.id_in(token.resource_owner_id).first
+          return unless user && (user.can_log_in_with_non_expired_password? || valid_composite_identity?(user))
+
+          Gitlab::Auth::Result.new(user, nil, :oauth, abilities_for_scopes(token.scopes))
         end
       end
 
@@ -304,6 +318,7 @@ module Gitlab
 
         finder_options = { state: 'active' }
         finder_options[:impersonation] = false unless Gitlab.config.gitlab.impersonation_enabled
+
         token = PersonalAccessTokensFinder.new(finder_options).find_by_token(password)
 
         return unless token
@@ -317,7 +332,8 @@ module Gitlab
         if token.user.can_log_in_with_non_expired_password? || (token.user.project_bot? || token.user.service_account?)
           ::PersonalAccessTokens::LastUsedService.new(token).execute
 
-          Gitlab::Auth::Result.new(token.user, nil, :personal_access_token, abilities_for_scopes(token.scopes))
+          Gitlab::Auth::Result.new(token.user, nil, :personal_access_token, abilities_for_scopes(token.scopes),
+            personal_access_token: token)
         end
       end
 
@@ -350,7 +366,8 @@ module Gitlab
           create_runner: %i[create_instance_runners create_runners],
           manage_runner: %i[assign_runner update_runner delete_runner],
           ai_workflows: %i[push_code download_code],
-          mcp: %i[execute_mcp_tool] # This ability doesn't exist yet
+          mcp: %i[execute_mcp_tool], # This ability doesn't exist yet
+          mcp_orbit: %i[execute_mcp_tool]
         }
 
         scopes.flat_map do |scope|
@@ -484,7 +501,8 @@ module Gitlab
 
       # Other available scopes
       def optional_scopes
-        all_available_scopes + OPENID_SCOPES + PROFILE_SCOPES + AI_WORKFLOW_SCOPES + DYNAMIC_SCOPES - DEFAULT_SCOPES
+        all_available_scopes + OPENID_SCOPES + PROFILE_SCOPES + AI_WORKFLOW_SCOPES + DYNAMIC_SCOPES - DEFAULT_SCOPES -
+          [GRANULAR_SCOPE]
       end
 
       def registry_scopes
@@ -529,11 +547,12 @@ module Gitlab
       def unavailable_scopes_for_resource(resource)
         unavailable_ai_features_scopes +
           unavailable_observability_scopes_for_resource(resource) +
-          unavailable_virtual_registry_scopes_for_resource(resource)
+          unavailable_virtual_registry_scopes_for_resource(resource) +
+          [GRANULAR_SCOPE]
       end
 
       def unavailable_ai_features_scopes
-        AI_WORKFLOW_SCOPES
+        AI_WORKFLOW_SCOPES + [MCP_SCOPE, MCP_ORBIT_SCOPE]
       end
 
       def unavailable_observability_scopes_for_resource(resource)
@@ -554,7 +573,39 @@ module Gitlab
       end
 
       def find_build_by_token(token)
-        ::Ci::AuthJobFinder.new(token: token).execute
+        ::Gitlab::Database::LoadBalancing::SessionMap
+          .with_sessions.use_primary do
+          ::Ci::AuthJobFinder.new(token: token).execute
+        end
+      end
+
+      def password_authenticators_for_user(user)
+        authenticators = []
+
+        if user
+          authenticators << Gitlab::Auth::OAuth::Provider.authentication(user, 'database')
+
+          # Add authenticators for all identities if user is not nil
+          user&.identities&.each do |identity|
+            authenticators << Gitlab::Auth::OAuth::Provider.authentication(user, identity.provider)
+          end
+        else
+          # If no user is provided, try LDAP.
+          #   LDAP users are only authenticated via LDAP
+          authenticators << Gitlab::Auth::Ldap::Authentication
+        end
+
+        authenticators.compact
+      end
+
+      def find_user_from_authenticators(user, login, password)
+        authenticators = password_authenticators_for_user(user)
+
+        # return found user that was authenticated first for given login credentials
+        authenticators.find do |auth|
+          found_user = auth.login(login, password)
+          break [found_user, auth] if found_user
+        end
       end
 
       def user_auth_attempt!(user, success:)
@@ -562,6 +613,26 @@ module Gitlab
         return user.unlock_access! if success
 
         user.increment_failed_attempts!
+      end
+
+      def valid_composite_identity?(user)
+        user.composite_identity_enforced? && user.service_account?
+      end
+
+      def log_authentication(message, user, authenticator, request: nil)
+        # `authenticator` can be an instance or a class
+        authenticator_class_name = authenticator.is_a?(Class) ? authenticator.to_s : authenticator.class.to_s
+
+        Gitlab::AuthLogger.info(
+          message: message,
+          user_id: user.id,
+          username: user.username,
+          authenticator: authenticator_class_name,
+          remote_ip: request&.remote_ip,
+          request_method: request&.request_method,
+          path: request&.filtered_path,
+          ua: request&.user_agent
+        )
       end
     end
   end

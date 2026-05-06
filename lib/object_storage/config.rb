@@ -4,6 +4,9 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025 Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module ObjectStorage
@@ -13,7 +16,6 @@ module ObjectStorage
     GOOGLE_PROVIDER = 'Google'
 
     LOCATIONS = {
-      ai_catalog: Gitlab.config.ai_catalog,
       artifacts: Gitlab.config.artifacts,
       ci_secure_files: Gitlab.config.ci_secure_files,
       dependency_proxy: Gitlab.config.dependency_proxy,
@@ -21,7 +23,6 @@ module ObjectStorage
       lfs: Gitlab.config.lfs,
       packages: Gitlab.config.packages,
       pages: Gitlab.config.pages,
-      terraform_state: Gitlab.config.terraform_state,
       uploads: Gitlab.config.uploads
     }.freeze
 

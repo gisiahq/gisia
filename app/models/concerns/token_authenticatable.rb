@@ -4,6 +4,9 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025 Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module TokenAuthenticatable
@@ -29,7 +32,7 @@ module TokenAuthenticatable
 
     def add_authentication_token_field(token_field, options = {})
       if token_authenticatable_fields.include?(token_field)
-        raise ArgumentError, "#{token_field} already configured via add_authentication_token_field"
+        return
       end
 
       token_authenticatable_fields.push(token_field)

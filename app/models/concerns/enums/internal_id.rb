@@ -4,9 +4,6 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
-#
-# Modifications and additions copyright (c) 2025-present Liuming Tan
-# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module Enums
@@ -27,10 +24,12 @@ module Enums
         design_management_designs: 10,
         incident_management_oncall_schedules: 11,
         ml_experiments: 12,
-        ml_candidates: 13
+        ml_candidates: 13,
+        slsa_attestations: 14
       }
     end
   end
 end
 
 Enums::InternalId.prepend_mod_with('Enums::InternalId')
+

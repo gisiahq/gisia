@@ -12,13 +12,17 @@
 module Ci
   module HasVariable
     extend ActiveSupport::Concern
-    include Gitlab::EncryptedAttribute
+
+    # The following line is included in the models that include this concern.
+    # It doesn't work in the concern itself, so is put here only for reference.
+    # ignore_columns :value, remove_with: '19.1', remove_after: '2026-05-21' # https://gitlab.com/gitlab-org/gitlab/-/work_items/592747
+    # It is _not_ included in ee/app/models/dast/site_profile_secret_variable
+    # as that model does not include the column in its table.
 
     included do
-      enum :variable_type, {
-        env_var: 1,
-        file: 2
-      }
+      include Gitlab::EncryptedAttribute
+
+      enum :variable_type, Enums::Ci::Variable::TYPES
 
       validates :key,
         presence: true,
@@ -73,3 +77,4 @@ module Ci
     end
   end
 end
+

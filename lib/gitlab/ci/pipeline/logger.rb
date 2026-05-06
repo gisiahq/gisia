@@ -4,6 +4,9 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025 Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module Gitlab
@@ -44,13 +47,7 @@ module Gitlab
         end
 
         def instrument_once_with_sql(operation, &block)
-          op_start_db_counters = current_db_counter_payload
-
-          result = instrument(operation, once: true, &block)
-
-          observe_sql_counters(operation, op_start_db_counters, current_db_counter_payload, once: true)
-
-          result
+          yield if block_given?
         end
 
         def observe(operation, value, once: false)

@@ -4,6 +4,9 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025 Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module Ci
@@ -65,6 +68,7 @@ module Ci
           # Builds are ordered by projects that have the fewest running builds.
           # This keeps projects that create many builds at once from hogging capacity but
           # has the downside of penalizing projects with lots of builds created in a short period of time
+          # Todo, remove
           relation
             .with(running_builds_for_shared_runners_cte.to_arel)
             .joins("LEFT JOIN project_builds ON ci_pending_builds.project_id = project_builds.project_id")

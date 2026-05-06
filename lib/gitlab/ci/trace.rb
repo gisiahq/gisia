@@ -4,6 +4,9 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025 Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module Gitlab
@@ -289,9 +292,10 @@ module Gitlab
       end
 
       def read_trace_artifact(build)
-        ::Ci::Build
-          .sticking
-          .find_caught_up_replica(LOAD_BALANCING_STICKING_NAMESPACE, build.id)
+        # Todo, sticking
+        # ::Ci::Build
+        #   .sticking
+        #   .find_caught_up_replica(LOAD_BALANCING_STICKING_NAMESPACE, build.id)
 
         yield
       end

@@ -37,74 +37,105 @@ module Gitlab
       # Using a case statement here is preferable for readability and maintainability.
       # See discussion in https://gitlab.com/gitlab-org/gitlab/-/issues/217397
       #
-      # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/CyclomaticComplexity
-      def build(object, **)
+      def build(object, **options)
         # Objects are sometimes wrapped in a BatchLoader instance
         case object.itself
+        when Board
+          board_url(object, **options)
         when ::Ci::Build
-          instance.project_job_url(object.project, object, **)
+          instance.project_job_url(object.project, object, **options)
         when ::Ci::Pipeline
-          instance.project_pipeline_url(object.project, object, **)
+          instance.project_pipeline_url(object.project, object, **options)
+        when Commit
+          commit_url(object, **options)
+        when Compare
+          compare_url(object, **options)
+        when Group
+          instance.group_canonical_url(object, **options)
+        # This also covers WorkItem due to inheritance
+        when Issue
+          instance.work_item_url(object, **options)
         when MergeRequest
-          instance.merge_request_url(object, **)
+          instance.merge_request_url(object, **options)
+        when Milestone
+          instance.milestone_url(object, **options)
+        when Note
+          note_url(object, **options)
+        when Release
+          instance.release_url(object, **options)
+        when ::Organizations::Organization
+          instance.organization_root_url(object.path, **options)
         when Project
-          instance.project_url(object, **)
+          instance.project_url(object, **options)
+        when Snippet
+          snippet_url(object, **options)
         when User
-          instance.user_url(object, **)
+          instance.user_url(object, **options)
         when Namespaces::UserNamespace
-          instance.user_url(object.owner, **)
+          instance.user_url(object.owner, **options)
         when Namespaces::ProjectNamespace
-          instance.project_url(object.project, **)
+          instance.project_url(object.project, **options)
+        when Wiki
+          wiki_url(object, **options)
+        when WikiPage
+          wiki_page_url(object.wiki, object, **options)
+        when WikiPage::Meta
+          wiki_page_url(object.container.wiki, object.canonical_slug, **options)
+        when ::DesignManagement::Design
+          design_url(object, **options)
+        when ::Packages::Package
+          package_url(object, **options)
         when ::Key
           instance.user_settings_ssh_key_url(object)
         else
           raise NotImplementedError, "No URL builder defined for #{object.inspect}"
         end
       end
-
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/CyclomaticComplexity
-      def board_url(board, **)
+
+      def board_url(board, **options)
         if board.project_board?
-          instance.project_board_url(board.resource_parent, board, **)
+          instance.project_board_url(board.resource_parent, board, **options)
         else
-          instance.group_board_url(board.resource_parent, board, **)
+          instance.group_board_url(board.resource_parent, board, **options)
         end
       end
 
-      def commit_url(commit, **)
+      def commit_url(commit, **options)
         return '' unless commit.project
 
-        instance.commit_url(commit, **)
+        instance.commit_url(commit, **options)
       end
 
-      def compare_url(compare, **)
+      def compare_url(compare, **options)
         return '' unless compare.project
 
-        instance.project_compare_url(compare.project, **, **compare.to_param)
+        compare_params = compare.to_param
+
+        if compare_params[:straight] == true
+          instance.project_compare_with_two_dots_url(compare.project, **options.merge(compare_params))
+        else
+          instance.project_compare_url(compare.project, **options.merge(compare_params))
+        end
       end
 
-      def note_url(note, **)
+      def note_url(note, **options)
         if note.for_commit?
           return '' unless note.project
 
-          instance.project_commit_url(note.project, note.commit_id, anchor: dom_id(note), **)
+          instance.project_commit_url(note.project, note.commit_id, anchor: dom_id(note), **options)
         elsif note.for_issue?
-          instance.issue_url(note.noteable, anchor: dom_id(note), **)
+          instance.work_item_url(note.noteable, anchor: dom_id(note), **options)
         elsif note.for_merge_request?
-          instance.merge_request_url(note.noteable, anchor: dom_id(note), **)
+          instance.merge_request_url(note.noteable, anchor: dom_id(note), **options)
         elsif note.for_snippet?
-          instance.gitlab_snippet_url(note.noteable, anchor: dom_id(note), **)
+          instance.gitlab_snippet_url(note.noteable, anchor: dom_id(note), **options)
         elsif note.for_abuse_report?
-          instance.admin_abuse_report_url(note.noteable, anchor: dom_id(note), **)
+          instance.admin_abuse_report_url(note.noteable, anchor: dom_id(note), **options)
         elsif note.for_wiki_page?
-          instance.project_wiki_page_url(note.noteable, anchor: dom_id(note), **)
+          instance.project_wiki_page_url(note.noteable, anchor: dom_id(note), **options)
         end
-      end
-
-      def abuse_report_note_url(note, **)
-        instance.admin_abuse_report_url(note.abuse_report, anchor: dom_id(note), **)
       end
 
       def snippet_url(snippet, **options)
@@ -149,18 +180,16 @@ module Gitlab
         end
       end
 
-      def package_url(package, **)
+      def package_url(package, **options)
         project = package.project
 
-        if package.terraform_module?
-          return instance.project_infrastructure_registry_url(project, package,
-                                                              **)
-        end
+        return instance.project_infrastructure_registry_url(project, package, **options) if package.terraform_module?
 
-        instance.project_package_url(project, package, **)
+        instance.project_package_url(project, package, **options)
       end
     end
   end
 end
 
-Gitlab::UrlBuilder.prepend_mod_with('Gitlab::UrlBuilder')
+::Gitlab::UrlBuilder.prepend_mod_with('Gitlab::UrlBuilder')
+

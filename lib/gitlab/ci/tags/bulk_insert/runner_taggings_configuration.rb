@@ -33,11 +33,12 @@ module Gitlab
             [:tag_id, :runner_id, :runner_type]
           end
 
+          # Todo override
           def attributes_map(runner)
             {
               runner_id: runner.id,
               runner_type: runner.runner_type,
-              organization_id: runner.organization_id
+              # organization_id: runner.organization_id
             }
           end
 

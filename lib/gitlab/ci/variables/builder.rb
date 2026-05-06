@@ -4,6 +4,9 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025 Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module Gitlab
@@ -308,7 +311,7 @@ module Gitlab
 
           Gitlab::Ci::Variables::Collection.new.tap do |variables|
             variables.concat(secret_instance_variables(only: only))
-            variables.concat(secret_group_variables(environment: environment, include_protected_vars: expose_group_variables, only: only))
+            # variables.concat(secret_group_variables(environment: environment, include_protected_vars: expose_group_variables, only: only))
             variables.concat(secret_project_variables(environment: environment, include_protected_vars: expose_project_variables, only: only))
 
             next if pipeline.only_workload_variables?

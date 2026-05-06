@@ -4,9 +4,6 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
-#
-# Modifications and additions copyright (c) 2025-present Liuming Tan
-# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module Ci
@@ -16,6 +13,7 @@ module Ci
   #
   module Metadatable
     extend ActiveSupport::Concern
+    include Gitlab::Utils::StrongMemoize
 
     included do
       has_one :metadata,
@@ -26,25 +24,45 @@ module Ci
 
       accepts_nested_attributes_for :metadata
 
-      delegate :timeout, to: :metadata, prefix: true, allow_nil: true
-      delegate :interruptible, to: :metadata, prefix: false, allow_nil: true
-      delegate :environment_auto_stop_in, to: :metadata, prefix: false, allow_nil: true
-      delegate :id_tokens, to: :metadata, allow_nil: true
-      delegate :exit_code, to: :metadata, allow_nil: true
-
-      before_validation :ensure_metadata, on: :create
-
       scope :with_project_and_metadata, -> do
-        joins(:metadata).includes(:metadata).preload(:project)
+        preload(:project, :metadata, :job_definition)
+      end
+
+      def self.any_with_exposed_artifacts?
+        found_exposed_artifacts = false
+
+        includes(:job_definition).each_batch do |batch|
+          # We only load what we need for `has_exposed_artifacts?`
+          records = batch.select(:id, :partition_id, :project_id, :options).to_a
+
+          ActiveRecord::Associations::Preloader.new(
+            records: records,
+            associations: :job_artifacts_metadata,
+            scope: Ci::JobArtifact.select(:job_id, :partition_id, :exposed_as)
+          ).call
+
+          ActiveRecord::Associations::Preloader.new(
+            records: records,
+            associations: :metadata,
+            scope: Ci::BuildMetadata.select(:build_id, :partition_id, :config_options)
+          ).call
+
+          next unless records.any?(&:has_exposed_artifacts?)
+
+          found_exposed_artifacts = true
+          break
+        end
+
+        found_exposed_artifacts
+      end
+
+      def self.select_with_exposed_artifacts
+        includes(:metadata, :job_definition, :job_artifacts_metadata, :project).select(&:has_exposed_artifacts?)
       end
     end
 
     def has_exposed_artifacts?
-      !!metadata&.has_exposed_artifacts?
-    end
-
-    def ensure_metadata
-      metadata || build_metadata(project: project)
+      artifacts_exposed_as.present?
     end
 
     def degenerated?
@@ -56,75 +74,144 @@ module Ci
         self.update!(options: nil, yaml_variables: nil)
         self.needs.all.delete_all
         self.metadata&.destroy
+        self.job_definition_instance&.destroy
         yield if block_given?
       end
     end
 
     def options
-      read_metadata_attribute(:options, :config_options, {})
+      read_metadata_attribute(:options, :config_options, :options, {})
     end
 
     def yaml_variables
-      read_metadata_attribute(:yaml_variables, :config_variables, [])
-    end
-
-    def options=(value)
-      write_metadata_attribute(:options, :config_options, value)
-
-      ensure_metadata.tap do |metadata|
-        # Store presence of exposed artifacts in build metadata to make it easier to query
-        metadata.has_exposed_artifacts = value&.dig(:artifacts, :expose_as).present?
-        metadata.environment_auto_stop_in = value&.dig(:environment, :auto_stop_in)
-      end
-    end
-
-    def yaml_variables=(value)
-      write_metadata_attribute(:yaml_variables, :config_variables, value)
+      read_metadata_attribute(:yaml_variables, :config_variables, :yaml_variables, [])
     end
 
     def interruptible
-      metadata&.interruptible
+      return job_definition.interruptible if job_definition
+      return temp_job_definition.interruptible if temp_job_definition
+
+      metadata&.read_attribute(:interruptible)
     end
 
-    def interruptible=(value)
-      ensure_metadata.interruptible = value
+    def id_tokens
+      read_metadata_attribute(nil, :id_tokens, :id_tokens, {}).deep_stringify_keys
     end
 
     def id_tokens?
-      metadata&.id_tokens.present?
+      id_tokens.present?
     end
 
-    def id_tokens=(value)
-      ensure_metadata.id_tokens = value
+    def debug_trace_enabled?
+      return debug_trace_enabled unless debug_trace_enabled.nil?
+      return true if degenerated?
+
+      !!metadata&.debug_trace_enabled?
     end
 
-    def enqueue_immediately?
-      !!options[:enqueue_immediately]
+    def enable_debug_trace!
+      update!(debug_trace_enabled: true)
     end
 
-    def set_enqueue_immediately!
-      # ensures that even if `config_options: nil` in the database we set the
-      # new value correctly.
-      self.options = options.merge(enqueue_immediately: true)
+    def timeout_human_readable_value
+      timeout_human_readable || metadata&.timeout_human_readable
     end
 
     def timeout_value
-      # TODO: need to add the timeout to p_ci_builds later
-      # See https://gitlab.com/gitlab-org/gitlab/-/work_items/538183#note_2542611159
-      try(:timeout) || metadata&.timeout
+      timeout || metadata&.timeout
+    end
+
+    # This method is called from within a Ci::Build state transition;
+    # it returns nil/true (success) or false (failure)
+    def update_timeout_state
+      timeout = ::Ci::Builds::TimeoutCalculator.new(self).applicable_timeout
+      return unless timeout
+
+      # We don't use update because we're already in a Ci::Build transaction
+      write_attribute(:timeout, timeout.value)
+      write_attribute(:timeout_source, timeout.source)
+      valid?
+    end
+
+    # metadata has `unknown_timeout_source` as default
+    def timeout_source_value
+      timeout_source || metadata&.timeout_source || 'unknown_timeout_source'
+    end
+
+    def artifacts_exposed_as
+      job_artifacts_metadata&.exposed_as || options.dig(:artifacts, :expose_as)
+    end
+
+    def artifacts_exposed_paths
+      job_artifacts_metadata&.exposed_paths || options.dig(:artifacts, :paths)
+    end
+
+    def downstream_errors
+      error_job_messages.map(&:content).presence || options[:downstream_errors]
+    end
+    strong_memoize_attr :downstream_errors
+
+    def scoped_user_id
+      read_attribute(:scoped_user_id) || options[:scoped_user_id]
+    end
+
+    def exit_code
+      read_attribute(:exit_code) || metadata&.exit_code
+    end
+
+    def exit_code=(value)
+      return unless value
+
+      safe_value = value.to_i.clamp(0, Gitlab::Database::MAX_SMALLINT_VALUE)
+
+      write_attribute(:exit_code, safe_value)
+    end
+
+    # Should be removed when the column is dropped from p_ci_builds
+    # allows deleting data for `degenerate!`
+    def options=(value)
+      raise ActiveRecord::ReadonlyAttributeError, 'This data is read only' unless value.nil?
+
+      super
+    end
+
+    # Should be removed when the column is dropped from p_ci_builds
+    # allows deleting data for `degenerate!`
+    def yaml_variables=(value)
+      raise ActiveRecord::ReadonlyAttributeError, 'This data is read only' unless value.nil?
+
+      super
+    end
+
+    def interruptible=(_value)
+      raise ActiveRecord::ReadonlyAttributeError, 'This data is read only'
+    end
+
+    def id_tokens=(_value)
+      raise ActiveRecord::ReadonlyAttributeError, 'This data is read only'
+    end
+
+    def secrets=(_value)
+      raise ActiveRecord::ReadonlyAttributeError, 'This data is read only'
     end
 
     private
 
-    def read_metadata_attribute(legacy_key, metadata_key, default_value = nil)
-      read_attribute(legacy_key) || metadata&.read_attribute(metadata_key) || default_value
-    end
+    def read_metadata_attribute(legacy_key, metadata_key, job_definition_key, default_value = nil)
+      result = read_attribute(legacy_key) if legacy_key
+      return result if result
 
-    def write_metadata_attribute(legacy_key, metadata_key, value)
-      ensure_metadata.write_attribute(metadata_key, value)
-      write_attribute(legacy_key, nil)
+      result = job_definition&.config&.dig(job_definition_key) || temp_job_definition&.config&.dig(job_definition_key)
+      return result if result
+
+      # New builds are created with a `temp_job_definition`, so we know it's not stored in metadata.
+      # We return from this point because the `metadata` lookup raises N+1 queries in `after_commit` callbacks.
+      return default_value if temp_job_definition
+
+      metadata&.read_attribute(metadata_key) || default_value
     end
   end
 end
 
 Ci::Metadatable.prepend_mod_with('Ci::Metadatable')
+

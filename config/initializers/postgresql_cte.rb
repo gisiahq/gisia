@@ -4,9 +4,6 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
-#
-# Modifications and additions copyright (c) 2025-present Liuming Tan
-# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 # Adds support for WITH statements when using PostgreSQL. The code here is taken
@@ -74,13 +71,13 @@ module ActiveRecord
     end
 
     def with_values_=(values)
-      raise ImmutableRelation if @loaded
+      raise UnmodifiableRelation if @loaded
 
       @values[:with_values] = values
     end
 
     def recursive_value=(value)
-      raise ImmutableRelation if @loaded
+      raise UnmodifiableRelation if @loaded
 
       @values[:recursive] = value
     end
@@ -108,7 +105,7 @@ module ActiveRecord
       end
     end
 
-    def build_arel(connection, aliases = nil)
+    def build_arel(*)
       arel = super
 
       build_with(arel) if @values[:with_values]
@@ -119,8 +116,6 @@ module ActiveRecord
     def build_with(arel)
       with_statements = with_values_.flat_map do |with_value|
         case with_value
-        when String
-          with_value
         when Hash
           with_value.map do |name, expression|
             case expression
@@ -131,19 +126,17 @@ module ActiveRecord
             end
             Arel::Nodes::As.new Arel::Nodes::SqlLiteral.new("\"#{name}\""), select
           end
-        when Arel::Nodes::As
-          with_value
-        when Gitlab::Database::AsWithMaterialized
+        when String, Arel::Nodes::As, Gitlab::Database::AsWithMaterialized
           with_value
         end
       end
 
-      unless with_statements.empty?
-        if recursive_value
-          arel.with :recursive, with_statements
-        else
-          arel.with with_statements
-        end
+      return if with_statements.empty?
+
+      if recursive_value
+        arel.with :recursive, with_statements
+      else
+        arel.with with_statements
       end
     end
   end

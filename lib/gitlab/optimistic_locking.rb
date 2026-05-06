@@ -10,34 +10,39 @@
 # ======================================================
 
 module Gitlab
-  module OptimisticLocking
+  class OptimisticLocking # rubocop:disable Gitlab/NamespacedClass -- platform layer
     MAX_RETRIES = 100
 
-    module_function
+    class << self
+      def retry_lock_with_transaction(subject, max_retries = MAX_RETRIES, name:, &block)
+        # prevent scope override, see https://gitlab.com/gitlab-org/gitlab/-/issues/391186
+        klass = subject.is_a?(ActiveRecord::Relation) ? subject.klass : subject.class
 
-    def retry_lock(subject, max_retries = MAX_RETRIES, name:, &block)
-      start_time = ::Gitlab::Metrics::System.monotonic_time
-      retry_attempts = 0
-
-      # prevent scope override, see https://gitlab.com/gitlab-org/gitlab/-/issues/391186
-      klass = subject.is_a?(ActiveRecord::Relation) ? subject.klass : subject.class
-
-      begin
-        klass.transaction do
-          yield(subject)
+        retry_lock(subject, max_retries, name: name) do |inner_subject|
+          klass.transaction do
+            yield(inner_subject)
+          end
         end
-      rescue ActiveRecord::StaleObjectError
-        raise unless retry_attempts < max_retries
+      end
 
-        subject.reset
+      def retry_lock(subject, max_retries = MAX_RETRIES, name:, &block)
+        start_time = ::Gitlab::Metrics::System.monotonic_time
+        retry_attempts = 0
 
-        retry_attempts += 1
-        retry
-      ensure
-        # Todo,
+        begin
+          yield(subject)
+        rescue ActiveRecord::StaleObjectError
+          raise unless retry_attempts < max_retries
+
+          subject.reset
+
+          retry_attempts += 1
+          retry
+        ensure
+          # Todo,
+        end
       end
     end
-
-    alias_method :retry_optimistic_lock, :retry_lock
   end
 end
+
