@@ -4,12 +4,10 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025-present Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
-
-Rails.application.configure do |config|
-  # ApolloUploadServer::Middleware expects to find uploaded files ready to use
-  config.middleware.insert_before(ApolloUploadServer::Middleware, Gitlab::Middleware::Multipart)
-end
 
 # The Gitlab::Middleware::Multipart middleware inserts instances of our
 # own ::UploadedFile class in the Rack env of requests. These instances
