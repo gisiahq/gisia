@@ -15,7 +15,6 @@ module Ci
     include Ci::HasStatus
     include Ci::HasCompletionReason
     include AfterCommitQueue
-    include Gitlab::OptimisticLocking
 
     include AtomicInternalId
     include Ci::HasRef

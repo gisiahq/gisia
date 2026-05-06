@@ -12,7 +12,6 @@
 module Ci
   # Cancel a pipelines cancelable jobs and optionally it's child pipelines cancelable jobs
   class CancelPipelineService
-    include Gitlab::OptimisticLocking
     include Gitlab::Allowable
 
     ##

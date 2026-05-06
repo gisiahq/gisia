@@ -12,7 +12,6 @@
 module Ci
   class Stage < ApplicationRecord
     include Ci::HasStatus
-    include Gitlab::OptimisticLocking
 
     has_many :builds
     enum :status, Ci::HasStatus::STATUSES_ENUM
