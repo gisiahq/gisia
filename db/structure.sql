@@ -1169,12 +1169,9 @@ ALTER SEQUENCE public.ci_stages_id_seq OWNED BY public.ci_stages.id;
 
 CREATE TABLE public.ci_triggers (
     id bigint NOT NULL,
-    token character varying NOT NULL,
     project_id bigint NOT NULL,
     owner_id bigint NOT NULL,
     description character varying,
-    encrypted_token bytea,
-    encrypted_token_iv bytea,
     expires_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -5170,13 +5167,6 @@ CREATE INDEX index_ci_stages_on_project_id ON public.ci_stages USING btree (proj
 
 
 --
--- Name: index_ci_triggers_on_encrypted_token; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_ci_triggers_on_encrypted_token ON public.ci_triggers USING btree (encrypted_token);
-
-
---
 -- Name: index_ci_triggers_on_owner_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5188,13 +5178,6 @@ CREATE INDEX index_ci_triggers_on_owner_id ON public.ci_triggers USING btree (ow
 --
 
 CREATE INDEX index_ci_triggers_on_project_id_and_id ON public.ci_triggers USING btree (project_id, id);
-
-
---
--- Name: index_ci_triggers_on_token; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_ci_triggers_on_token ON public.ci_triggers USING btree (token);
 
 
 --
@@ -6743,6 +6726,8 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260507063936'),
+('20260507063933'),
 ('20260507063431'),
 ('20260507063429'),
 ('20260507063426'),
