@@ -150,7 +150,10 @@ gem 'gitlab-fog-azure-rm', '~> 2.4.0', require: 'fog/azurerm'
 gem 'rubyzip', '~> 2.4.0', require: 'zip'
 
 gem 'apollo_upload_server', '~> 2.1.6'
+
+# dummy
 gem "gvltools", "~> 0.4.0"
+gem 'circuitbox', '2.0.0'
 
 # Events
 gem 'wisper', '~> 3.0'
