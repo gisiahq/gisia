@@ -21,5 +21,13 @@ module Feature
 
     def current_request
     end
+
+    def logged_states
+      RequestStore.fetch(:feature_flag_events) { {} }
+    end
+
+    def logged_states_for_log
+      logged_states.map { |key, state| "#{key}:#{state ? 1 : 0}" }
+    end
   end
 end
