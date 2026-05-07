@@ -15,5 +15,10 @@ module Organizations
 
     DEFAULT_ORGANIZATION_ID = 1
     scope :without_default, -> { where.not(id: DEFAULT_ORGANIZATION_ID) }
+
+
+    def owner_user_ids
+      []
+    end
   end
 end
