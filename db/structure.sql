@@ -957,7 +957,6 @@ CREATE SEQUENCE public.ci_runner_machines_id_seq
 CREATE TABLE public.ci_runner_machines (
     id bigint DEFAULT nextval('public.ci_runner_machines_id_seq'::regclass) NOT NULL,
     runner_id bigint NOT NULL,
-    sharding_key_id bigint,
     contacted_at timestamp(6) without time zone,
     creation_state integer DEFAULT 0 NOT NULL,
     executor_type integer,
@@ -983,7 +982,6 @@ CREATE TABLE public.ci_runner_taggings (
     id bigint NOT NULL,
     tag_id bigint NOT NULL,
     runner_id bigint NOT NULL,
-    sharding_key_id bigint,
     runner_type integer NOT NULL
 );
 
@@ -1036,12 +1034,10 @@ CREATE TABLE public.ci_runners (
     locked boolean DEFAULT false NOT NULL,
     name text,
     token_encrypted text,
-    token text,
     description text,
     maintainer_note text,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    sharding_key_id bigint
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -5034,13 +5030,6 @@ CREATE INDEX index_ci_runner_machines_on_ip_address ON public.ci_runner_machines
 
 
 --
--- Name: index_ci_runner_machines_on_sharding_key_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_ci_runner_machines_on_sharding_key_id ON public.ci_runner_machines USING btree (sharding_key_id);
-
-
---
 -- Name: index_ci_runner_machines_on_version; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5052,13 +5041,6 @@ CREATE INDEX index_ci_runner_machines_on_version ON public.ci_runner_machines US
 --
 
 CREATE INDEX index_ci_runner_taggings_on_runner_id_and_runner_type ON public.ci_runner_taggings USING btree (runner_id, runner_type);
-
-
---
--- Name: index_ci_runner_taggings_on_sharding_key_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_ci_runner_taggings_on_sharding_key_id ON public.ci_runner_taggings USING btree (sharding_key_id);
 
 
 --
@@ -5101,20 +5083,6 @@ CREATE INDEX index_ci_runners_on_locked ON public.ci_runners USING btree (locked
 --
 
 CREATE INDEX index_ci_runners_on_runner_type ON public.ci_runners USING btree (runner_type);
-
-
---
--- Name: index_ci_runners_on_sharding_key_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_ci_runners_on_sharding_key_id ON public.ci_runners USING btree (sharding_key_id);
-
-
---
--- Name: index_ci_runners_on_token_and_runner_type; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_ci_runners_on_token_and_runner_type ON public.ci_runners USING btree (token, runner_type) WHERE (token IS NOT NULL);
 
 
 --
@@ -6775,6 +6743,9 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260507063431'),
+('20260507063429'),
+('20260507063426'),
 ('20260504104200'),
 ('20260501134632'),
 ('20260501134333'),
