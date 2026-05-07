@@ -24,6 +24,7 @@ Please refer to the license references for the original terms.
      - lib/gitlab/usage_data_counters/total_counter_redis_key_overrides.yml
      - db/database_connections/
      - db/gitlab_schemas/
+     - config/authz/
 
 2. diff_match_patch (MIT License)
    Copied from GitLab FOSS (with GitLab modifications)
