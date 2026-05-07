@@ -101,6 +101,14 @@ class Namespace < ApplicationRecord
     end
   end
 
+  def organization_id
+    Organizations::Organization::DEFAULT_ORGANIZATION_ID
+  end
+
+  def organization
+    Organizations::Organization.default_organization
+  end
+
   def visibility_level_field
     :visibility_level
   end

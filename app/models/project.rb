@@ -149,8 +149,12 @@ class Project < ApplicationRecord
     false
   end
 
+  def organization_id
+    Organizations::Organization::DEFAULT_ORGANIZATION_ID
+  end
+
   def organization
-    nil
+    Organizations::Organization.default_organization
   end
 
   def pages_enabled?

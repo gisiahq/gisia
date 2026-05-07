@@ -172,6 +172,18 @@ class User < ApplicationRecord
     Namespace.where(id: namespace.id).or(Namespace.where(id: groups.select(:namespace_id)))
   end
 
+  def organization_id
+    Organizations::Organization::DEFAULT_ORGANIZATION_ID
+  end
+
+  def organization
+    Organizations::Organization.default_organization
+  end
+
+  def member_of_organization?(*args)
+    true
+  end
+
   private
 
   def set_default_name
