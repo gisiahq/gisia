@@ -87,7 +87,7 @@ gem 'gitlab-net-dns', '~> 0.15.0'
 gem 'gitlab-chronic', '~> 0.10.5'
 gem 'gitlab_chronic_duration', '~> 0.12'
 
-gem 'google-protobuf', '~> 3.25', '>= 3.25.3'
+gem 'google-protobuf', '~> 4.34', '>= 4.34.1'
 gem 'grpc', '= 1.80.0'
 
 gem 'charlock_holmes', '~> 0.7.9'
