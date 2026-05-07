@@ -1,6 +1,6 @@
 ---
 name: gitlab-experiment
-version: 0.9.1
+version: 1.3.0
 type: bundler
 summary: GitLab experimentation library.
 homepage: https://gitlab.com/gitlab-org/ruby/gems/gitlab-experiment

@@ -1,6 +1,6 @@
 ---
 name: actionpack
-version: 8.0.4
+version: 8.0.4.1
 type: bundler
 summary: Web-flow and rendering framework putting the VC in MVC (part of Rails).
 homepage: https://rubyonrails.org

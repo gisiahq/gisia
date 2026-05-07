@@ -1,6 +1,6 @@
 ---
 name: gitlab-utils
-version: 0.1.0
+version: 0.2.0
 type: bundler
 summary: GitLab common helper methods
 homepage: https://gitlab.com/gitlab-org/gitlab/-/tree/master/gems/gitlab-utils

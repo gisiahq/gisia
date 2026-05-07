@@ -1,6 +1,6 @@
 ---
 name: gitlab-labkit
-version: 0.39.0
+version: 1.5.1
 type: bundler
 summary: Instrumentation for GitLab
 homepage: https://gitlab.com/gitlab-org/labkit-ruby

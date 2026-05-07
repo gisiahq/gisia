@@ -1,6 +1,6 @@
 ---
 name: actionmailbox
-version: 8.0.4
+version: 8.0.4.1
 type: bundler
 summary: Inbound email handling framework.
 homepage: https://rubyonrails.org

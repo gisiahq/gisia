@@ -1,6 +1,6 @@
 ---
 name: activejob
-version: 8.0.4
+version: 8.0.4.1
 type: bundler
 summary: Job framework with pluggable queues.
 homepage: https://rubyonrails.org

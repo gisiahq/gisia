@@ -1,6 +1,6 @@
 ---
 name: gitlab-fog-azure-rm
-version: 2.2.0
+version: 2.4.0
 type: bundler
 summary: Module for the 'fog' gem to support Azure Blob Storage with CarrierWave and
   Fog.
