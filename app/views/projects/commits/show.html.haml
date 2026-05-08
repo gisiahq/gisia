@@ -15,12 +15,6 @@
               %span{ class: 'font-mono text-slate-700 bg-slate-100 px-2 py-1 rounded' }= @ref
               = _('branch history')
 
-        %div{ class: 'flex items-center gap-3' }
-          - if @path.present?
-            = link_to '#', class: 'inline-flex items-center gap-2 px-3 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-md text-sm font-medium transition-colors' do
-              = icon 'arrow-left', class: 'w-4 h-4'
-              %span= _('Back to files')
-
 
     %div{ class: 'space-y-6' }
       - if @commits&.any?
