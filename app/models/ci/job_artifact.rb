@@ -27,7 +27,7 @@ module Ci
 
     InvalidArtifactError = Class.new(StandardError)
 
-    enum :accessibility, { public: 0, private: 1, none: 2 }, suffix: true
+    enum :accessibility, { public: 0, private: 1, none: 2, maintainer: 3 }, suffix: true
 
     belongs_to :project
     belongs_to :job,
@@ -147,8 +147,8 @@ module Ci
     ##
     # FastDestroyAll concerns
     def self.begin_fast_destroy
-      service = ::Ci::JobArtifacts::DestroyAssociationsService.new(self)
-      service.destroy_records
+      service = ::Ci::JobArtifacts::DestroyAssociationsService.new
+      service.destroy_records(self)
       service
     end
 
@@ -193,10 +193,6 @@ module Ci
       expire_at.present? && expire_at.past?
     end
 
-    def expiring?
-      expire_at.present? && expire_at.future?
-    end
-
     def expire_in
       expire_at - Time.current if expire_at
     end
@@ -211,16 +207,12 @@ module Ci
     end
 
     def to_deleted_object_attrs(pick_up_at = nil)
-      final_path_store_dir, final_path_filename = nil
-      if file_final_path.present?
-        final_path_store_dir = File.dirname(file_final_path)
-        final_path_filename = File.basename(file_final_path)
-      end
+      store_dir_value, file_value = resolve_file_path_for_deletion
 
       {
         file_store: file_store,
-        store_dir: final_path_store_dir || file.store_dir.to_s,
-        file: final_path_filename || file_identifier,
+        store_dir: store_dir_value,
+        file: file_value,
         pick_up_at: set_pick_up_at(pick_up_at),
         project_id: project_id
       }
@@ -259,6 +251,28 @@ module Ci
     end
 
     private
+
+    def resolve_file_path_for_deletion
+      return [File.dirname(file_final_path), File.basename(file_final_path)] if file_final_path.present?
+
+      return [nil, nil] if object_storage_inaccessible?
+
+      extract_path_from_uploader
+    end
+
+    def object_storage_inaccessible?
+      file_store == ObjectStorage::Store::REMOTE && !JobArtifactUploader.object_store_enabled?
+    end
+
+    def extract_path_from_uploader
+      [file.store_dir.to_s, file_identifier]
+    rescue RuntimeError => e
+      if e.message.match?(/Object Storage is not enabled|storage.*not.*configured/i)
+        [nil, nil]
+      else
+        raise e
+      end
+    end
 
     def set_pick_up_at(pick_up_at)
       (pick_up_at || expire_at || Time.current).clamp(1.day.ago, 1.hour.from_now)
@@ -306,3 +320,6 @@ module Ci
     end
   end
 end
+
+Ci::JobArtifact.prepend_mod_with('Ci::JobArtifact')
+
