@@ -10,7 +10,10 @@
         - if message.error?
           %div{ class: 'flex items-start gap-3 px-4 py-3 bg-rose-50 border border-rose-200 rounded-lg' }
             = icon 'warning-circle', class: 'w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5'
-            %p{ class: 'text-sm text-rose-700' }= message.content
+            %div{ class: 'flex flex-col gap-1' }
+              - if @pipeline.failure_reason.present?
+                %span{ class: 'text-xs font-medium text-rose-500 uppercase tracking-wide' }= @pipeline.failure_reason.humanize
+              %p{ class: 'text-sm text-rose-700' }= message.content
         - else
           %div{ class: 'flex items-start gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg' }
             = icon 'warning', class: 'w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5'

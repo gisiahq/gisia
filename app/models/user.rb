@@ -12,6 +12,8 @@
 class User < ApplicationRecord
   extend Gitlab::ConfigHelper
 
+  include CaseSensitivity
+  include FromUnion
   include Gitlab::ConfigHelper
   include HasUserType
   include Users::Authenticatable
@@ -67,6 +69,7 @@ class User < ApplicationRecord
   scope :admins, -> { where(admin: true) }
   scope :active, -> { with_state(:active).non_internal }
   scope :blocked_pending_approval, -> { with_state(:blocked_pending_approval) }
+  scope :by_user_email, ->(emails) { iwhere(email: Array(emails)) }
 
   class << self
     def find_by_ssh_key_id(key_id)
@@ -80,6 +83,23 @@ class User < ApplicationRecord
     def ransackable_associations(_auth_object = nil)
       %w[assigned_merge_requests merge_request_assignees merge_request_reviewers reviews]
     end
+
+    # Find a User by their primary email or any associated confirmed secondary email
+    def find_by_any_email(email, confirmed: false)
+      return unless email
+
+      by_any_email(email, confirmed: confirmed).take
+    end
+
+    def by_any_email(emails, confirmed: false)
+      return none if Array(emails).all?(&:nil?)
+
+      from_users = by_user_email(emails)
+      from_users = from_users.confirmed if confirmed
+
+      from_users
+    end
+
   end
 
   def can?(action, subject = :global, **)
@@ -168,6 +188,7 @@ class User < ApplicationRecord
   def commit_email
   end
 
+
   def accessible_namespaces
     Namespace.where(id: namespace.id).or(Namespace.where(id: groups.select(:namespace_id)))
   end
@@ -182,6 +203,11 @@ class User < ApplicationRecord
 
   def member_of_organization?(*args)
     true
+  end
+
+  # Todo,
+  def private_rofile?
+    false
   end
 
   private

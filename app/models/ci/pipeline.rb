@@ -258,6 +258,57 @@ module Ci
       end
     end
 
+    def ci_config_ref_uri
+      url = File.join(Settings.build_server_fqdn, project.full_path, '//', project.ci_config_path_or_default)
+      "#{url}@#{source_ref_path}"
+    end
+
+    def git_author_name
+      strong_memoize(:git_author_name) { commit.try(:author_name) }
+    end
+
+    def git_author_email
+      strong_memoize(:git_author_email) { commit.try(:author_email) }
+    end
+
+    def git_author_full_text
+      strong_memoize(:git_author_full_text) { commit.try(:author_full_text) }
+    end
+
+    def git_author_login
+      strong_memoize(:git_author_login) do
+        email = commit.try(:author_email)
+        next unless email
+
+        user = User.find_by_any_email(email, confirmed: true)
+        next unless user
+        next if user.private_profile?
+        next unless user.public_email.present? && user.public_email.casecmp?(email)
+
+        user.username
+      end
+    end
+
+    def git_commit_message
+      strong_memoize(:git_commit_message) { commit.try(:message) }
+    end
+
+    def git_commit_title
+      strong_memoize(:git_commit_title) { commit.try(:title) }
+    end
+
+    def git_commit_full_title
+      strong_memoize(:git_commit_full_title) { commit.try(:full_title) }
+    end
+
+    def git_commit_description
+      strong_memoize(:git_commit_description) { commit.try(:description) }
+    end
+
+    def git_commit_timestamp
+      strong_memoize(:git_commit_timestamp) { commit.try(:timestamp) }
+    end
+
     def source_ref
       if merge_request?
         merge_request.source_branch
