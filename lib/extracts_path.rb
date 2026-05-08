@@ -58,7 +58,6 @@ module ExtractsPath
     raise InvalidPathError unless @commit
 
     @hex_path = Digest::SHA1.hexdigest(@path)
-    @logs_path = logs_file_project_ref_path(@project, @ref, @path)
   end
 
   def ref_type
@@ -140,7 +139,11 @@ module ExtractsPath
 
   def ref_extractor
     @ref_extractor ||=
-      ExtractsRef::RefExtractor.new(repository_container, params.permit(:id, :ref, :path, :ref_type)).tap(&:extract!)
+      ExtractsRef::RefExtractor.new(repository_container, ref_extractor_params).tap(&:extract!)
+  end
+
+  def ref_extractor_params
+    params.permit(:id, :ref, :path, :ref_type)
   end
 end
 # rubocop:enable Gitlab/ModuleWithInstanceVariables

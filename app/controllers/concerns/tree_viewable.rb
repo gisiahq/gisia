@@ -55,8 +55,8 @@ module TreeViewable
     repository.branch_names.find { |branch| id == branch }
   end
 
-  def ref_params
-    { ref_type: ref_type, ref: ref }
+  def ref_extractor_params
+    params.permit(:ref, :path, :ref_type).merge(id: @project.default_branch)
   end
 
   def pagination_params

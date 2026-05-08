@@ -26,6 +26,26 @@ module Banzai
       html.html_safe
     end
 
+    def self.render_field(object, field, context = {})
+      unless object.respond_to?(:cached_markdown_fields)
+        return cacheless_render_field(object, field, context)
+      end
+
+      object.refresh_markdown_cache! unless object.cached_html_up_to_date?(field)
+      object.cached_html_for(field)
+    end
+
+    def self.cacheless_render_field(object, field, context = {})
+      text = object.__send__(field) # rubocop:disable GitlabSecurity/PublicSend
+      context = context.reverse_merge(object.banzai_render_context(field)) if object.respond_to?(:banzai_render_context)
+
+      cacheless_render(text, context)
+    end
+
+    def self.cacheless_render(text, context = {})
+      render(text, context)
+    end
+
     def self.render_result(text, context = {})
       { output: render(text, context) }
     end

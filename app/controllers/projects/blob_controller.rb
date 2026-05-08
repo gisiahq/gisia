@@ -35,7 +35,7 @@ class Projects::BlobController < Projects::ApplicationController
 
   private
 
-  def ref_params
+  def ref_extractor_params
     { id: params[:id]}
   end
 end

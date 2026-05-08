@@ -33,7 +33,7 @@ class Projects::CommitsController < Projects::ApplicationController
     @commits = @repository.commits(@fully_qualified_ref || @ref, **options)
   end
 
-  def ref_params
+  def ref_extractor_params
     type = params['ref_type'] || 'heads'
 
     { id: params[:id], ref_type: type }

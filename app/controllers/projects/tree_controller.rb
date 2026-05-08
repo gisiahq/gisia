@@ -24,7 +24,7 @@ class Projects::TreeController < Projects::ApplicationController
 
   private
 
-  def ref_params
+  def ref_extractor_params
     params.permit(:id, :ref, :path, :ref_type)
   end
 end
