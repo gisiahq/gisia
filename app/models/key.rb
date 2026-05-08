@@ -49,6 +49,11 @@ class Key < ApplicationRecord
     @public_key = nil
   end
 
+  def regular_key?
+    # Todo,
+    true
+  end
+
   def public_key
     @public_key ||= Gitlab::SSHPublicKey.new(key)
   end
