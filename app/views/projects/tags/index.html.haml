@@ -37,7 +37,7 @@
 
                   - if tag.message.present?
                     %div{class: 'text-sm text-slate-600 mb-2'}
-                      = truncate(tag.message.sub(/-----BEGIN PGP SIGNATURE-----.*\z/m, '').strip, length: 100)
+                      = truncate(strip_signature(tag.message).strip, length: 100)
 
                   %div{class: 'flex items-center gap-4 text-sm'}
                     %div{class: 'flex items-center gap-1.5 text-slate-500'}
