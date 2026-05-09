@@ -2450,7 +2450,8 @@ CREATE TABLE public.personal_access_tokens (
     last_used_at timestamp(6) without time zone,
     description text,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    user_type smallint DEFAULT 0
 );
 
 
@@ -7006,6 +7007,7 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260509000005'),
 ('20260509000004'),
 ('20260509000003'),
 ('20260509000002'),
