@@ -669,6 +669,71 @@ ALTER SEQUENCE public.ci_job_artifacts_id_seq OWNED BY public.ci_job_artifacts.i
 
 
 --
+-- Name: ci_job_definition_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ci_job_definition_instances (
+    id bigint NOT NULL,
+    project_id bigint NOT NULL,
+    job_id bigint NOT NULL,
+    job_definition_id bigint NOT NULL
+);
+
+
+--
+-- Name: ci_job_definition_instances_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.ci_job_definition_instances_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: ci_job_definition_instances_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.ci_job_definition_instances_id_seq OWNED BY public.ci_job_definition_instances.id;
+
+
+--
+-- Name: ci_job_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ci_job_definitions (
+    id bigint NOT NULL,
+    project_id bigint NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    checksum text NOT NULL,
+    interruptible boolean,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: ci_job_definitions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.ci_job_definitions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: ci_job_definitions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.ci_job_definitions_id_seq OWNED BY public.ci_job_definitions.id;
+
+
+--
 -- Name: ci_job_variables; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3248,6 +3313,20 @@ ALTER TABLE ONLY public.ci_job_artifacts ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
+-- Name: ci_job_definition_instances id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ci_job_definition_instances ALTER COLUMN id SET DEFAULT nextval('public.ci_job_definition_instances_id_seq'::regclass);
+
+
+--
+-- Name: ci_job_definitions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ci_job_definitions ALTER COLUMN id SET DEFAULT nextval('public.ci_job_definitions_id_seq'::regclass);
+
+
+--
 -- Name: ci_job_variables id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3752,6 +3831,22 @@ ALTER TABLE ONLY public.ci_instance_variables
 
 ALTER TABLE ONLY public.ci_job_artifacts
     ADD CONSTRAINT ci_job_artifacts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ci_job_definition_instances ci_job_definition_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ci_job_definition_instances
+    ADD CONSTRAINT ci_job_definition_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ci_job_definitions ci_job_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ci_job_definitions
+    ADD CONSTRAINT ci_job_definitions_pkey PRIMARY KEY (id);
 
 
 --
@@ -4905,6 +5000,34 @@ CREATE UNIQUE INDEX index_ci_job_artifacts_on_job_id_and_file_type ON public.ci_
 --
 
 CREATE INDEX index_ci_job_artifacts_on_project_id ON public.ci_job_artifacts USING btree (project_id);
+
+
+--
+-- Name: index_ci_job_definition_instances_on_job_definition_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ci_job_definition_instances_on_job_definition_id ON public.ci_job_definition_instances USING btree (job_definition_id);
+
+
+--
+-- Name: index_ci_job_definition_instances_on_job_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_ci_job_definition_instances_on_job_id ON public.ci_job_definition_instances USING btree (job_id);
+
+
+--
+-- Name: index_ci_job_definitions_on_checksum; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ci_job_definitions_on_checksum ON public.ci_job_definitions USING btree (checksum);
+
+
+--
+-- Name: index_ci_job_definitions_on_project_id_and_checksum; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_ci_job_definitions_on_project_id_and_checksum ON public.ci_job_definitions USING btree (project_id, checksum);
 
 
 --
@@ -6880,6 +7003,8 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260509000002'),
+('20260509000001'),
 ('20260508073925'),
 ('20260508065116'),
 ('20260507152428'),
