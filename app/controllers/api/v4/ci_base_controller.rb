@@ -56,7 +56,7 @@ module API
       end
 
       def runner_config_from_request
-        { config: params.dig('info', 'config', 'gpus') }
+        { config: attributes_for_keys(%w[gpus], params.dig('info', 'config')) }
       end
 
       def runner_ip

@@ -34,6 +34,18 @@ module API::V4::CiBaseHelper
     @job_token ||= (params[JOB_TOKEN_PARAM] || request.env[JOB_TOKEN_HEADER]).to_s
   end
 
+  def attributes_for_keys(keys, custom_params = nil)
+    params_hash = custom_params || params
+    attrs = {}
+    keys.each do |key|
+      if params_hash[key].present? || (params_hash.key?(key) && params_hash[key] == false)
+        attrs[key] = params_hash[key]
+      end
+    end
+    permitted_attrs = ActionController::Parameters.new(attrs).permit!
+    permitted_attrs.to_h
+  end
+
   def job_from_token
     # Uses the Ci::AuthJobFinder, which we want to use
     # as the sole centralized job token authentication service.
@@ -42,7 +54,7 @@ module API::V4::CiBaseHelper
     # return a generic auth error with no build details.
 
     return unless current_job
-    return unless current_job == ::Ci::AuthJobFinder.new(token: job_token).execute!(allow_canceling: true)
+    return unless current_job == ::Ci::AuthJobFinder.new(token: job_token).execute!
 
     current_job
   end
