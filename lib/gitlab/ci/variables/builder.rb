@@ -47,7 +47,7 @@ module Gitlab
             variables.concat(project.predefined_variables)
             variables.concat(pipeline_variables_builder.predefined_variables)
             variables.concat(job.runner.predefined_variables) if job.runnable? && job.runner
-            variables.concat(kubernetes_variables_from_job(environment: environment, job: job))
+            # variables.concat(kubernetes_variables_from_job(environment: environment, job: job))
             variables.concat(job.yaml_variables)
             variables.concat(user_variables(job.user))
             variables.concat(job.dependency_variables) if dependencies
@@ -80,7 +80,7 @@ module Gitlab
             variables.concat(project.predefined_variables)
             variables.concat(pipeline_variables_builder.predefined_variables)
             variables.concat(job.runner.predefined_variables) if job.runnable? && job.runner
-            variables.concat(kubernetes_variables_from_job(environment: environment, job: job))
+            # variables.concat(kubernetes_variables_from_job(environment: environment, job: job))
             variables.concat(job.yaml_variables)
             variables.concat(user_variables(job.user))
             variables.concat(job.dependency_variables) if dependencies
@@ -113,7 +113,7 @@ module Gitlab
             variables.concat(project.predefined_variables)
             variables.concat(pipeline_variables_builder.predefined_variables)
             # job.runner.predefined_variables: No need because it's not available in the Seed step.
-            variables.concat(kubernetes_variables_from_attr(environment: environment, kubernetes_namespace: kubernetes_namespace))
+            # variables.concat(kubernetes_variables_from_attr(environment: environment, kubernetes_namespace: kubernetes_namespace))
             variables.concat(job_attr[:yaml_variables])
             variables.concat(user_variables(user))
             # job.dependency_variables: No need because dependencies are not in the Seed step.
@@ -151,21 +151,6 @@ module Gitlab
               environment: environment,
               kubernetes_namespace: kubernetes_namespace
             )
-          end
-        end
-
-        def kubeconfig_variables(environment, kubernetes_namespace, token, kubeconfig_yaml)
-          # kubernetes_namespace is part of the cache key because the value of KUBECONFIG depends on it.
-          # And we don't want to use `kubeconfig_yaml` in the cache key because it can be too large.
-          strong_memoize_with(:kubeconfig_variables, environment, token, kubernetes_namespace) do
-            template = ::Ci::GenerateKubeconfigService.new(pipeline, token: token, environment: environment).execute
-            template.merge_yaml(kubeconfig_yaml) if kubeconfig_yaml.present?
-
-            next [] unless template.valid?
-
-            ::Gitlab::Ci::Variables::Collection.new.tap do |collection|
-              collection.append(key: 'KUBECONFIG', value: template.to_yaml, public: false, file: true)
-            end
           end
         end
 
