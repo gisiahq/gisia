@@ -451,14 +451,16 @@ CREATE TABLE public.ci_builds (
     processed boolean DEFAULT false,
     auto_canceled_by_id bigint,
     erased_by_id bigint,
-    trigger_request_id bigint,
     execution_config_id bigint,
     description character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     lock_version integer DEFAULT 0,
     type integer DEFAULT 0 NOT NULL,
-    exit_code integer
+    exit_code integer,
+    timeout integer,
+    timeout_source integer,
+    scoped_user_id bigint
 );
 
 
@@ -7004,6 +7006,8 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260509000004'),
+('20260509000003'),
 ('20260509000002'),
 ('20260509000001'),
 ('20260508073925'),
