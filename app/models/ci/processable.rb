@@ -23,6 +23,23 @@ module Ci
 
     ACTIONABLE_WHEN = %w[manual delayed].freeze
 
+    attribute :temp_job_definition
+
+    has_one :job_source,
+      class_name: 'Ci::BuildSource',
+      foreign_key: :build_id,
+      inverse_of: :job
+
+    has_one :job_definition_instance,
+      class_name: 'Ci::JobDefinitionInstance',
+      foreign_key: :job_id,
+      inverse_of: :job,
+      autosave: true
+
+    has_one :job_definition,
+      class_name: 'Ci::JobDefinition',
+      through: :job_definition_instance
+
     scope :interruptible, -> do
       joins(:metadata).merge(Ci::BuildMetadata.with_interruptible)
     end
@@ -62,6 +79,20 @@ module Ci
 
     def can_auto_cancel_pipeline_on_job_failure?
       raise NotImplementedError
+    end
+
+    def self.fabricate(partition_id:, **attrs)
+      definition_attrs = attrs.extract!(*Ci::JobDefinition::CONFIG_ATTRIBUTES)
+      attrs[:tag_list] = definition_attrs[:tag_list] if definition_attrs.key?(:tag_list)
+      attrs[:partition_id] = partition_id
+
+      new(attrs).tap do |job|
+        job.temp_job_definition = ::Ci::JobDefinition.fabricate(
+          config: definition_attrs,
+          project_id: job.project_id,
+          partition_id: job.partition_id
+        )
+      end
     end
 
     def self.select_with_aggregated_needs(_project)

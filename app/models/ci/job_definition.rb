@@ -1,0 +1,116 @@
+# frozen_string_literal: true
+
+# ======================================================
+# Contains code from GitLab FOSS (MIT Licensed)
+# Copyright (c) GitLab Inc.
+# See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025-present Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
+# ======================================================
+
+module Ci
+  # The purpose of this class is to store immutable duplicate Processable related
+  # data that can be disposed after all the pipelines that use it are archived.
+  # Data that should be persisted forever, should be stored with Ci::Build model.
+  class JobDefinition < Ci::ApplicationRecord
+    include BulkInsertSafe
+
+    self.table_name = :ci_job_definitions
+    self.primary_key = :id
+
+    attr_accessor :partition_id
+
+    # IMPORTANT: append new attributes at the end of this list. Do not change the order!
+    # Order is important for the checksum calculation.
+    # We have two constants at the moment because we'll only stop writing to the `p_ci_builds_metadata` table via
+    # the `stop_writing_builds_metadata` feature flag. The `tag_list` and `run_steps` will be implemented in the future.
+    CONFIG_ATTRIBUTES_FROM_METADATA = [
+      :options,
+      :yaml_variables,
+      :id_tokens,
+      :secrets,
+      :interruptible
+    ].freeze
+    CONFIG_ATTRIBUTES = (CONFIG_ATTRIBUTES_FROM_METADATA + [:tag_list, :run_steps]).freeze
+    NORMALIZED_DATA_COLUMNS = %i[interruptible].freeze
+
+    belongs_to :project
+
+    validates :project, presence: true
+    validates :config, json_schema: {
+      filename: 'ci_job_definition_config',
+      size_limit: 1.megabyte,
+      detail_errors: true
+    }
+
+    attribute :config, ::Gitlab::Database::Type::SymbolizedJsonb.new
+
+    scope :in_partition, ->(_partition_id) { all }
+    scope :for_project, ->(project_id) { where(project_id: project_id) }
+    scope :for_checksum, ->(checksum) { where(checksum: checksum) }
+    scope :with_interruptible_true, -> { where(interruptible: true) }
+
+    ignore_column :updated_at, remove_after: '2025-12-22', remove_with: '18.8'
+
+    def self.fabricate(config:, project_id:, partition_id:)
+      sanitized_config = sanitize_config(config)
+      config_with_defaults = apply_normalized_defaults!(sanitized_config.deep_dup)
+
+      new(
+        project_id: project_id,
+        config: sanitized_config.except(*NORMALIZED_DATA_COLUMNS),
+        checksum: generate_checksum(config_with_defaults),
+        created_at: Time.current,
+        **config_with_defaults.slice(*NORMALIZED_DATA_COLUMNS)
+      )
+    end
+
+    def self.sanitize_config(config)
+      config
+        .symbolize_keys
+        .slice(*CONFIG_ATTRIBUTES)
+        .then { |data| data.merge!(extract_and_parse_tags(data)) }
+    end
+
+    def self.generate_checksum(config)
+      config
+        .then { |data| Gitlab::Json.dump(data) }
+        .then { |data| Digest::SHA256.hexdigest(data) }
+    end
+
+    def self.apply_normalized_defaults!(config)
+      NORMALIZED_DATA_COLUMNS.each do |col|
+        config[col] = config.fetch(col) { column_defaults[col.to_s] }
+      end
+      config
+    end
+
+    def self.extract_and_parse_tags(config)
+      tag_list = config[:tag_list]
+      return {} unless tag_list
+
+      { tag_list: Gitlab::Ci::Tags::Parser.new(tag_list).parse }
+    end
+
+    # We need to re-parse the tags because there are a few
+    # records in the 106-107 partitions that were not properly
+    # parsed during the pipeline creation.
+    def tag_list
+      tags = config.fetch(:tag_list) { [] }
+
+      Gitlab::Ci::Tags::Parser.new(tags).parse
+    end
+
+    # Hash containing all job attributes: config + normalized_data.
+    # Used in spec helpers, to merge with `job_attributes` instead of `config`.
+    def job_attributes
+      attributes.deep_symbolize_keys.slice(*NORMALIZED_DATA_COLUMNS).merge(config)
+    end
+
+    def readonly?
+      persisted?
+    end
+  end
+end
+

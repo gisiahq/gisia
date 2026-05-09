@@ -1,0 +1,641 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "CI builds metadata config_options with recursive support",
+  "type": [
+    "object",
+    "null"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "after_script": true,
+    "allow_failure_criteria": {
+      "$ref": "#/definitions/allowFailureCriteria"
+    },
+    "artifacts": {
+      "$ref": "#/definitions/artifactsConfig"
+    },
+    "before_script": true,
+    "bridge_needs": {
+      "$ref": "#/definitions/bridgeNeedsDefinition"
+    },
+    "cache": {
+      "$ref": "#/definitions/cacheDefinition"
+    },
+    "cross_dependencies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/crossDependencyDefinition"
+      }
+    },
+    "dast_configuration": {
+      "$ref": "#/definitions/dastConfigurationDefinition"
+    },
+    "dependencies": true,
+    "downstream_errors": true,
+    "enqueue_immediately": true,
+    "environment": {
+      "$ref": "#/definitions/environmentDefinition"
+    },
+    "execution_policy_job": {
+      "type": "boolean"
+    },
+    "execution_policy_name": {
+      "type": "string"
+    },
+    "execution_policy_pre_succeeds": {
+      "type": "boolean"
+    },
+    "execution_policy_variables_override": {
+      "$ref": "#/definitions/executionPolicyVariablesOverrideDefinition"
+    },
+    "policy": {
+      "$ref": "#/definitions/policyDefinition"
+    },
+    "hooks": {
+      "$ref": "#/definitions/hooksDefinition"
+    },
+    "identity": true,
+    "image": {
+      "$ref": "#/definitions/imageDefinition"
+    },
+    "inputs": true,
+    "instance": true,
+    "job_timeout": true,
+    "manual_confirmation": true,
+    "pages": {
+      "$ref": "#/definitions/pagesDefinition"
+    },
+    "parallel": {
+      "$ref": "#/definitions/parallelDefinition"
+    },
+    "publish": true,
+    "release": {
+      "$ref": "#/definitions/releaseDefinition"
+    },
+    "resource_group_key": true,
+    "retry": {
+      "$ref": "#/definitions/retryDefinition"
+    },
+    "scoped_user_id": true,
+    "script": true,
+    "services": {
+      "$ref": "#/definitions/servicesDefinition"
+    },
+    "start_in": true,
+    "trigger": {
+      "$ref": "#/definitions/triggerDefinition"
+    }
+  },
+  "definitions": {
+    "allowFailureCriteria": {
+      "additionalProperties": false,
+      "properties": {
+        "exit_codes": true
+      }
+    },
+    "artifactReports": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "accessibility": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "annotations": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "api_fuzzing": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "archive": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "browser_performance": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "cluster_applications": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "cluster_image_scanning": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "cobertura": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "codequality": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "container_scanning": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "coverage_fuzzing": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "coverage_report": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "coverage_format": true,
+            "path": true
+          }
+        },
+        "cyclonedx": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "dast": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "dependency_scanning": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "dotenv": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "file": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "jacoco": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "junit": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "license_scanning": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "load_performance": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "lsif": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "metadata": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "metrics": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "metrics_referee": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "network_referee": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "performance": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "repository_xray": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "requirements": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "requirements_v2": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "sarif": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "sast": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "scip": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "secret_detection": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "terraform": {
+          "$ref": "#/definitions/reportPath"
+        },
+        "trace": {
+          "$ref": "#/definitions/reportPath"
+        }
+      }
+    },
+    "artifactsConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "access": true,
+        "exclude": true,
+        "expire_in": true,
+        "expose_as": true,
+        "file": true,
+        "name": true,
+        "paths": true,
+        "public": true,
+        "reports": {
+          "$ref": "#/definitions/artifactReports"
+        },
+        "untracked": true,
+        "when": true
+      }
+    },
+    "bridgeNeedsDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pipeline": true
+      }
+    },
+    "cacheConfigBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fallback_keys": true,
+        "key": {
+          "$ref": "#/definitions/cacheKeyDefinition"
+        },
+        "paths": true,
+        "policy": true,
+        "unprotect": true,
+        "untracked": true,
+        "when": true
+      }
+    },
+    "cacheDefinition": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/cacheConfigBase"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cacheConfigBase"
+          },
+          "maxItems": 4
+        }
+      ]
+    },
+    "cacheKeyDefinition": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "files": true,
+            "prefix": true
+          }
+        }
+      ]
+    },
+    "crossDependencyDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": true,
+        "job": true,
+        "pipeline": true,
+        "project": true,
+        "ref": true
+      }
+    },
+    "dastConfigurationDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scanner_profile": true,
+        "site_profile": true
+      }
+    },
+    "dockerOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "platform": true,
+        "user": true
+      }
+    },
+    "environmentDefinition": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "action": true,
+            "auto_stop_in": true,
+            "deployment_tier": {
+              "type": "string"
+            },
+            "kubernetes": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "agent": true,
+                "flux_resource_path": true,
+                "namespace": true,
+                "managed_resources": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "enabled": true
+                  }
+                },
+                "dashboard": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "namespace": true,
+                    "flux_resource_path": true
+                  }
+                }
+              }
+            },
+            "name": true,
+            "on_stop": true,
+            "url": true
+          }
+        }
+      ]
+    },
+    "policyDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pipeline_execution_policy_job": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "pre_succeeds": {
+          "type": "boolean"
+        },
+        "variables_override": {
+          "$ref": "#/definitions/executionPolicyVariablesOverrideDefinition"
+        },
+        "project_id": {
+          "type": "integer"
+        },
+        "sha": {
+          "type": "string"
+        }
+      }
+    },
+    "executionPolicyVariablesOverrideDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowed": true,
+        "exceptions": true,
+        "dotenv": true
+      }
+    },
+    "hooksDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pre_get_sources_script": true
+      }
+    },
+    "imageDefinition": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "alias": true,
+            "entrypoint": true,
+            "executor_opts": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "docker": {
+                  "$ref": "#/definitions/dockerOptions"
+                },
+                "kubernetes": {
+                  "$ref": "#/definitions/kubernetesOptions"
+                }
+              }
+            },
+            "name": true,
+            "ports": true,
+            "pull_policy": {
+              "$ref": "#/definitions/pullPolicyOptions"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        }
+      ]
+    },
+    "kubernetesOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "user": true
+      }
+    },
+    "pagesDefinition": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "expire_in": true,
+            "path_prefix": true,
+            "publish": true
+          }
+        }
+      ]
+    },
+    "parallelDefinition": {
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "matrix": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "number": true,
+            "total": true
+          }
+        }
+      ]
+    },
+    "pullPolicyOptions": true,
+    "releaseDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "assets": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "links": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "direct_asset_path": true,
+                  "filepath": true,
+                  "link_type": true,
+                  "name": true,
+                  "type": true,
+                  "url": true
+                }
+              }
+            }
+          }
+        },
+        "description": true,
+        "milestones": true,
+        "name": true,
+        "ref": true,
+        "released_at": true,
+        "tag_message": true,
+        "tag_name": true
+      }
+    },
+    "reportPath": true,
+    "retryDefinition": {
+      "oneOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "exit_codes": true,
+            "max": true,
+            "when": true
+          }
+        }
+      ]
+    },
+    "serviceDefinition": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "alias": true,
+            "command": true,
+            "docker": {
+              "$ref": "#/definitions/dockerOptions"
+            },
+            "entrypoint": true,
+            "executor_opts": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "docker": {
+                  "$ref": "#/definitions/dockerOptions"
+                },
+                "kubernetes": {
+                  "$ref": "#/definitions/kubernetesOptions"
+                }
+              }
+            },
+            "kubernetes": {
+              "$ref": "#/definitions/kubernetesOptions"
+            },
+            "name": true,
+            "ports": true,
+            "pull_policy": {
+              "$ref": "#/definitions/pullPolicyOptions"
+            },
+            "variables": true
+          }
+        }
+      ]
+    },
+    "servicesDefinition": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/serviceDefinition"
+      }
+    },
+    "triggerDefinition": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "branch": true,
+            "file": true,
+            "forward": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "pipeline_variables": true,
+                "yaml_variables": true
+              }
+            },
+            "include": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/triggerIncludeItem"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/triggerIncludeItem"
+                  }
+                }
+              ]
+            },
+            "inputs": true,
+            "project": true,
+            "strategy": true
+          }
+        }
+      ]
+    },
+    "triggerIncludeItem": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "artifact": true,
+            "component": true,
+            "file": true,
+            "inputs": true,
+            "job": true,
+            "local": true,
+            "project": true,
+            "ref": true,
+            "remote": true,
+            "rules": true,
+            "template": true
+          }
+        }
+      ]
+    }
+  }
+}
+

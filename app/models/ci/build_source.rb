@@ -24,6 +24,7 @@ module Ci
     }.merge(::Enums::Ci::Pipeline.sources)
 
     belongs_to :build, class_name: 'Ci::Build', inverse_of: :build_source
+    belongs_to :job, class_name: 'Ci::Processable', foreign_key: :build_id, inverse_of: :job_source
 
     validates :build, presence: true
   end

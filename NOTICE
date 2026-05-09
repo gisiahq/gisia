@@ -16,6 +16,8 @@ Please refer to the license references for the original terms.
      - app/validators/json_schemas/ci_runner_config.json
      - app/validators/json_schemas/ci_runner_runtime_features.json
      - app/validators/json_schemas/position.json
+     - app/validators/json_schemas/ci_job_definition_config.json
+     - app/validators/json_schemas/build_metadata_config_options.json
      - config/security/banned_ssh_keys.yml
      - lib/gitlab/ci/config/entry/schemas/imageable/executor_opts.json
      - lib/gitlab/ci/config/README.md
