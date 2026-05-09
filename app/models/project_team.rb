@@ -232,6 +232,18 @@ class ProjectTeam
     max_member_access_for_user_ids([user_id])[user_id]
   end
 
+  def max_member_access_for_user(user, only_concrete_membership: false)
+    return ProjectMember::NO_ACCESS unless user
+
+    return ProjectMember::OWNER if !only_concrete_membership && user.can_admin_all_resources?
+
+    return ProjectMember::OWNER if personal_namespace_owner?(user)
+
+    return ProjectMember::OWNER if !only_concrete_membership && user.can_admin_organization?(project.organization)
+
+    max_member_access(user.id)
+  end
+
   def contribution_check_for_user_ids(user_ids)
     Gitlab::SafeRequestLoader.execute(
       resource_key: "contribution_check_for_users:#{project.id}",
@@ -253,6 +265,13 @@ class ProjectTeam
   end
 
   private
+
+  def personal_namespace_owner?(user)
+    return false unless user.id
+    return false unless project.namespace.parent.is_a?(Namespaces::UserNamespace)
+
+    project.namespace.parent.owner.id == user.id
+  end
 
   def fetch_members(level = nil)
     scope = User.joins("INNER JOIN members ON members.user_id = users.id")

@@ -93,6 +93,8 @@ class Project < ApplicationRecord
     delegate :to_reference_base
   end
 
+  delegate :max_member_access_for_user, to: :team
+
   with_options to: :pipeline_settings, allow_nil: true do
     delegate :auto_cancel_pending_pipelines?
     delegate :ci_config_path

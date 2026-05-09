@@ -36,7 +36,7 @@ json.services @job.services do |service|
   json.partial! 'service', service: service
 end
 
-json.artifacts @job.artifacts do |artifact|
+json.artifacts(@job.artifacts || []) do |artifact|
   json.partial! 'artifacts', artifacts: artifact
 end
 

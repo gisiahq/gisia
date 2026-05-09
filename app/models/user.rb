@@ -134,6 +134,10 @@ class User < ApplicationRecord
     can?(:admin_all_resources)
   end
 
+  def can_admin_organization?(_organization)
+    can_admin_all_resources?
+  end
+
   def notification_email_or_default
     email
   end
