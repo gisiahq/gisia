@@ -107,6 +107,8 @@ module Ci
     after_destroy :cleanup_runner_queue
 
     scope :active, ->(value = true) { where(active: value) }
+    scope :with_recent_runner_queue, -> { where(arel_table[:contacted_at].gt(recent_queue_deadline)) }
+    scope :with_tags, -> { preload(:tags) }
 
     def heartbeat(creation_state: nil)
       values = { contacted_at: Time.current }
@@ -155,24 +157,6 @@ module Ci
         creation_state == 'started'
     end
 
-    def matches_build?(build)
-      runner_matcher.matches?(build.build_matcher)
-    end
-
-    def runner_matcher
-      Gitlab::Ci::Matching::RunnerMatcher.new({
-        runner_ids: [id],
-        runner_type: runner_type,
-        public_projects_minutes_cost_factor: public_projects_minutes_cost_factor,
-        private_projects_minutes_cost_factor: private_projects_minutes_cost_factor,
-        run_untagged: run_untagged,
-        access_level: access_level,
-        tag_list: tag_list,
-        allowed_plan_ids: allowed_plan_ids
-      })
-    end
-    strong_memoize_attr :runner_matcher
-
     def self.online_contact_time_deadline
       ONLINE_CONTACT_TIMEOUT.ago
     end
@@ -181,11 +165,23 @@ module Ci
       STALE_TIMEOUT.ago
     end
 
+    def self.recent_queue_deadline
+      # we add queue expiry + online
+      # - contacted_at can be updated at any time within this interval
+      #   we have always accurate `contacted_at` but it is stored in Redis
+      #   and not persisted in database
+      (ONLINE_CONTACT_TIMEOUT + RUNNER_QUEUE_EXPIRY_TIME).ago
+    end
+
     def tick_runner_queue
       SecureRandom.hex.tap do |new_update|
         ::Gitlab::Workhorse.set_key_and_notify(runner_queue_key, new_update,
           expire: RUNNER_QUEUE_EXPIRY_TIME, overwrite: true)
       end
+    end
+
+    def pick_build!(build)
+      tick_runner_queue if matches_build?(build)
     end
 
     def match_build_if_online?(build)
@@ -208,6 +204,7 @@ module Ci
         allowed_plan_ids: []
       })
     end
+    strong_memoize_attr :runner_matcher
 
     def public_projects_minutes_cost_factor
       1.0

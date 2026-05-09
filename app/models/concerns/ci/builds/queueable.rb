@@ -68,6 +68,17 @@ module Ci
       end
 
       ##
+      # Unblock runners associated with the build's project
+      #
+      def tick(build)
+        runners = build.project.all_available_runners.with_recent_runner_queue.with_tags
+
+        runners.each do |runner|
+          runner.pick_build!(build)
+        end
+      end
+
+      ##
       # Force remove build from the queue, without checking a transition state
       #
       def remove!(build)

@@ -76,10 +76,9 @@ module Ci
         after_transition any => [:pending] do |build, transition|
           build.push(build, transition)
 
-          # build.run_after_commit do
-          #   BuildQueueWorker.perform_async(id)
-          #   build.execute_hooks
-          # end
+          build.run_after_commit do
+            TickBuildQuequeJob.perform_later(id)
+          end
         end
 
         after_transition pending: any do |build, transition|

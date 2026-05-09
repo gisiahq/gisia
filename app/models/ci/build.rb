@@ -40,6 +40,7 @@ module Ci
     has_one :pending_state, class_name: 'Ci::BuildPendingState', foreign_key: :build_id, inverse_of: :build
     has_one :build_source, class_name: 'Ci::BuildSource', foreign_key: :build_id, inverse_of: :build
     has_one :queuing_entry, class_name: 'Ci::PendingBuild', foreign_key: :build_id, dependent: :delete, inverse_of: :build
+    has_one :runtime_metadata, class_name: 'Ci::RunningBuild', foreign_key: :build_id, inverse_of: :build
 
     has_many :sourced_pipelines, class_name: 'Ci::Sources::Pipeline', foreign_key: :source_job_id, inverse_of: :build
 
@@ -93,6 +94,12 @@ module Ci
       class_name: 'Ci::BuildExecutionConfig',
       foreign_key: :execution_config_id,
       inverse_of: :builds, optional: true
+
+    scope :not_timed_out_running_builds, -> do
+      joins(:runtime_metadata)
+        .where("#{Ci::RunningBuild.table_name}.created_at + INTERVAL \'1 second\' * #{table_name}.timeout > ?",
+          Time.current)
+    end
 
     scope :finished_before, ->(date) { finished.where('finished_at < ?', date) }
     scope :eager_load_for_archiving_trace, -> { preload(:project, :pending_state) }
@@ -284,12 +291,6 @@ module Ci
         .dig(:allow_failure_criteria, :exit_codes)
         .to_a
         .include?(exit_code)
-    end
-
-    def exit_code=(value)
-      return unless value
-
-      ensure_metadata.exit_code = value.to_i.clamp(0, Gitlab::Database::MAX_SMALLINT_VALUE)
     end
 
     def status_commit_hooks

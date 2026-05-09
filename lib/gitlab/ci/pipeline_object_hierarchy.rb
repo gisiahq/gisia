@@ -4,6 +4,9 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025-present Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module Gitlab
@@ -25,17 +28,13 @@ module Gitlab
 
       def ancestor_conditions(cte)
         middle_table[:source_pipeline_id].eq(objects_table[:id])
-          .and(middle_table[:source_partition_id].eq(objects_table[:partition_id]))
           .and(middle_table[:pipeline_id].eq(cte.table[:id]))
-          .and(middle_table[:partition_id].eq(cte.table[:partition_id]))
           .and(project_condition)
       end
 
       def descendant_conditions(cte)
         middle_table[:pipeline_id].eq(objects_table[:id])
-          .and(middle_table[:partition_id].eq(objects_table[:partition_id]))
           .and(middle_table[:source_pipeline_id].eq(cte.table[:id]))
-          .and(middle_table[:source_partition_id].eq(cte.table[:partition_id]))
           .and(project_condition)
       end
 
@@ -48,7 +47,7 @@ module Gitlab
       end
 
       def objects_id_columns
-        [objects_table[:id], objects_table[:partition_id]]
+        objects_table[:id]
       end
     end
   end
