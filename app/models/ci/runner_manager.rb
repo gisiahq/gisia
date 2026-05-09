@@ -62,7 +62,6 @@ module Ci
     validates :runner, presence: true
     validates :runner_type, presence: true, on: :create
     validates :system_xid, presence: true, length: { maximum: 64 }
-    validates :sharding_key_id, presence: true, on: :create, unless: :instance_type?
     validates :version, length: { maximum: 2048 }
     validates :revision, length: { maximum: 255 }
     validates :platform, length: { maximum: 255 }
@@ -70,8 +69,6 @@ module Ci
     validates :ip_address, length: { maximum: 1024 }
     validates :config, json_schema: { filename: 'ci_runner_config' }
     validates :runtime_features, json_schema: { filename: 'ci_runner_runtime_features' }
-
-    validate :no_sharding_key_id, if: :instance_type?
 
     # The `STALE_TIMEOUT` constant defines the how far past the last contact or creation date a runner manager
     # will be considered stale
@@ -182,12 +179,6 @@ module Ci
       return unless new_version && Gitlab::Ci::RunnerReleases.instance.enabled?
 
       Ci::Runners::ProcessRunnerVersionUpdateWorker.perform_async(new_version)
-    end
-
-    def no_sharding_key_id
-      return if sharding_key_id.nil?
-
-      errors.add(:runner_manager, 'cannot have sharding_key_id assigned')
     end
 
     def self.version_regex_expression_for_version(version)

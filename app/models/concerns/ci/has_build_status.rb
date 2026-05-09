@@ -97,7 +97,7 @@ module Ci
         end
 
         after_transition pending: :running do |build|
-          build.ensure_metadata.update_timeout_state
+          build.update_timeout_state
         end
 
         after_transition pending: :running do |build|

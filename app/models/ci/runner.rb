@@ -31,7 +31,7 @@ module Ci
     attribute :run_untagged, :boolean, default: true
 
     add_authentication_token_field :token,
-      encrypted: :optional,
+      encrypted: :required,
       expires_at: :compute_token_expiration,
       format_with_prefix: :prefix_for_new_and_legacy_runner
 
@@ -128,7 +128,6 @@ module Ci
     def ensure_manager(system_xid) # -- This is used only in API endpoints outside of transactions
       RunnerManager.safe_find_or_create_by!(runner_id: id, system_xid: system_xid.to_s) do |m|
         m.runner_type = runner_type
-        m.sharding_key_id = sharding_key_id
       end
     end
 
