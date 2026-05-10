@@ -5,7 +5,7 @@
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
 #
-# Modifications and additions copyright (c) 2025 Liuming Tan
+# Modifications and additions copyright (c) 2025-present Liuming Tan
 # Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
@@ -22,13 +22,14 @@ class PersonalAccessToken < ApplicationRecord
 
   extend ::Gitlab::Utils::Override
 
+  AVAILABLE_SCOPES = %i[api read_api].freeze
   NOTIFICATION_INTERVALS = {
     seven_days: 0..7,
     thirty_days: 8..30,
     sixty_days: 31..60
   }.freeze
 
-  PERSONAL_TOKEN_PREFIX = 'glpat-'
+  PERSONAL_TOKEN_PREFIX = 'gspat-'
 
   add_authentication_token_field :token,
     digest: true,
@@ -47,15 +48,14 @@ class PersonalAccessToken < ApplicationRecord
   MAX_PERSONAL_ACCESS_TOKEN_LIFETIME_IN_DAYS_BUFFERED = 400
   MAX_PERSONAL_ACCESS_TOKEN_LIFETIME_IN_DAYS = 365
 
-  # Todo, use jsonb and remove this line
-  # serialize :scopes, type: Array # rubocop:disable Cop/ActiveRecordSerialize
+  serialize :scopes, coder: ActiveRecord::Coders::YAMLColumn.new(:scopes, Array) # rubocop:disable Cop/ActiveRecordSerialize
 
   enum :user_type, HasUserType::USER_TYPES
 
   belongs_to :user
-  belongs_to :group
+  belongs_to :group, optional: true
   belongs_to :organization, class_name: 'Organizations::Organization'
-  belongs_to :previous_personal_access_token, class_name: 'PersonalAccessToken'
+  belongs_to :previous_personal_access_token, class_name: 'PersonalAccessToken', optional: true
 
   has_many :last_used_ips, class_name: 'Authn::PersonalAccessTokenLastUsedIp'
   has_many :personal_access_token_granular_scopes, class_name: 'Authz::PersonalAccessTokenGranularScope', autosave: true

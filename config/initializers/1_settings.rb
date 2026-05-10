@@ -236,6 +236,15 @@ Settings.workhorse['secret_file'] ||= Rails.root.join('.gitlab_workhorse_secret'
 
 
 #
+# Cell
+#
+Settings['cell'] ||= {}
+Settings.cell['enabled'] ||= false
+Settings.cell['id'] ||= nil
+Settings.cell['database'] ||= {}
+Settings.cell.database['skip_sequence_alteration'] ||= false
+
+#
 # Extra customization
 #
 Settings['extra'] ||= {}

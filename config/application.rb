@@ -48,7 +48,6 @@ module Gitlab
 
     # Add custom autoload/eager load paths
     additional_paths = %W[
-      #{config.root}/lib
       #{config.root}/app/models/members
       #{config.root}/app/coders
       #{config.root}/app/models/hooks

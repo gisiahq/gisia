@@ -10,5 +10,31 @@
 # ======================================================
 
 class Current < ActiveSupport::CurrentAttributes
+  class OrganizationNotAssignedError < RuntimeError
+    def message
+      'Assign an organization to Current.organization before calling it.'
+    end
+  end
+
+  class OrganizationAlreadyAssignedError < RuntimeError
+    def message
+      'Current.organization has already been set in the current thread and should not be set again.'
+    end
+  end
+
+  attribute :organization, :organization_assigned
   attribute :token_info
+
+  def organization=(value)
+    return if organization_assigned
+
+    self.organization_assigned = true
+    super(value)
+  end
+
+  private
+
+  def organization_assigned=(value)
+    organization_assigned || super(value)
+  end
 end

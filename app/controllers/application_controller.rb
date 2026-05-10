@@ -1,8 +1,9 @@
-class ApplicationController < ActionController::Base
+class ApplicationController < BaseActionController
   include WorkhorseHelper
 
   allow_browser versions: :modern
   before_action :authenticate_user!
+  before_action :set_current_organization
   around_action :set_locale
 
   private

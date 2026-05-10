@@ -9,6 +9,10 @@
 # Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
+Rails.application.configure do |config|
+  config.middleware.use Gitlab::Middleware::Multipart
+end
+
 # The Gitlab::Middleware::Multipart middleware inserts instances of our
 # own ::UploadedFile class in the Rack env of requests. These instances
 # will be blocked by the 'strong parameters' feature of ActionController

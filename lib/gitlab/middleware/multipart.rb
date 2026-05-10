@@ -143,10 +143,7 @@ module Gitlab
         end
 
         def package_allowed_paths
-          packages_config = ::Gitlab.config.packages
-          return [] unless allow_packages_storage_path?(packages_config)
-
-          [::Packages::PackageFileUploader.workhorse_upload_path]
+          []
         end
 
         def allow_packages_storage_path?(packages_config)
@@ -165,10 +162,6 @@ module Gitlab
             ::JobArtifactUploader.workhorse_upload_path,
             ::LfsObjectUploader.workhorse_upload_path,
             ::DependencyProxy::FileUploader.workhorse_upload_path,
-            ::Terraform::StateUploader.workhorse_local_upload_path,
-            # dedicated uploader class forcing no direct upload
-            ::Packages::Npm::PackageFileUploader.workhorse_local_upload_path,
-            ::Repositories::CommitsUploader.workhorse_local_upload_path,
             File.join(Rails.root, 'public/uploads/tmp')
           ] + package_allowed_paths
         end
