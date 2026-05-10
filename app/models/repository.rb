@@ -39,6 +39,7 @@ class Repository
   FORMAT_SHA256 = 'sha256'
 
   include Gitlab::RepositoryCacheAdapter
+  include Repositories::HasTags
 
   attr_accessor :full_path, :shard, :disk_path, :container, :repo_type
 
