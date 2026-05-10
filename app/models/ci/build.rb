@@ -95,6 +95,10 @@ module Ci
       foreign_key: :execution_config_id,
       inverse_of: :builds, optional: true
 
+    # Builds no longer use the ci_build_tags table for tag storage.
+    # Tags are stored in ci_job_definitions and accessed via job_definition.tag_list.
+    skip_callback :save, :after, :save_tags
+
     scope :not_timed_out_running_builds, -> do
       joins(:runtime_metadata)
         .where("#{Ci::RunningBuild.table_name}.created_at + INTERVAL \'1 second\' * #{table_name}.timeout > ?",

@@ -38,6 +38,8 @@ module Gitlab
       def measure(*_args)
         yield
       end
+
+      def add_event(*_args); end
     end
   end
 end
