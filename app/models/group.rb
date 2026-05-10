@@ -54,6 +54,10 @@ class Group < ApplicationRecord
     :visibility_level
   end
 
+  def visibility_level_value
+    visibility_level
+  end
+
   def default_branch_name
     'main'
   end

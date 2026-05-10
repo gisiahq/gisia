@@ -39,7 +39,7 @@ class DiffNote < Note
 
   def line_code_in_diffs(diff_refs)
     if active?(diff_refs)
-      line_code
+      position.line_code(repository) || line_code
     elsif diff_refs && created_at_diff?(diff_refs)
       line_code
     elsif diff_refs && change_position.present? &&
