@@ -89,6 +89,22 @@ module Gitlab
     # Todo, https://github.com/rails/rails/pull/54872
     config.active_record.schema_format = :sql
 
+    config.active_record.default_column_serializer = Psych
+
+    config.to_prepare do
+      Rails.application.config.active_record.yaml_column_permitted_classes = [
+        Symbol, Date, Time,
+        BigDecimal,
+        Gitlab::Diff::Position,
+        ActiveSupport::HashWithIndifferentAccess,
+        ActiveSupport::TimeWithZone,
+        ActiveSupport::TimeZone,
+        ActiveSupport::SafeBuffer
+      ]
+
+      ActiveRecord.yaml_column_permitted_classes = Rails.application.config.active_record.yaml_column_permitted_classes
+    end
+
     # locale
 
     config.i18n.enforce_available_locales = false
