@@ -587,6 +587,10 @@ class Project < ApplicationRecord
     :visibility_level
   end
 
+  def visibility_level_value
+    visibility_level
+  end
+
   def external_authorization_classification_label; end
 
   # Todo,
