@@ -2451,7 +2451,8 @@ CREATE TABLE public.personal_access_tokens (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     user_type smallint DEFAULT 0,
-    granular boolean DEFAULT false NOT NULL
+    granular boolean DEFAULT false NOT NULL,
+    impersonation boolean DEFAULT false NOT NULL
 );
 
 
@@ -4724,6 +4725,13 @@ CREATE INDEX idx_pat_on_user_id_and_expires_at ON public.personal_access_tokens 
 --
 
 CREATE INDEX idx_pat_on_user_id_and_last_used_at ON public.personal_access_tokens USING btree (user_id, last_used_at, id);
+
+
+--
+-- Name: idx_pat_on_user_id_created_at_no_impersonation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_pat_on_user_id_created_at_no_impersonation ON public.personal_access_tokens USING btree (user_id, created_at, id) WHERE (impersonation = false);
 
 
 --
@@ -7007,6 +7015,7 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260510000001'),
 ('20260509000006'),
 ('20260509000005'),
 ('20260509000004'),
