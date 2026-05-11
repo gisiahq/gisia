@@ -4,6 +4,9 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025-present Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 # Gitlab::VisibilityLevel module
@@ -18,11 +21,16 @@ module Gitlab
     included do
       scope :public_only,               -> { where(visibility_level: PUBLIC) }
       scope :public_and_internal_only,  -> { where(visibility_level: [PUBLIC, INTERNAL]) }
+      scope :internal_only, -> { where(visibility_level: INTERNAL) }
       scope :private_only,              -> { where(visibility_level: PRIVATE) }
       scope :non_public_only,           -> { where.not(visibility_level: PUBLIC) }
 
       scope :public_to_user, ->(user = nil) do
         where(visibility_level: VisibilityLevel.levels_for_user(user))
+      end
+
+      scope :by_visibility_level, ->(levels) do
+        where(visibility_level: levels)
       end
 
       scope :by_visibility_level, ->(levels) do

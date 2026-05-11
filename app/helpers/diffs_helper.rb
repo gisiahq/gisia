@@ -38,15 +38,16 @@ module DiffsHelper
 
     merge_request = note.noteable
 
-    if note.change_position.present?
+    if note.change_position.present? && note.change_position.diff_refs.complete?
       diff_refs = note.change_position.diff_refs
       anchor = note.change_position.line_code(merge_request.project.repository)
       version_params = merge_request.version_params_for(diff_refs)
     else
-      version_params = merge_request.version_params_for(note.original_position.diff_refs)
+      orig_refs = note.original_position.diff_refs
+      version_params = merge_request.version_params_for(orig_refs)
       return unless version_params&.key?(:start_sha)
 
-      diff_refs = note.original_position.diff_refs
+      diff_refs = orig_refs
       anchor = note.line_code
     end
 

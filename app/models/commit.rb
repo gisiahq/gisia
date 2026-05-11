@@ -10,6 +10,7 @@
 # ======================================================
 
 class Commit
+  include ::Gitlab::Utils::StrongMemoize
   include Commits::Signaturable
 
   attr_accessor :raw
