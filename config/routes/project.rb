@@ -33,6 +33,9 @@ constraints(::Constraints::ProjectUrlConstrainer.new) do
         get 'jobs/skill.md', to: 'skills#jobs', format: false, as: :jobs_skill_md
         get 'members/skill.md', to: 'skills#members', format: false, as: :members_skill_md
 
+        get 'ci/lint', to: 'ci_lint#show', as: :ci_lint
+        post 'ci/lint/validate', to: 'ci_lint#validate', as: :validate_ci_lint
+
         draw :repository
         draw :merge_requests
         draw :pipelines

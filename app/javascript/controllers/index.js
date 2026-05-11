@@ -29,6 +29,7 @@ import MrBranchSelectController from "./mr_branch_select_controller"
 import RefSelectorController from "./ref_selector_controller"
 import LinkItemFormController from "./link_item_form_controller"
 import PipelineRefSelectController from "./pipeline_ref_select_controller"
+import CiLintController from "./ci_lint_controller"
 
 // Register controllers manually to ensure they're loaded
 application.register("search", SearchController)
@@ -59,5 +60,6 @@ application.register("mr-branch-select", MrBranchSelectController)
 application.register("ref-selector", RefSelectorController)
 application.register("link-item-form", LinkItemFormController)
 application.register("pipeline-ref-select", PipelineRefSelectController)
+application.register("ci-lint", CiLintController)
 
 eagerLoadControllersFrom("controllers", application)

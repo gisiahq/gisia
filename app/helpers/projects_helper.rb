@@ -80,6 +80,16 @@ module ProjectsHelper
     namespace_project_job_url(namespace.full_path, project.path, job)
   end
 
+  def ci_lint_path(project)
+    namespace = project.namespace.parent
+    namespace_project_ci_lint_path(namespace.full_path, project.path)
+  end
+
+  def validate_ci_lint_path(project)
+    namespace = project.namespace.parent
+    namespace_project_validate_ci_lint_path(namespace.full_path, project.path)
+  end
+
   def project_issues_path(project, options = {})
     namespace = project.namespace.parent
     namespace_project_issues_path(namespace.full_path, project.path, options)

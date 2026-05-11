@@ -71,7 +71,7 @@ module ApplicationHelper
     {
       plan: %w[projects/issues projects/epics projects/boards],
       repository: %w[projects projects/merge_requests projects/branches projects/tags projects/commits projects/tree projects/blob],
-      ci_cd: %w[projects/pipelines projects/jobs]
+      ci_cd: %w[projects/pipelines projects/jobs projects/ci_lint]
     }
   end
 
@@ -112,6 +112,10 @@ module ApplicationHelper
       ci_cd_jobs: {
         controller: 'projects/jobs',
         route_check: :namespace_project_jobs_path_check
+      },
+      ci_cd_ci_lint: {
+        controller: 'projects/ci_lint',
+        route_check: :ci_lint_path_check
       }
     }
   end
@@ -158,6 +162,10 @@ module ApplicationHelper
 
   def namespace_project_jobs_path_check
     namespace_project_jobs_path(@project.namespace.parent.full_path, @project.namespace.path)
+  end
+
+  def ci_lint_path_check
+    ci_lint_path(@project)
   end
 
   def user_homepage_path(user)

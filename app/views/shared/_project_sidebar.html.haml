@@ -58,6 +58,10 @@
           = link_to namespace_project_jobs_path(@project.namespace.parent.full_path, @project.namespace.path), class: "flex items-center gap-3 px-3 py-2 text-sm font-medium #{sidebar_item_active?('ci_cd', 'jobs') ? 'text-blue-700 bg-blue-50' : 'text-gray-800'} rounded hover:bg-gray-50 hover:text-blue-700 group" do
             = icon 'briefcase', class: "w-4 h-4 #{sidebar_item_active?('ci_cd', 'jobs') ? 'text-blue-600' : 'text-gray-600'} group-hover:text-blue-600"
             %span= _('Jobs')
+        %li
+          = link_to ci_lint_path(@project), class: "flex items-center gap-3 px-3 py-2 text-sm font-medium #{sidebar_item_active?('ci_cd', 'ci_lint') ? 'text-blue-700 bg-blue-50' : 'text-gray-800'} rounded hover:bg-gray-50 hover:text-blue-700 group" do
+            = icon 'check-circle', class: "w-4 h-4 #{sidebar_item_active?('ci_cd', 'ci_lint') ? 'text-blue-600' : 'text-gray-600'} group-hover:text-blue-600"
+            %span= _('CI Lint')
 
     - if can_access_project_settings?(@project, current_user)
       %div{class: 'mb-6'}

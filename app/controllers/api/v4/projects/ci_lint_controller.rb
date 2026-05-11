@@ -8,6 +8,7 @@ module API
         before_action :authorize_create_pipeline!, only: [:create]
         before_action :require_non_empty_repo!, only: [:show]
         before_action :find_commit!, only: [:show]
+        before_action :validate_ref!, only: [:create]
 
         def show
           content = @project.repository.blob_data_at(@commit.sha, @project.ci_config_path_or_default)
@@ -38,6 +39,11 @@ module API
           content_ref = params[:content_ref] || @project.repository.root_ref_sha
           @commit = @project.commit(content_ref)
           not_found! unless @commit.present?
+        end
+
+        def validate_ref!
+          ref = lint_params[:ref] || @project.default_branch
+          not_found! unless @project.repository.branch_exists?(ref)
         end
 
         def authorize_read_code!
