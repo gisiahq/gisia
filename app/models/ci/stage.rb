@@ -42,7 +42,7 @@ module Ci
       self.status = DEFAULT_STATUS if self.status.nil?
     end
 
-    state_machine :status, initial: :created do
+    state_machine :status do
       event :enqueue do
         transition any - [:pending] => :pending
       end
