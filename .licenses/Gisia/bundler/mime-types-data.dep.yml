@@ -1,6 +1,6 @@
 ---
 name: mime-types-data
-version: 3.2025.0527
+version: 3.2026.0414
 type: bundler
 summary: mime-types-data provides a registry for information about MIME media type
   definitions

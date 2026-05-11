@@ -1,6 +1,6 @@
 ---
 name: drb
-version: 2.2.1
+version: 2.2.3
 type: bundler
 summary: Distributed object system for Ruby
 homepage: https://github.com/ruby/drb

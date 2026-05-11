@@ -1,6 +1,6 @@
 ---
 name: fog-aliyun
-version: 0.4.0
+version: 0.4.1
 type: bundler
 summary: Fog provider for Alibaba Cloud Web Services.
 homepage: https://github.com/fog/fog-aliyun

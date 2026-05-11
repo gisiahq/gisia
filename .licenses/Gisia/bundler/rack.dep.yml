@@ -1,6 +1,6 @@
 ---
 name: rack
-version: 2.2.14
+version: 2.2.23
 type: bundler
 summary: A modular Ruby webserver interface.
 homepage: https://github.com/rack/rack

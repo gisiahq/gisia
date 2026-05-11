@@ -1,6 +1,6 @@
 ---
 name: connection_pool
-version: 2.5.3
+version: 2.5.5
 type: bundler
 summary: Generic connection pool for Ruby
 homepage: https://github.com/mperham/connection_pool
