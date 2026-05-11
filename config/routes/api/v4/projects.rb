@@ -23,6 +23,9 @@ resources :projects, only: [:index, :show, :create, :update, :destroy] do
       post :cancel
     end
   end
+  get 'ci/lint', to: 'projects/ci_lint#show'
+  post 'ci/lint', to: 'projects/ci_lint#create'
+
   get 'repository/branches', to: 'projects/branches#index', as: :repository_branches
   post 'repository/branches', to: 'projects/branches#create'
   constraints(name: %r{[^/]+}) do

@@ -334,6 +334,16 @@ module Ci
       add_message(:warning, content)
     end
 
+    def error_messages
+      messages.select(&:error?)
+    end
+
+    def warning_messages(limit: nil)
+      messages.select(&:warning?).tap do |warnings|
+        break warnings.take(limit) if limit
+      end
+    end
+
     def variables_builder
       @variables_builder ||= ::Gitlab::Ci::Variables::Builder.new(self)
     end
