@@ -1242,7 +1242,7 @@ CREATE TABLE public.ci_stages (
     id bigint NOT NULL,
     project_id bigint NOT NULL,
     name character varying NOT NULL,
-    status integer DEFAULT 0,
+    status integer,
     "position" integer,
     pipeline_id bigint NOT NULL,
     lock_version integer DEFAULT 0,
@@ -7016,6 +7016,7 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260511042908'),
 ('20260510000001'),
 ('20260509000006'),
 ('20260509000005'),
