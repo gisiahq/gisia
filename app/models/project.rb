@@ -95,6 +95,7 @@ class Project < ApplicationRecord
 
   with_options to: :team do
     delegate :members, prefix: true
+    delegate :add_developer
     delegate :member?, :max_member_access_for_user
   end
 
