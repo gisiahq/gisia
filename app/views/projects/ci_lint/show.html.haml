@@ -9,19 +9,16 @@
       %h1{ class: 'text-2xl font-semibold text-gray-800' }= _('CI Lint')
 
     %div{ data: { controller: 'ci-lint' } }
-
-      = form_tag(validate_ci_lint_path(@project), method: :post, data: { 'ci-lint-target': 'form', turbo_stream: true }) do
-        %div{ class: 'bg-gray-50 rounded-lg p-4 mb-6 flex items-center gap-4' }
-          %label{ for: 'ci_lint_branch', class: 'text-sm font-medium text-gray-700' }= _('Branch')
+      %div{ class: 'bg-gray-50 rounded-lg p-4 mb-6 flex items-center gap-4' }
+        %label{ for: 'ci_lint_branch', class: 'text-sm font-medium text-gray-700' }= _('Branch')
+        = form_tag(content_ci_lint_path(@project), method: :post, data: { turbo_frame: 'ci-lint-content' }) do
           = select_tag 'ci_lint[ref]',
               options_for_select(@branches.map { |b| [b[:label], b[:ref]] }, @ref),
               id: 'ci_lint_branch',
               class: 'text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500',
-              onchange: "window.location='#{ci_lint_path(@project)}?ci_lint[ref]=' + this.value"
-          %div{ class: 'ml-auto' }
-            %button{ type: 'submit', data: { 'ci-lint-target': 'validateBtn' }, class: 'px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed' }
-              = _('Validate')
+              onchange: 'this.form.requestSubmit()'
+        %div{ class: 'ml-auto' }
+          %button{ type: 'submit', form: 'ci-lint-validate-form', data: { 'ci-lint-target': 'validateBtn' }, class: 'px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed' }
+            = _('Validate')
 
-        %div{ id: 'ci-lint-result', class: 'mb-4' }
-
-        %textarea{ name: 'ci_lint[content]', rows: 30, spellcheck: false, class: 'w-full font-mono text-sm border border-gray-300 rounded-lg px-4 py-3 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y' }= @content
+      = render 'content'

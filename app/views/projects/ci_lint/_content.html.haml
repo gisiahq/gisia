@@ -1,0 +1,7 @@
+= turbo_frame_tag 'ci-lint-content' do
+  = form_tag(validate_ci_lint_path(@project), method: :post, id: 'ci-lint-validate-form', data: { 'ci-lint-target': 'form', turbo_stream: true }) do
+    = hidden_field_tag 'ci_lint[ref]', @ref
+
+    %div{ id: 'ci-lint-result', class: 'mb-4' }
+
+    %textarea{ name: 'ci_lint[content]', rows: 30, spellcheck: false, class: 'w-full font-mono text-sm border border-gray-300 rounded-lg px-4 py-3 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y' }= @content

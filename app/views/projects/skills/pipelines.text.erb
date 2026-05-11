@@ -1,6 +1,6 @@
 ---
 name: gisia-<%= @project.full_path.gsub('/', '-') %>-pipelines-skills
-description: Manage CI/CD pipelines for the project <%= @project.full_path %> via the Gisia API. You are connected to Gisia, an AI-native DevOps platform. Covers listing, showing, creating, retrying, canceling, and deleting pipelines.
+description: Manage CI/CD pipelines for the project <%= @project.full_path %> via the Gisia API. You are connected to Gisia, an AI-native DevOps platform. Covers listing, showing, creating, retrying, canceling, and deleting pipelines, and linting CI configuration.
 ---
 
 ## Pipelines — `<%= @project.full_path %>`
@@ -133,3 +133,68 @@ curl -X DELETE "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id 
 - `:id` — Pipeline ID
 - Returns `204 No Content` on success
 - Returns `403 Forbidden` if you do not have permission
+
+---
+
+### Lint CI Configuration
+
+Validate a `.gitlab-ci.yml` file without running a pipeline.
+
+#### Lint the project's current `.gitlab-ci.yml`
+
+```bash
+curl "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/ci/lint" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+**Query parameters:**
+
+- `content_ref` (optional) — Branch, tag, or commit SHA to read the file from (default: repository root ref)
+- `dry_run_ref` (optional) — Branch to use for dry-run pipeline simulation (default: project default branch)
+- `dry_run` (optional) — Set to `true` to simulate pipeline creation (default: `false`)
+
+Requires `read_code` permission (reporter or above).
+
+#### Lint provided CI YAML content
+
+```bash
+curl -X POST "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/ci/lint" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "test-job:\n  script:\n    - echo hi\n",
+    "ref": "main",
+    "dry_run": true
+  }'
+```
+
+**Fields:**
+
+- `content` (required) — CI YAML string to validate
+- `ref` (optional) — Branch to use for pipeline simulation (default: project default branch). Must exist in the repository.
+- `dry_run` (optional) — Set to `true` to simulate pipeline creation (default: `false`)
+
+Requires `create_pipeline` permission (developer or above).
+
+**Response fields:**
+
+| Field | Description |
+|-------|-------------|
+| `valid` | `true` if the configuration is valid |
+| `errors` | Array of error messages (empty when valid) |
+| `warnings` | Array of warning messages |
+| `merged_yaml` | Fully merged YAML after includes are resolved |
+| `includes` | Array of included files with `type`, `location`, `blob`, `raw`, `extra`, `context_project`, `context_sha` |
+| `jobs` | Array of jobs (only included when `include_jobs=true` query param is set) |
+
+**Error response example:**
+
+```json
+{
+  "valid": false,
+  "errors": ["jobs:test-job config contains unknown keys: bad_key"],
+  "warnings": [],
+  "merged_yaml": null,
+  "includes": []
+}
+```

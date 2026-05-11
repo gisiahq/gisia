@@ -85,6 +85,11 @@ module ProjectsHelper
     namespace_project_ci_lint_path(namespace.full_path, project.path)
   end
 
+  def content_ci_lint_path(project)
+    namespace = project.namespace.parent
+    namespace_project_content_ci_lint_path(namespace.full_path, project.path)
+  end
+
   def validate_ci_lint_path(project)
     namespace = project.namespace.parent
     namespace_project_validate_ci_lint_path(namespace.full_path, project.path)

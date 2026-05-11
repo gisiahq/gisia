@@ -17,10 +17,21 @@ class Projects::CiLintController < Projects::ApplicationController
     @content ||= ''
   end
 
+  def content
+    @branches = load_refs
+
+    unless @project.empty_repo?
+      commit = @project.commit(@ref)
+      @content = @project.repository.blob_data_at(commit.sha, @project.ci_config_path_or_default) if commit
+    end
+
+    @content ||= ''
+  end
+
   def validate
     @result = Gitlab::Ci::Lint
       .new(project: @project, current_user: current_user)
-      .legacy_validate(ci_lint_params[:content], dry_run: true, ref: @ref)
+      .legacy_validate(ci_lint_params[:content], dry_run: false, ref: @ref)
 
     respond_to do |format|
       format.turbo_stream

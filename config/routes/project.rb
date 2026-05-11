@@ -34,6 +34,7 @@ constraints(::Constraints::ProjectUrlConstrainer.new) do
         get 'members/skill.md', to: 'skills#members', format: false, as: :members_skill_md
 
         get 'ci/lint', to: 'ci_lint#show', as: :ci_lint
+        post 'ci/lint/content', to: 'ci_lint#content', as: :content_ci_lint
         post 'ci/lint/validate', to: 'ci_lint#validate', as: :validate_ci_lint
 
         draw :repository
