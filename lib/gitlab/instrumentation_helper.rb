@@ -279,4 +279,3 @@ module Gitlab
     private_class_method :convert_to_time
   end
 end
-

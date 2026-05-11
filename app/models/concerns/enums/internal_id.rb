@@ -32,4 +32,3 @@ module Enums
 end
 
 Enums::InternalId.prepend_mod_with('Enums::InternalId')
-

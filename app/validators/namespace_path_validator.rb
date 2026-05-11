@@ -21,4 +21,3 @@ class NamespacePathValidator < AbstractPathValidator
     Gitlab::PathRegex.namespace_format_message
   end
 end
-

@@ -1,0 +1,183 @@
+# frozen_string_literal: true
+
+# ======================================================
+# Contains code from GitLab FOSS (MIT Licensed)
+# Copyright (c) GitLab Inc.
+# See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+# ======================================================
+
+module Ci
+  module Inputs
+    ##
+    # This is a common abstraction for all input types
+    class BaseInput
+      include Gitlab::Utils::StrongMemoize
+
+      def self.matches?(spec)
+        spec.is_a?(Hash) && spec[:type] == type_name
+      end
+
+      # Human readable type used in error messages
+      def self.type_name
+        raise NotImplementedError
+      end
+
+      attr_reader :errors, :name, :spec
+
+      def initialize(name:, spec:)
+        @name = name
+        @errors = []
+
+        # Treat minimal spec definition (nil) as a valid hash:
+        #   spec:
+        #     inputs:
+        #       website:
+        spec_hash = spec || {}
+        @spec = spec_hash.is_a?(Hash) ? spec_hash.with_indifferent_access : spec_hash
+      end
+
+      def validate_param!(param, all_params = {})
+        param = nil if param.is_a?(String) && param.empty? && rules
+
+        error('required value has not been provided') if required? && param.nil?
+        return if errors.present?
+
+        default_value = resolved_default(all_params)
+        run_validations(default_value, all_params, default: true) unless required? || default_value.nil?
+
+        run_validations(param, all_params) unless param.nil?
+      end
+
+      def actual_value(param, all_params = {})
+        param = nil if param.is_a?(String) && param.empty? && rules
+
+        if param.nil?
+          coerced_value(resolved_default(all_params))
+        else
+          coerced_value(param)
+        end
+      end
+
+      def type
+        self.class.type_name
+      end
+
+      # An input specification without a default value is required.
+      # For example:
+      # ```yaml
+      # spec:
+      #   inputs:
+      #     website:
+      # ```
+      # For rules-based inputs, check if any rule provides a default value (this functionality is under a feature
+      # flag).
+      def required?
+        !default_value_present?
+      end
+
+      def default_value_present?
+        spec.key?(:default) || has_default_through_rules?
+      end
+
+      def default
+        spec[:default]
+      end
+
+      def options
+        spec[:options]
+      end
+
+      def description
+        spec[:description]
+      end
+
+      def regex
+        return unless regex_provided?
+
+        spec[:regex]
+      end
+
+      def rules
+        return unless spec.key?(:rules)
+
+        spec[:rules]&.map { |rule| rule.is_a?(Hash) ? rule.with_indifferent_access : rule }
+      end
+
+      private
+
+      def resolved_options(current_inputs = {})
+        return options unless rules
+
+        rules_evaluator(current_inputs).resolved_options || options
+      end
+
+      def resolved_default(current_inputs = {})
+        return default unless rules
+
+        value = rules_evaluator(current_inputs).resolved_default
+        value.nil? ? default : value
+      end
+
+      def rules_evaluator(current_inputs)
+        strong_memoize_with(:rules_evaluator, current_inputs) do
+          RulesEvaluator.new(rules, current_inputs)
+        end
+      end
+
+      def has_default_through_rules?
+        return false unless spec.key?(:rules) && spec[:rules].is_a?(Array)
+
+        spec[:rules].any? do |rule|
+          next false unless rule.is_a?(Hash)
+
+          rule.key?(:default)
+        end
+      end
+
+      def run_validations(value, all_params = {}, default: false)
+        value = coerced_value(value)
+
+        validate_type(value, default)
+        validate_options(value, all_params)
+        validate_regex(value, default)
+      end
+
+      # Type validations are done separately for different input types.
+      def validate_type(_value, _default)
+        raise NotImplementedError
+      end
+
+      # Options can be either StringInput or NumberInput and are validated accordingly.
+      def validate_options(_value, _all_params = {})
+        return unless options
+
+        error('Options can only be used with string and number inputs')
+      end
+
+      # Regex can be only be a StringInput and is validated accordingly.
+      def validate_regex(_value, _default)
+        return unless regex_provided?
+
+        error('RegEx validation can only be used with string inputs')
+      end
+
+      def regex_provided?
+        spec.key?(:regex)
+      end
+
+      def error(message)
+        @errors.push("`#{name}` input: #{message}")
+      end
+
+      def coerced_value(value)
+        strong_memoize_with(:coerced_value, value) do
+          next if value.nil?
+
+          Gitlab::Json.parse(value)
+        rescue JSON::ParserError
+          value
+        end
+      end
+    end
+  end
+end

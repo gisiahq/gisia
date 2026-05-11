@@ -7,12 +7,19 @@
 # ======================================================
 
 module Ci
-  module Buildable
-    extend ActiveSupport::Concern
+  module Inputs
+    class ArrayInput < BaseInput
+      extend ::Gitlab::Utils::Override
 
-    class_methods do
-      def build_from(project, user, params,event, options)
-        Ci::PipelineBuilder.new(project, user, params).build!(event, **options)
+      def self.type_name
+        'array'
+      end
+
+      override :validate_type
+      def validate_type(value, default)
+        return if value.is_a?(Array)
+
+        error("#{default ? 'default' : 'provided'} value is not an array")
       end
     end
   end

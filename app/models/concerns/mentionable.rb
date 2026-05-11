@@ -222,4 +222,3 @@ module Mentionable
 end
 
 Mentionable.prepend_mod_with('Mentionable')
-

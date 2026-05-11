@@ -5,7 +5,6 @@
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
 # ======================================================
-# frozen_string_literal: true
 
 module Ci
   module Builds
@@ -55,4 +54,3 @@ module Ci
     end
   end
 end
-

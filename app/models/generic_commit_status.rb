@@ -37,4 +37,3 @@ class GenericCommitStatus < CommitStatus
     end
   end
 end
-

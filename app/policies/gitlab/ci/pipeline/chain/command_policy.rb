@@ -19,4 +19,3 @@ module Gitlab
 end
 
 Gitlab::Ci::Pipeline::Chain::CommandPolicy.prepend_mod
-

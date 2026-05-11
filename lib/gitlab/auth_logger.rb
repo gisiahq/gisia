@@ -15,4 +15,3 @@ module Gitlab
 end
 
 Gitlab::AuthLogger.prepend_mod
-

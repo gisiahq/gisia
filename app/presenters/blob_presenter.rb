@@ -265,4 +265,3 @@ class BlobPresenter < Gitlab::View::Presenter::Delegated
 end
 
 BlobPresenter.prepend_mod_with('BlobPresenter')
-

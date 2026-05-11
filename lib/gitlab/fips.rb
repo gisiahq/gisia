@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # ======================================================
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
@@ -5,7 +7,6 @@
 # ======================================================
 
 # rubocop: disable Naming/FileName
-# frozen_string_literal: true
 
 module Gitlab
   class FIPS

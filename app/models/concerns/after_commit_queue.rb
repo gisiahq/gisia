@@ -59,4 +59,3 @@ module AfterCommitQueue
     _after_commit_queue.clear
   end
 end
-

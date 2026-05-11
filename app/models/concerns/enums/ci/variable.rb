@@ -16,4 +16,3 @@ module Enums # rubocop: disable Gitlab/BoundedContexts -- It's within CI domain
     end
   end
 end
-

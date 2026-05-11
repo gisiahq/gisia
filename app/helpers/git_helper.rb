@@ -18,4 +18,3 @@ module GitHelper
     Commit.truncate_sha(text)
   end
 end
-

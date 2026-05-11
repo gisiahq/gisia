@@ -113,4 +113,3 @@ module PolicyActor
 end
 
 PolicyActor.prepend_mod_with('PolicyActor')
-
