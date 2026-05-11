@@ -61,6 +61,34 @@ module Routable
     def find_by_full_path!(path, follow_redirects: false)
       find_by_full_path(path, follow_redirects: follow_redirects) || raise(ActiveRecord::RecordNotFound)
     end
+
+    # Builds a relation to find multiple objects by their full paths.
+    #
+    # Usage:
+    #
+    #     Klass.where_full_path_in(%w{gitlab-org/gitlab-foss gitlab-org/gitlab})
+    #
+    # Returns an ActiveRecord::Relation.
+    def where_full_path_in(paths, preload_routes: true)
+      return none if paths.empty?
+
+      path_condition = paths.map do |path|
+        "(LOWER(routes.path) = LOWER(#{connection.quote(path)}))"
+      end.join(' OR ')
+
+      route_scope = all
+
+      routes_matching_condition = Route.where(path_condition)
+
+      namespace_ids = routes_matching_condition.select(:namespace_id)
+      result = route_scope.where(namespace_id: namespace_ids)
+
+      if preload_routes
+        result.preload(:route)
+      else
+        result
+      end
+    end
   end
 
   def full_name
