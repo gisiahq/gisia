@@ -97,11 +97,12 @@ module Ci
       attrs[:partition_id] = partition_id
 
       new(attrs).tap do |job|
-        job.temp_job_definition = ::Ci::JobDefinition.fabricate(
+        job_definition = ::Ci::JobDefinition.fabricate(
           config: definition_attrs,
           project_id: job.project_id,
           partition_id: job.partition_id
         )
+        job.temp_job_definition = job_definition
       end
     end
 
