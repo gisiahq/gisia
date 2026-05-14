@@ -25,6 +25,7 @@ module Ci
     include Ci::Pipelines::Processable
     include Ci::Pipelines::HasPersistentRef
     include Ci::Pipelines::HasVariables
+    include Ci::Pipelines::HasRepositoryPaths
 
     attr_accessor :config_metadata, :partition_id
     # Not supported
