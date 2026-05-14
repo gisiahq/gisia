@@ -65,6 +65,7 @@ module Ci
     has_many :current_jobs, -> { latest }, class_name: 'CommitStatus', foreign_key: :commit_id, inverse_of: :pipeline
     has_many :all_processable_jobs, class_name: 'Ci::Processable', foreign_key: :commit_id, inverse_of: :pipeline
     has_many :current_processable_jobs, class_name: 'Ci::Processable', foreign_key: :commit_id, inverse_of: :pipeline
+    has_many :processables, class_name: 'Ci::Processable', foreign_key: :commit_id, inverse_of: :pipeline
     delegate :name, to: :pipeline_metadata, allow_nil: true
     has_many :pending_builds, -> { pending }, foreign_key: :commit_id, class_name: 'Ci::Build', inverse_of: :pipeline
     has_many :failed_builds, -> {
@@ -98,6 +99,7 @@ module Ci
     scope :for_source_sha, ->(source_sha) { where(source_sha: source_sha) }
     scope :for_sha, ->(sha) { where(sha: sha) }
     scope :for_project, ->(project_id) { where(project_id: project_id) }
+    scope :for_source, ->(source) { where(source: source) }
     scope :for_sha_or_source_sha, ->(sha) { for_sha(sha).or(for_source_sha(sha)) }
 
     scope :order_id_asc, -> { order(id: :asc) }

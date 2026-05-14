@@ -14,4 +14,8 @@ class ProjectPipelineSetting < ApplicationRecord
 
   validates :build_timeout, presence: true, numericality: { greater_than: 0 }
   validates :project_id, presence: true, uniqueness: true
+
+  def auto_cancel_pending_pipelines?
+    auto_cancel_pending_pipelines
+  end
 end

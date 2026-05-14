@@ -18,6 +18,7 @@ module API
           @pipelines = @pipelines.for_status(params[:status]) if params[:status].present?
           @pipelines = @pipelines.for_ref(params[:ref]) if params[:ref].present?
           @pipelines = @pipelines.for_sha(params[:sha]) if params[:sha].present?
+          @pipelines = @pipelines.for_source(params[:source]) if params[:source].present?
           @pipelines = paginate(@pipelines.order_id_desc)
         end
 

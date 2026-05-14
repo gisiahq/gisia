@@ -1,4 +1,5 @@
 json.id pipeline.id
+json.name pipeline.pipeline_metadata&.name
 json.iid pipeline.iid
 json.project_id pipeline.project_id
 json.sha pipeline.sha

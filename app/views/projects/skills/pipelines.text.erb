@@ -30,6 +30,7 @@ curl "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/pipelin
 - `status` (optional) — Filter by pipeline status: `created`, `pending`, `running`, `success`, `failed`, `canceled`, `skipped`, `manual`, `scheduled`
 - `ref` (optional) — Filter by branch or tag name
 - `sha` (optional) — Filter by commit SHA
+- `source` (optional) — Filter by pipeline source: `push`, `web`, `api`, `trigger`, `schedule`, `merge_request_event`, `external`, `pipeline`, `chat`
 - `page` (optional) — Page number (default: `1`)
 - `per_page` (optional) — Items per page, max `100` (default: `20`)
 
