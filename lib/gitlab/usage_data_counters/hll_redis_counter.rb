@@ -41,7 +41,8 @@ module Gitlab
         # property_name - Name of the values counted.
         # time - Time of the action, set to Time.current.
         def track_event(event_name, values:, property_name: nil, time: Time.current)
-          track(values, event_name, property_name: property_name, time: time)
+          return
+          # track(values, event_name, property_name: property_name, time: time)
         end
 
         # Count unique events for a given time range.

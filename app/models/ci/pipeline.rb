@@ -54,8 +54,10 @@ module Ci
     has_many :cancelable_statuses, -> { cancelable }, foreign_key: :commit_id, class_name: 'CommitStatus', inverse_of: :pipeline
     has_many :stages, inverse_of: :pipeline
     has_many :bridges, class_name: 'Ci::Bridge', foreign_key: :commit_id, inverse_of: :pipeline
-    has_many :builds, inverse_of: :pipeline
+    has_many :builds, foreign_key: :commit_id, inverse_of: :pipeline
     has_many :messages, class_name: 'Ci::PipelineMessage', inverse_of: :pipeline
+
+    before_validation :remove_stub_builds
 
     has_one :pipeline_config, class_name: 'Ci::PipelineConfig', inverse_of: :pipeline
     has_one :pipeline_metadata, class_name: 'Ci::PipelineMetadata', inverse_of: :pipeline, dependent: :destroy
@@ -474,6 +476,10 @@ module Ci
 
     def add_message(severity, content)
       messages.build(severity: severity, content: content, project_id: project_id)
+    end
+
+    def remove_stub_builds
+      builds.target&.delete_if { |b| b.name.blank? && !b.persisted? }
     end
   end
 end
