@@ -124,7 +124,8 @@ CREATE TABLE public.application_settings (
     password_authentication_enabled_for_web boolean,
     commit_email_hostname character varying,
     can_create_organization boolean DEFAULT false NOT NULL,
-    pipeline_limit_per_user integer DEFAULT 0 NOT NULL
+    pipeline_limit_per_user integer DEFAULT 0 NOT NULL,
+    default_artifacts_expire_in character varying DEFAULT '30 days'::character varying NOT NULL
 );
 
 
@@ -7015,6 +7016,7 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260515050226'),
 ('20260511042908'),
 ('20260510000001'),
 ('20260509000006'),
