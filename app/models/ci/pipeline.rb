@@ -106,6 +106,24 @@ module Ci
     scope :order_id_asc, -> { order(id: :asc) }
     scope :order_id_desc, -> { order(id: :desc) }
 
+    def self.newest_first(ref: nil, sha: nil, limit: nil, source: nil)
+      relation = order(id: :desc)
+      relation = relation.where(ref: ref) if ref
+      relation = relation.where(sha: sha) if sha
+      relation = relation.where(source: source) if source
+
+      if limit
+        ids = relation.limit(limit).select(:id)
+        relation = relation.where(id: ids)
+      end
+
+      relation
+    end
+
+    def self.latest_successful_for_ref(ref)
+      newest_first(ref: ref).success.take
+    end
+
     scope :conservative_interruptible, -> do
       where_not_exists(
         Ci::Build.scoped_pipeline.with_status(STARTED_STATUSES).not_interruptible
@@ -445,6 +463,20 @@ module Ci
 
     def all_child_pipelines
       object_hierarchy(project_condition: :same).descendants
+    end
+
+    def build_with_artifacts_in_self_and_project_descendants(name)
+      builds_in_self_and_project_descendants
+        .ordered_by_pipeline
+        .with_downloadable_artifacts
+        .find_by_name(name)
+    end
+
+    def builds_in_self_and_project_descendants
+      latest_pipelines = self_and_project_descendants.preload(:source_bridge)
+      latest_pipelines = latest_pipelines.reject { |pipeline| pipeline&.source_bridge&.retried? }
+
+      Ci::Build.latest.where(pipeline: latest_pipelines)
     end
 
     def bridges_in_self_and_project_descendants

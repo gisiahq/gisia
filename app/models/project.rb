@@ -33,6 +33,7 @@ class Project < ApplicationRecord
   has_one :project_feature, inverse_of: :project, dependent: :destroy
   has_one :pipeline_settings, class_name: 'ProjectPipelineSetting', inverse_of: :project, dependent: :destroy
   has_many :all_pipelines, class_name: 'Ci::Pipeline', inverse_of: :project, dependent: :destroy
+  has_many :ci_pipelines, -> { ci_sources }, class_name: 'Ci::Pipeline', inverse_of: :project
   has_many :variables, class_name: 'Ci::Variable', foreign_key: :namespace_id, primary_key: :namespace_id
   has_many :builds, class_name: 'Ci::Build', inverse_of: :project
   has_many :pipeline_metadata, class_name: 'Ci::PipelineMetadata', inverse_of: :project
@@ -693,6 +694,19 @@ class Project < ApplicationRecord
     return unless namespace.parent.blank?
 
     errors.add(:namespace, 'must have a parent namespace')
+  end
+
+  def latest_successful_build_for_ref(job_name, ref = default_branch)
+    return unless ref
+
+    latest_pipeline = ci_pipelines.latest_successful_for_ref(ref)
+    return unless latest_pipeline
+
+    latest_pipeline.build_with_artifacts_in_self_and_project_descendants(job_name)
+  end
+
+  def latest_successful_build_for_ref!(job_name, ref = default_branch)
+    latest_successful_build_for_ref(job_name, ref) || raise(ActiveRecord::RecordNotFound, "Couldn't find job #{job_name}")
   end
 
 end

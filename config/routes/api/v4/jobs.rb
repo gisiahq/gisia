@@ -5,6 +5,9 @@ resources :jobs, only: %i[create update] do
 
   member do
     patch :trace
+    post 'artifacts/authorize', action: :authorize_artifact
+    post :artifacts, action: :create_artifact
+    get :artifacts, action: :download_artifact
   end
 end
 

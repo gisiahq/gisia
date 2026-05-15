@@ -22,6 +22,7 @@ module Ci
     include Ci::Builds::StateUpdateable
     include Ci::Builds::Traceable
     include Ci::Builds::TraceArchivable
+    include Ci::Builds::HasArtifacts
 
     TOKEN_PREFIX = 'gscbt-'
     RUNNERS_STATUS_CACHE_EXPIRATION = 1.minute
@@ -108,6 +109,11 @@ module Ci
     scope :finished_before, ->(date) { finished.where('finished_at < ?', date) }
     scope :eager_load_for_archiving_trace, -> { preload(:project, :pending_state) }
     scope :without_archived_trace, -> { where_not_exists(Ci::JobArtifact.scoped_build.trace) }
+    scope :ordered_by_pipeline, -> { order(pipeline_id: :asc) }
+
+    def self.find_by_name(name)
+      find_by(name: name)
+    end
 
     add_authentication_token_field :token,
       encrypted: :required,
@@ -340,10 +346,6 @@ module Ci
     def hide_secrets(data, _metrics = ::Gitlab::Ci::Trace::Metrics.new)
       # Todo,
       data
-    end
-
-    def available_artifacts?
-      false
     end
 
     def ensure_trace_metadata!

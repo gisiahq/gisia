@@ -21,7 +21,23 @@ resources :projects, only: [:index, :show, :create, :update, :destroy] do
       get :trace
       post :retry
       post :cancel
+      get :artifacts, controller: 'projects/job_artifacts', action: :download
+      get 'artifacts/tree', controller: 'projects/job_artifacts', action: :browse
+      post 'artifacts/keep', controller: 'projects/job_artifacts', action: :keep
+      delete :artifacts, controller: 'projects/job_artifacts', action: :destroy
+      get 'artifacts/*artifact_path', controller: 'projects/job_artifacts', action: :raw,
+        format: false, constraints: { artifact_path: /.*/ }
     end
+  end
+
+  member do
+    scope 'jobs/artifacts/:ref_name', constraints: { ref_name: /[^\/]+/ } do
+      get 'download', to: 'projects/job_artifacts#download_by_ref'
+      get 'raw/*artifact_path', to: 'projects/job_artifacts#raw_by_ref',
+        format: false, constraints: { artifact_path: /.*/ }
+    end
+
+    delete 'artifacts', to: 'projects/job_artifacts#expire_all'
   end
   get 'ci/lint', to: 'projects/ci_lint#show'
   post 'ci/lint', to: 'projects/ci_lint#create'

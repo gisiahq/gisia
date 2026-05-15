@@ -12,9 +12,12 @@
 module API
   module V4
     class JobsController < ::API::V4::CiBaseController
+      include WorkhorseHelper
+      include SendFileUpload
+
       before_action :authenticate_runner!, only: [:job_request]
       before_action :require_active_runner!, :halt_if_up_to_date!, only: [:job_request]
-      before_action :authenticate_job!, :runner_heartbeat, only: %i[update trace]
+      before_action :authenticate_job!, :runner_heartbeat, only: %i[update trace authorize_artifact create_artifact download_artifact]
 
       def job_request
         new_update = current_runner.ensure_runner_queue_value
@@ -64,7 +67,48 @@ module API
         end
       end
 
+      def authorize_artifact
+        return not_allowed! unless Gitlab.config.artifacts.enabled
+
+        result = Ci::JobArtifacts::CreateService.new(@job).authorize(
+          artifact_type: params[:artifact_type] || 'archive',
+          filesize: params[:filesize]
+        )
+
+        if result[:status] == :success
+          set_workhorse_internal_api_content_type
+          render json: result[:headers]
+        else
+          render json: { message: result[:message] }, status: result[:http_status]
+        end
+      end
+
+      def create_artifact
+        return not_allowed! unless Gitlab.config.artifacts.enabled
+
+        artifacts = params[:file]
+        metadata = params[:metadata]
+
+        result = Ci::JobArtifacts::CreateService.new(@job).execute(artifacts, params, metadata_file: metadata)
+
+        if result[:status] == :success
+          render plain: '201', status: :created
+        else
+          render json: { message: result[:message] }, status: result[:http_status]
+        end
+      end
+
+      def download_artifact
+        not_found! unless @job.artifacts_file&.exists?
+
+        send_upload(@job.artifacts_file)
+      end
+
       private
+
+      def not_allowed!
+        render json: { message: '405 Method Not Allowed' }, status: :method_not_allowed
+      end
 
       def trace_input
         ::Ci::Builds::TraceableInputBuilder.from params, request.headers, request.body
