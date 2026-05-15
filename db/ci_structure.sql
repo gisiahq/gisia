@@ -591,6 +591,40 @@ ALTER SEQUENCE public.ci_builds_runner_session_id_seq OWNED BY public.ci_builds_
 
 
 --
+-- Name: ci_deleted_objects; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ci_deleted_objects (
+    id bigint NOT NULL,
+    file_store smallint DEFAULT 1 NOT NULL,
+    pick_up_at timestamp(6) without time zone DEFAULT now() NOT NULL,
+    store_dir text NOT NULL,
+    file text NOT NULL,
+    project_id bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: ci_deleted_objects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.ci_deleted_objects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: ci_deleted_objects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.ci_deleted_objects_id_seq OWNED BY public.ci_deleted_objects.id;
+
+
+--
 -- Name: ci_instance_variables; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3306,6 +3340,13 @@ ALTER TABLE ONLY public.ci_builds_runner_session ALTER COLUMN id SET DEFAULT nex
 
 
 --
+-- Name: ci_deleted_objects id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ci_deleted_objects ALTER COLUMN id SET DEFAULT nextval('public.ci_deleted_objects_id_seq'::regclass);
+
+
+--
 -- Name: ci_instance_variables id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3822,6 +3863,14 @@ ALTER TABLE ONLY public.ci_builds
 
 ALTER TABLE ONLY public.ci_builds_runner_session
     ADD CONSTRAINT ci_builds_runner_session_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ci_deleted_objects ci_deleted_objects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ci_deleted_objects
+    ADD CONSTRAINT ci_deleted_objects_pkey PRIMARY KEY (id);
 
 
 --
@@ -4979,6 +5028,20 @@ CREATE UNIQUE INDEX index_ci_builds_runner_session_on_build_id ON public.ci_buil
 --
 
 CREATE INDEX index_ci_builds_runner_session_on_project_id ON public.ci_builds_runner_session USING btree (project_id);
+
+
+--
+-- Name: index_ci_deleted_objects_on_pick_up_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ci_deleted_objects_on_pick_up_at ON public.ci_deleted_objects USING btree (pick_up_at);
+
+
+--
+-- Name: index_ci_deleted_objects_on_project_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ci_deleted_objects_on_project_id ON public.ci_deleted_objects USING btree (project_id);
 
 
 --
@@ -7017,6 +7080,7 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260515060001'),
 ('20260515050226'),
 ('20260511042908'),
 ('20260510000001'),
