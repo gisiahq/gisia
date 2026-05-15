@@ -38,4 +38,3 @@ module Ci
     end
   end
 end
-

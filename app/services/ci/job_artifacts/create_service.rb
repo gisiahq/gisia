@@ -223,4 +223,3 @@ module Ci
 end
 
 Ci::JobArtifacts::CreateService.prepend_mod
-
