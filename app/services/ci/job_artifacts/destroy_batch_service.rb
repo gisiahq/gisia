@@ -53,9 +53,9 @@ module Ci
 
         after_batch_destroy_hook(@job_artifacts)
 
-        update_project_statistics! if update_stats
+        # update_project_statistics! if update_stats
 
-        increment_monitoring_statistics(artifacts_count, artifacts_bytes)
+        # increment_monitoring_statistics(artifacts_count, artifacts_bytes)
 
         Gitlab::Ci::Artifacts::Logger.log_deleted(@job_artifacts, 'Ci::JobArtifacts::DestroyBatchService#execute')
 
@@ -84,7 +84,7 @@ module Ci
       # using ! here since this can't be called inside a transaction
       def update_project_statistics!
         statistics_updates_per_project.each do |project, increments|
-          ProjectStatistics.bulk_increment_statistic(project, Ci::JobArtifact.project_statistics_name, increments)
+          # ProjectStatistics.bulk_increment_statistic(project, Ci::JobArtifact.project_statistics_name, increments)
         end
       end
 
@@ -95,8 +95,8 @@ module Ci
           @job_artifacts.each_with_object(result) do |job_artifact, result|
             next unless job_artifact.project
 
-            increment = Gitlab::Counters::Increment.new(amount: -job_artifact.size.to_i, ref: job_artifact.id)
-            result[job_artifact.project] << increment
+            # increment = Gitlab::Counters::Increment.new(amount: -job_artifact.size.to_i, ref: job_artifact.id)
+            # result[job_artifact.project] << increment
           end
         end
       end
