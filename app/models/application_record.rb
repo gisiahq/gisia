@@ -94,6 +94,11 @@ class ApplicationRecord < ActiveRecord::Base
     where('NOT EXISTS (?)', query.select(1))
   end
 
+  def self.nullable_column?(column_name)
+    columns.find { |column| column.name == column_name }.null &&
+      !not_null_check?(column_name)
+  end
+
   def to_ability_name
     model_name.element
   end

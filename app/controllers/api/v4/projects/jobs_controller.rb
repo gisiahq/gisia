@@ -64,15 +64,15 @@ module API
         end
 
         def authorize_read_build!
-          forbidden! unless current_user.can?(:read_build, @project)
+          forbidden! unless can?(current_user, :read_build, @project)
         end
 
         def authorize_update_build!
-          forbidden! unless current_user.can?(:update_build, @project)
+          forbidden! unless can?(current_user, :update_build, @project)
         end
 
         def authorize_cancel_build!
-          forbidden! unless current_user.can?(:cancel_build, @project)
+          forbidden! unless can?(current_user, :cancel_build, @project)
         end
       end
     end

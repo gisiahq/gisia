@@ -663,6 +663,18 @@ class Project < ApplicationRecord
 
   def refreshing_build_artifacts_size? = false
 
+  # for BaseContainerService
+  def owner_entity = self
+
+  def latest_successful_build_for_ref(job_name, ref = default_branch)
+    return unless ref
+
+    latest_pipeline = ci_pipelines.latest_successful_for_ref(ref)
+    return unless latest_pipeline
+
+    latest_pipeline.build_with_artifacts_in_self_and_project_descendants(job_name)
+  end
+
   private
 
   def runners_token_prefix
@@ -696,19 +708,6 @@ class Project < ApplicationRecord
     return unless namespace.parent.blank?
 
     errors.add(:namespace, 'must have a parent namespace')
-  end
-
-  def latest_successful_build_for_ref(job_name, ref = default_branch)
-    return unless ref
-
-    latest_pipeline = ci_pipelines.latest_successful_for_ref(ref)
-    return unless latest_pipeline
-
-    latest_pipeline.build_with_artifacts_in_self_and_project_descendants(job_name)
-  end
-
-  def latest_successful_build_for_ref!(job_name, ref = default_branch)
-    latest_successful_build_for_ref(job_name, ref) || raise(ActiveRecord::RecordNotFound, "Couldn't find job #{job_name}")
   end
 
 end

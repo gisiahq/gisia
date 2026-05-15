@@ -37,7 +37,7 @@ module API
           recursive = ActiveModel::Type::Boolean.new.cast(params[:recursive])
 
           entry = job.artifacts_metadata_entry(directory, recursive: recursive)
-          not_found!('Path') unless entry.exists?
+          not_found! unless entry.exists?
 
           entries = recursive ? entry.children : entry.directories(parent: false) + entry.files
           page = paginate(::Kaminari.paginate_array(entries))
@@ -76,7 +76,7 @@ module API
         end
 
         def expire_all
-          Ci::JobArtifacts::DeleteProjectArtifactsService.new(@project).execute
+          Ci::JobArtifacts::DeleteProjectArtifactsService.new(project: @project).execute
 
           head :accepted
         end
@@ -84,14 +84,14 @@ module API
         private
 
         def job
-          @job ||= @project.builds.find(params[:job_id])
+          @job ||= @project.builds.find(params[:id])
         rescue ActiveRecord::RecordNotFound
           not_found!
         end
 
         def find_build_by_ref!
           @build = @project.latest_successful_build_for_ref(params[:job], params[:ref_name])
-          not_found!('Job') unless @build
+          not_found! unless @build
         end
 
         def require_artifacts!
@@ -99,11 +99,11 @@ module API
         end
 
         def require_available_artifacts!
-          not_found!('Artifacts') unless job.available_artifacts?
+          not_found! unless job.available_artifacts?
         end
 
         def require_artifacts_metadata!
-          not_found!('Artifacts metadata') unless job.job_artifacts_metadata&.exists?
+          not_found! unless job.job_artifacts_metadata&.exists?
         end
 
         def require_artifacts_for_keep!
@@ -124,15 +124,15 @@ module API
         end
 
         def authorize_read_artifacts!
-          forbidden! unless current_user&.can?(:read_build, @project)
+          forbidden! unless can?(current_user, :read_build, @project)
         end
 
         def authorize_destroy_artifacts!
-          forbidden! unless current_user&.can?(:destroy_artifacts, @project)
+          forbidden! unless can?(current_user, :delete_job_artifact, @project)
         end
 
         def authorize_update_artifacts!
-          forbidden! unless current_user&.can?(:update_build, @project)
+          forbidden! unless can?(current_user, :update_build, @project)
         end
       end
     end
