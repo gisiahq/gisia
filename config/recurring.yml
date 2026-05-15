@@ -17,6 +17,9 @@ default: &default
   bulk_delete_expired_job_artifacts:
     class: "Ci::JobArtifacts::BulkDeleteExpiredJobArtifactsJob"
     schedule: "*/7 * * * *"
+  update_locked_unknown_artifacts:
+    class: "Ci::JobArtifacts::UpdateLockedUnknownArtifactsJob"
+    schedule: "*/7 * * * *"
 
 
 development:
