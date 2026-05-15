@@ -110,6 +110,7 @@ module Ci
     scope :eager_load_for_archiving_trace, -> { preload(:project, :pending_state) }
     scope :without_archived_trace, -> { where_not_exists(Ci::JobArtifact.scoped_build.trace) }
     scope :ordered_by_pipeline, -> { order(pipeline_id: :asc) }
+    scope :with_pipeline_locked_artifacts, -> { joins(:pipeline).where('pipeline.locked': Ci::Pipeline.lockeds[:artifacts_locked]) }
 
     def self.find_by_name(name)
       find_by(name: name)

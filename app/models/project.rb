@@ -661,6 +661,8 @@ class Project < ApplicationRecord
     :unlocked
   end
 
+  def refreshing_build_artifacts_size? = false
+
   private
 
   def runners_token_prefix
