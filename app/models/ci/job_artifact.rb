@@ -155,7 +155,8 @@ module Ci
     ##
     # FastDestroyAll concerns
     def self.finalize_fast_destroy(service)
-      service.update_statistics
+      # No need
+      # service.update_statistics
     end
 
     def self.archived_trace_exists_for?(job_id)

@@ -25,6 +25,7 @@ module ApplicationSettingImplementation
         valid_runner_registrars: VALID_RUNNER_REGISTRAR_TYPES,
         max_attachment_size: Settings.gitlab['max_attachment_size'],
         require_personal_access_token_expiry: true,
+        default_artifacts_expire_in: '30 days',
         default_branch_name: 'main',
         diff_max_files: Commit::DEFAULT_MAX_DIFF_FILES_SETTING,
         diff_max_lines: Commit::DEFAULT_MAX_DIFF_LINES_SETTING,
