@@ -24,7 +24,7 @@ module Ci
           next true if persistent_ref.exist?
           next true if persistent_ref.create
 
-          pipeline.drop!(:pipeline_ref_creation_failure)
+          drop!(:pipeline_ref_creation_failure)
           false
         end
       end

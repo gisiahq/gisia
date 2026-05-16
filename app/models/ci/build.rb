@@ -100,6 +100,10 @@ module Ci
     # Tags are stored in ci_job_definitions and accessed via job_definition.tag_list.
     skip_callback :save, :after, :save_tags
 
+    def tag_list
+      job_definition&.tag_list || super
+    end
+
     scope :not_timed_out_running_builds, -> do
       joins(:runtime_metadata)
         .where("#{Ci::RunningBuild.table_name}.created_at + INTERVAL \'1 second\' * #{table_name}.timeout > ?",

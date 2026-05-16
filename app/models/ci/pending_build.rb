@@ -13,6 +13,9 @@ module Ci
   class PendingBuild < Ci::ApplicationRecord
     include EachBatch
 
+    MAX_TAGS_IDS = 50
+    TooManyTagsError = Class.new(StandardError)
+
     attr_accessor :partition_id
 
     belongs_to :project
@@ -59,13 +62,21 @@ module Ci
           project: project,
           protected: build.protected?,
           namespace: project.namespace,
-          tag_ids: build.tags_ids,
+          tag_ids: build_tags_ids(build),
           instance_runners_enabled: shared_runners_enabled?(project)
         }
 
         args.store(:namespace_traversal_ids, project.namespace.traversal_ids) if group_runners_enabled?(project)
 
         args
+      end
+
+      def build_tags_ids(build)
+        build.tag_list.then do |tag_list|
+          raise TooManyTagsError if tag_list.size >= MAX_TAGS_IDS
+
+          Ci::Tag.find_or_create_all_with_like_by_name(tag_list).map(&:id).sort
+        end
       end
 
       def shared_runners_enabled?(project)
