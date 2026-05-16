@@ -15,11 +15,8 @@ module Ci
       SCIP_ARTIFACT_TYPE = 'scip'
       ARTIFACT_HASH_FUNCTIONS = %w[sha256].freeze
 
-      OBJECT_STORAGE_ERRORS = [
-        Errno::EIO,
-        Google::Apis::ServerError,
-        Signet::RemoteServerError
-      ].freeze
+      # Todo, maybe to support  GCS?
+      OBJECT_STORAGE_ERRORS = [Errno::EIO].freeze
 
       def initialize(job)
         @job = job

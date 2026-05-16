@@ -10,6 +10,7 @@ json.started_at job.started_at
 json.finished_at job.finished_at
 json.duration job.duration
 json.queued_duration job.queued_at ? (job.started_at || Time.current) - job.queued_at : nil
+json.artifacts_expire_at job.artifacts_expire_at
 json.web_url "#{Gitlab.config.gitlab.url}/#{job.project.full_path}/-/jobs/#{job.id}"
 
 json.pipeline do

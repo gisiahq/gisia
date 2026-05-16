@@ -666,6 +666,12 @@ class Project < ApplicationRecord
   # for BaseContainerService
   def owner_entity = self
 
+  def closest_setting(name)
+    setting = has_attribute?(name) ? read_attribute(name) : nil
+    setting = Gitlab::CurrentSettings.send(name) if setting.nil? && Gitlab::CurrentSettings.respond_to?(name)
+    setting
+  end
+
   def latest_successful_build_for_ref(job_name, ref = default_branch)
     return unless ref
 
