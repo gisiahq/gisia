@@ -17,7 +17,8 @@ module API
 
       before_action :authenticate_runner!, only: [:job_request]
       before_action :require_active_runner!, :halt_if_up_to_date!, only: [:job_request]
-      before_action :authenticate_job!, :runner_heartbeat, only: %i[update trace authorize_artifact create_artifact download_artifact]
+      before_action :authenticate_job!, :runner_heartbeat, only: %i[update trace authorize_artifact create_artifact]
+      before_action :authenticate_job_via_dependent_job!, only: [:download_artifact]
 
       def job_request
         new_update = current_runner.ensure_runner_queue_value
@@ -99,9 +100,9 @@ module API
       end
 
       def download_artifact
-        not_found! unless @job.artifacts_file&.exists?
+        not_found! unless current_job.artifacts_file&.exists?
 
-        send_upload(@job.artifacts_file)
+        send_upload(current_job.artifacts_file)
       end
 
       private

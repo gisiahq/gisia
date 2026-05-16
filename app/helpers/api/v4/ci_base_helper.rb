@@ -52,11 +52,22 @@ module API::V4::CiBaseHelper
     #
     # If the token does not link to the URL-specified job,
     # return a generic auth error with no build details.
-
     return unless current_job
     return unless current_job == ::Ci::AuthJobFinder.new(token: job_token).execute!
 
     current_job
+  end
+
+  def authenticate_job_via_dependent_job!
+    forbidden! unless current_job
+
+    consuming_job = ::Ci::AuthJobFinder.new(token: job_token).execute
+    forbidden! unless consuming_job
+    forbidden! unless can?(consuming_job.user, :read_build, current_job.project)
+  rescue ::Ci::AuthJobFinder::DeletedProjectError
+    forbidden!('Project has been deleted!')
+  rescue ::Ci::AuthJobFinder::ErasedJobError
+    forbidden!('Job has been erased!')
   end
 end
 
