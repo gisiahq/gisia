@@ -192,4 +192,5 @@ group :test do
   gem 'test-prof', '~> 1.6'
   gem 'capybara', '~> 3.40'
   gem 'cuprite', '~> 0.17'
+  gem 'rspec-parameterized', '~> 2.0', '>= 2.0.1'
 end
