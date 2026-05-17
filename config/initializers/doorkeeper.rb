@@ -34,7 +34,7 @@ Doorkeeper.configure do
   #
   # By default Doorkeeper ActiveRecord ORM uses its own classes:
   #
-  # access_token_class "Doorkeeper::AccessToken"
+  access_token_class "OauthAccessToken"
   # access_grant_class "Doorkeeper::AccessGrant"
   # application_class "Doorkeeper::Application"
   #
@@ -527,3 +527,4 @@ Doorkeeper.configure do
   #
   # realm "Doorkeeper"
 end
+

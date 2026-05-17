@@ -9,9 +9,9 @@
 class BlobPresenter < Gitlab::View::Presenter::Delegated
   include ApplicationHelper
   include BlobHelper
-  include DiffHelper
-  include TreeHelper
-  include ChecksCollaboration
+  # include DiffHelper
+  # include TreeHelper
+  # include ChecksCollaboration
   include Gitlab::EncodingHelper
 
   presents ::Blob, as: :blob

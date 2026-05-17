@@ -9,9 +9,13 @@
 class OauthAccessToken < Doorkeeper::AccessToken
   include Gitlab::Utils::StrongMemoize
   include Doorkeeper::Concerns::TokenFallback
+  include SafelyChangeColumnDefault
+
+  columns_changing_default :organization_id
 
   belongs_to :application, class_name: 'Authn::OauthApplication'
-  belongs_to :organization, class_name: 'Organizations::Organization'
+  belongs_to :organization, class_name: 'Organizations::Organization', optional: false
+  belongs_to :resource_owner, class_name: 'User'
 
   validates :expires_in, presence: true
 
