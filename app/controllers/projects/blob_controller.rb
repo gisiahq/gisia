@@ -29,7 +29,7 @@ class Projects::BlobController < Projects::ApplicationController
   end
 
   def commit
-    @commit = @repository.commit(@ref)
+    @commit = @repository.last_commit_for_path(@ref, @path) || @repository.commit(@ref)
   end
 
   private
