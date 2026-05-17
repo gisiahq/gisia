@@ -36,6 +36,7 @@ Rails.autoloaders.each do |autoloader|
     'open_api' => 'OpenApi',
     'cte' => 'CTE',
     'recursive_cte' => 'RecursiveCTE',
-    'sql' => 'SQL'
+    'sql' => 'SQL',
+    'global_search_api' => 'GlobalSearchApi'
   )
 end
