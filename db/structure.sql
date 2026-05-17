@@ -2339,7 +2339,8 @@ CREATE TABLE public.oauth_access_tokens (
     scopes character varying,
     created_at timestamp(6) without time zone NOT NULL,
     revoked_at timestamp(6) without time zone,
-    previous_refresh_token character varying DEFAULT ''::character varying NOT NULL
+    previous_refresh_token character varying DEFAULT ''::character varying NOT NULL,
+    organization_id bigint DEFAULT 1 NOT NULL
 );
 
 
@@ -6046,6 +6047,13 @@ CREATE INDEX index_oauth_access_tokens_on_application_id ON public.oauth_access_
 
 
 --
+-- Name: index_oauth_access_tokens_on_organization_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_oauth_access_tokens_on_organization_id ON public.oauth_access_tokens USING btree (organization_id);
+
+
+--
 -- Name: index_oauth_access_tokens_on_refresh_token; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7080,6 +7088,7 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260517082126'),
 ('20260515070001'),
 ('20260515060001'),
 ('20260515050226'),
