@@ -34,7 +34,8 @@ class CommitStatus < Ci::ApplicationRecord
   def self.inheritance_column_to_class_map
     {
       ci_build: 'Ci::Build',
-      ci_bridge: 'Ci::Bridge'
+      ci_bridge: 'Ci::Bridge',
+      generic_commit_status: 'GenericCommitStatus'
     }.freeze
   end
 
@@ -72,7 +73,8 @@ class CommitStatus < Ci::ApplicationRecord
 
   enum :type, {
     ci_build: 0,
-    ci_bridge: 1
+    ci_bridge: 1,
+    generic_commit_status: 2,
   }
 
   delegate :commit, to: :pipeline

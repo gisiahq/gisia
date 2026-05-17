@@ -27,7 +27,9 @@ module Ci
       private
 
       def process_build(build)
-        build.remove_token!
+        Gitlab::OptimisticLocking.retry_lock(build, name: 'finalize_build_remove_token') do |b|
+          b.remove_token!
+        end
         Ci::Builds::ArchiveTraceJob.set(wait: ARCHIVE_TRACES_IN).perform_later(build.id)
       end
     end

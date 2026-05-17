@@ -491,6 +491,14 @@ module Ci
       parent_pipeline? && parent_pipeline.present?
     end
 
+    def root_ancestor
+      return self unless child?
+
+      object_hierarchy(project_condition: :same)
+        .base_and_ancestors(hierarchy_order: :desc)
+        .first
+    end
+
     # With only parent-child pipelines
     def self_and_project_ancestors
       object_hierarchy(project_condition: :same).base_and_ancestors

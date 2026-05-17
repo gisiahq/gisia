@@ -121,13 +121,13 @@ module Ci
       end
     end
 
-    # A Ci::Bridge may transition to `canceling` as a result of strategy: :depend
-    # but only a Ci::Build will transition to `canceling`` via `.cancel`
     def supports_canceling?
       cancel_gracefully?
     end
 
     def cancel_gracefully?
+      return false unless respond_to?(:runner_manager)
+
       !!runner_manager&.supports_after_script_on_cancel?
     end
   end
