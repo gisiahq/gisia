@@ -14,8 +14,7 @@
             = _('Status %{status}') % { status: @pipeline.status.titleize }
           %span
             = @pipeline.user.username
-          %span{ class: 'font-mono text-xs bg-gray-100 px-1 rounded' }
-            = @pipeline.short_sha
+          = link_to @pipeline.short_sha, namespace_project_commit_path(@project.namespace.parent.full_path, @project.path, @pipeline.sha), class: 'font-mono text-xs bg-gray-100 px-1 rounded hover:bg-gray-200 transition-colors', target: '_blank'
           %span
             = time_ago_in_words(@pipeline.created_at) + ' ago'
           %span •

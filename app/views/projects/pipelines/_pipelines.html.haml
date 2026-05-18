@@ -26,8 +26,8 @@
           %div{ class: 'flex items-center gap-3 mb-1' }
             %h3{ class: 'text-base font-semibold text-slate-900 truncate' }
               = link_to pipeline_title(pipeline), pipeline_jobs_path(pipeline), class: 'hover:text-blue-600 transition-colors duration-200'
-            %span{ class: 'font-mono text-slate-700 px-2 py-0.5 text-xs font-medium flex-shrink-0' }
-              = pipeline.sha[0..7] if pipeline.sha
+            - if pipeline.sha
+              = link_to pipeline.sha[0..7], namespace_project_commit_path(@project.namespace.parent.full_path, @project.path, pipeline.sha), class: 'font-mono text-slate-700 px-2 py-0.5 text-xs font-medium flex-shrink-0 hover:bg-gray-100 rounded transition-colors', target: '_blank'
 
           / Metadata row
           %div{ class: 'flex items-center gap-4 text-sm' }
