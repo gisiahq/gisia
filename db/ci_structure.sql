@@ -3063,7 +3063,6 @@ CREATE TABLE public.users (
     updated_at timestamp(6) without time zone NOT NULL,
     username character varying NOT NULL,
     name character varying NOT NULL,
-    mobile character varying,
     avatar character varying,
     user_type integer DEFAULT 0,
     admin boolean DEFAULT false NOT NULL,
@@ -6329,13 +6328,6 @@ CREATE INDEX index_users_on_lower_username ON public.users USING btree (lower((u
 
 
 --
--- Name: index_users_on_mobile; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_users_on_mobile ON public.users USING btree (mobile);
-
-
---
 -- Name: index_users_on_reset_password_token; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7090,6 +7082,7 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260518110000'),
 ('20260518100000'),
 ('20260517082126'),
 ('20260515070001'),
