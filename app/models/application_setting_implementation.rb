@@ -47,6 +47,7 @@ module ApplicationSettingImplementation
         repository_storages_weighted: { 'default' => 100 },
         password_authentication_enabled_for_web: Settings.gitlab['signin_enabled'],
         pipeline_limit_per_user: 0,
+        version_check_enabled: true,
       }
     end
 

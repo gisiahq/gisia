@@ -1,0 +1,42 @@
+- content_for :title, "Privacy"
+
+%div{class: 'w-full bg-white p-2 rounded-lg'}
+  %div{class: 'w-full max-w-6xl mx-auto'}
+
+    %div{class: 'py-6'}
+      %div{class: 'flex items-center gap-4 mb-6'}
+        %div{class: 'w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-lg'}
+          = icon 'shield', class: 'w-8 h-8'
+        %div
+          %h1{class: 'text-2xl font-bold text-gray-900'}
+            = _('Privacy')
+          %p{class: 'text-gray-600'}
+            = _('Configure usage statistics and telemetry settings')
+
+    - if notice
+      %div{class: 'mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm'}
+        = notice
+
+    %div{class: 'bg-white border border-gray-200 rounded-lg', 'data-controller': 'collapsible'}
+      %div{class: 'p-4 cursor-pointer', 'data-action': 'click->collapsible#toggle', 'data-collapsible-target': 'header'}
+        %div{class: 'flex items-center justify-between'}
+          %div
+            %h2{class: 'text-lg font-semibold text-gray-900'}
+              = _('Version Check')
+            %p{class: 'text-sm text-gray-600 mt-1'}
+              = _('Check if a newer version of Gisia is available.')
+          %div{class: 'ml-4'}
+            = icon 'caret-right', class: 'w-4 h-4 text-gray-500 transition-transform duration-200', 'data-collapsible-target': 'icon'
+
+      %div{class: 'p-6 hidden', 'data-collapsible-target': 'content'}
+        = form_with model: @application_setting, url: admin_settings_privacy_path, method: :patch do |f|
+          %div{class: 'flex items-start gap-3'}
+            = f.check_box :version_check_enabled, class: 'mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500'
+            %div
+              = f.label :version_check_enabled, _('Enable version check'), class: 'text-sm font-medium text-gray-900'
+              %p{class: 'text-sm text-gray-500 mt-1'}
+                = _('Gisia will periodically send your instance version to gisia.dev.')
+                = link_to _('Learn more'), 'https://gisia.dev/docs/admin/settings/private#version_check', target: '_blank', class: 'text-blue-600 hover:underline'
+
+          %div{class: 'pt-6 border-t border-gray-200 mt-6'}
+            = f.submit _('Save changes'), class: 'px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors'

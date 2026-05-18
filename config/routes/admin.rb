@@ -25,6 +25,10 @@ namespace :admin do
     end
   end
   
+  namespace :settings do
+    resource :privacy, only: [:show, :update], path: 'privacy', controller: 'privacy'
+  end
+
   resources :jobs, only: [:index] do
     member do
       post :cancel
