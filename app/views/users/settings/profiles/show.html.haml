@@ -43,15 +43,6 @@
 
         %div{class: 'flex items-center justify-between py-2'}
           %div{class: 'flex items-center gap-3'}
-            = icon 'phone', class: 'w-5 h-5 text-orange-500'
-            %span{class: 'font-medium text-gray-700'}= _('Mobile')
-          - if @user.mobile.present?
-            %span{class: 'text-gray-900'}= @user.mobile
-          - else
-            %span{class: 'text-gray-400 italic'}= _('Not provided')
-
-        %div{class: 'flex items-center justify-between py-2'}
-          %div{class: 'flex items-center gap-3'}
             = icon 'clock', class: 'w-5 h-5 text-teal-500'
             %span{class: 'font-medium text-gray-700'}= _('Timezone')
           - if @user.timezone.present?
