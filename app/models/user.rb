@@ -193,6 +193,14 @@ class User < ApplicationRecord
   end
 
 
+  def authorized_groups
+    project_parent_ns = Namespace.where(id: project_members.select(:namespace_id)).select(:parent_id)
+
+    Group
+      .where(namespace_id: group_members.select(:namespace_id))
+      .or(Group.where(namespace_id: project_parent_ns))
+  end
+
   def accessible_namespaces
     Namespace.where(id: namespace.id).or(Namespace.where(id: groups.select(:namespace_id)))
   end
