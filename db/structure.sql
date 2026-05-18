@@ -126,7 +126,8 @@ CREATE TABLE public.application_settings (
     can_create_organization boolean DEFAULT false NOT NULL,
     pipeline_limit_per_user integer DEFAULT 0 NOT NULL,
     default_artifacts_expire_in character varying DEFAULT '30 days'::character varying NOT NULL,
-    max_artifacts_size integer DEFAULT 100 NOT NULL
+    max_artifacts_size integer DEFAULT 100 NOT NULL,
+    version_check_enabled boolean DEFAULT true NOT NULL
 );
 
 
@@ -7088,6 +7089,7 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260518100000'),
 ('20260517082126'),
 ('20260515070001'),
 ('20260515060001'),
