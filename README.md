@@ -20,7 +20,7 @@ AI bot skills demo
 
 
 > [!WARNING]
-> ⚠️ Gisia is currently in **Beta**.
+> ⚠️ Gisia is approaching v1.0
 > 
 > That means it is under active development and may contain bugs or breaking changes between versions.
 
@@ -36,9 +36,10 @@ AI bot skills demo
 | **Git Repository Hosting** | ✅ Done | Lightweight Git server with SSH and HTTP(S) access |
 | **CI/CD Pipelines** | ✅ Done | Basic runner support and pipeline definitions in YAML |
 | **Issue Tracking** | ✅ Done| Simple issue board for personal or small team usage |
-| **Merge Requests / Code Review** | ✅ Done | Inline diffs and comment threads |
+| **Merge Requests ** | ✅ Done | Inline diffs and comment threads |
 | **Webhooks** | ✅ Done | Webhooks to call URL of 3rd party services|
 | **AI Bot Skills** | ✅ Done | Machine-readable skill files, so AI bots can clone, push, and manage issues and epics via the API |
+| **Code Review** | 🔜 Working on | comment notifications |
 
 
 ## 🛠️ Installation
