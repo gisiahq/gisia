@@ -35,8 +35,8 @@
             %div
               = f.label :version_check_enabled, _('Enable version check'), class: 'text-sm font-medium text-gray-900'
               %p{class: 'text-sm text-gray-500 mt-1'}
-                = _('Gisia will periodically send your instance version to gisia.dev.')
-                = link_to _('Learn more'), 'https://gisia.dev/docs/admin/settings/private#version_check', target: '_blank', class: 'text-blue-600 hover:underline'
+                = _('This Gisia instance checks for newer versions periodically.')
+                = link_to _('Learn more'), 'https://gisia.dev/docs/admin/settings/privacy#version_check', target: '_blank', class: 'text-blue-600 hover:underline'
 
           %div{class: 'pt-6 border-t border-gray-200 mt-6'}
             = f.submit _('Save changes'), class: 'px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors'

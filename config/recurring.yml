@@ -20,6 +20,9 @@ default: &default
   update_locked_unknown_artifacts:
     class: "Ci::JobArtifacts::UpdateLockedUnknownArtifactsJob"
     schedule: "*/7 * * * *"
+  version_check:
+    class: "VersionCheckJob"
+    schedule: "10 1 * * *"
 
 
 development:
