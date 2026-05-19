@@ -31,9 +31,8 @@ AI bot skills demo
 
 
 > [!WARNING]
-> ⚠️ Gisia is approaching v1.0
 > 
-> That means it is under active development and may contain bugs or breaking changes between versions.
+> This project is under active development and may contain bugs or breaking changes between versions.
 
 - **Regularly back up your repositories, configurations, and data — always before upgrading.**
 - Features and APIs may change without notice.
