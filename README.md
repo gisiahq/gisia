@@ -12,7 +12,13 @@ Gisia is an open-source, DevOps platform designed for individuals and small team
 
 <div align="center">
 <table><tr>
-<td><img src="docs/images/readme-banner.jpg" title="usage screenshots"></td>
+<td>
+
+Screenshots
+
+<img src="docs/images/readme-banner.jpg" title="usage screenshots">
+
+</td>
 <td>
 
 AI bot skills demo
@@ -33,6 +39,12 @@ AI bot skills demo
 - Features and APIs may change without notice.
 
 
+## 🛠️ Installation
+
+[How To Install](https://gisia.dev/docs/quick-start)
+
+[Official Docs](https://gisia.dev/docs)
+
 ## 🚀 Features
 
 | Feature | Status | Notes |
@@ -45,13 +57,6 @@ AI bot skills demo
 | **Webhooks** | ✅ Done | Webhooks to call URL of 3rd party services|
 | **AI Bot Skills** | ✅ Done | Machine-readable skill files, so AI bots can clone, push, and manage issues and epics via the API |
 | **Code Review** | 🔜 Working on | comment notifications |
-
-
-## 🛠️ Installation
-
-[How To Install](docs/how-to/1-quick-start.md)
-
-[Official Docs](https://gisia.dev/docs)
 
 ## ⏫ Upgrade
 
