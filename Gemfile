@@ -22,7 +22,6 @@ gem 'ransack', '~> 4.3'
 gem 'stringio', '3.1.7'
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem 'bcrypt', '~> 3.1.7'
-gem 'lexxy', '~> 0.8.0.beta'
 
 # Markdown
 gem 'gitlab-markup', '~> 2.0.0', require: 'github/markup'
