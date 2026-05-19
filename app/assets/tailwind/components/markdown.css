@@ -31,6 +31,16 @@
   @apply mb-4 last:mb-0;
 }
 
+.markdown p:has(> img) {
+  @apply flex flex-nowrap gap-2 items-start;
+}
+
+.markdown p:has(> img) > img {
+  @apply block h-auto;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
 .markdown ul {
   @apply list-disc pl-6 mb-4 space-y-1;
 }

@@ -147,7 +147,8 @@ export default class extends Controller {
       if (data?.link?.url) {
         const prefix = this.uploadPrefixValue
         const url = prefix ? `${prefix}${data.link.url}` : data.link.url
-        this.editor.paste(`![${data.link.alt}](${url})`)
+        const isImage = file.type.startsWith("image/")
+        this.editor.paste(isImage ? `![${data.link.alt}](${url})` : `[${data.link.alt}](${url})`)
       }
     } finally {
       this.uploadCount--
