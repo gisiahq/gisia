@@ -6,7 +6,7 @@ module Groups::Authorizable
   private
 
   def user_groups
-    current_user.accessible_namespaces
+    Namespace.where(id: current_user.authorized_groups.select(:namespace_id))
   end
 
   def authorize_group!(ability, namespace)

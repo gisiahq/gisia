@@ -2,9 +2,11 @@
 
 class Namespaces::NamespacesController < Namespaces::ApplicationController
   def show
-    @is_owner = user_signed_in? && current_user == @namespace.creator
-    projects = @namespace.descendant_projects
-    projects = projects.joins(:namespace).where(namespaces: { visibility_level: Gitlab::VisibilityLevel::PUBLIC }) unless @is_owner
+    projects = if user_signed_in?
+                 current_user.visible_projects_in_namespace(@namespace)
+               else
+                 @namespace.descendant_projects.joins(:namespace).where(namespaces: { visibility_level: Gitlab::VisibilityLevel::PUBLIC })
+               end
     @projects = projects.order(id: :desc)
   end
 end

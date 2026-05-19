@@ -201,6 +201,20 @@ class User < ApplicationRecord
       .or(Group.where(namespace_id: project_parent_ns))
   end
 
+  def authorized_for_namespace?(ns)
+    ns.members.exists?(user_id: id)
+  end
+
+  def visible_projects_in_namespace(ns)
+    all_projects = ns.descendant_projects
+    return all_projects if authorized_for_namespace?(ns)
+
+    member_ns_ids = project_members.select(:namespace_id)
+    all_projects.joins(:namespace)
+                .where(namespaces: { visibility_level: Gitlab::VisibilityLevel::PUBLIC })
+                .or(all_projects.joins(:namespace).where(namespace_id: member_ns_ids))
+  end
+
   def accessible_namespaces
     Namespace.where(id: namespace.id).or(Namespace.where(id: groups.select(:namespace_id)))
   end
