@@ -4,7 +4,7 @@
 @import "./components/tiny-mde.css";
 
 @theme {
-  --font-inter: "Inter", sans-serif;
+  --font-inter: "Inter", sans-serif, "Apple Color Emoji";
   --color-mint-500: oklch(0.72 0.11 178);
 }
 

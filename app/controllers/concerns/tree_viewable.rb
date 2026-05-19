@@ -21,6 +21,8 @@ module TreeViewable
     @logs = raw_logs.index_by { |row| row['file_name'] }
     @files = tree.entries
     @current_ref = @ref
+    @readme_blob = tree.readme
+    @readme_blob&.load_all_data!
 
     if ref_type == ExtractsRef::RefExtractor::TAG_REF_TYPE
       @tags = repository.tag_names
