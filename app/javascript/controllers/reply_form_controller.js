@@ -4,6 +4,7 @@ export default class extends Controller {
   static targets = ["placeholder", "editor"]
 
   connect() {
+    if (!this.hasEditorTarget) return
     const form = this.editorTarget.querySelector("form")
     if (form) {
       form.addEventListener("turbo:submit-end", (event) => {

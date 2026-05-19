@@ -5,7 +5,7 @@
   %div{ class: "flex gap-3 p-4 border border-slate-200 rounded-lg" }
     = render 'shared/user_avatar', user: note.author, size: 32, css_class: 'w-8 h-8 rounded-full flex-shrink-0'
 
-    %div{ class: "flex-1 min-w-0" }
+    %div{ class: "flex-1 min-w-0", data: { controller: "reply-form" } }
       %div{ class: "flex items-center justify-between mb-1" }
         %div{ class: "flex items-center gap-2" }
           - diff_change = note_diff_change_position_link(note)
@@ -26,6 +26,8 @@
         - unless collapsed
           %div{ class: "flex items-center gap-1 text-xs text-slate-500" }
             - if note.root_note? && note_has_project
+              - unless note.diff_note?
+                %button{ class: "hover:text-slate-700 bg-transparent border-0 px-1 py-0.5 text-xs cursor-pointer", type: "button", data: { action: "click->reply-form#expand" } } Reply
               - if note.resolved?
                 = button_to 'Unresolve', resolve_note_path(note), method: :delete, class: 'hover:text-slate-700 bg-transparent border-0 px-1 py-0.5 text-xs', form_class: 'inline'
               - else
@@ -68,8 +70,8 @@
             .ml-8.mt-4.space-y-4
               - note.replies.each do |reply|
                 = render 'shared/notes/note', note: reply
-          .mt-4{ id: "note-#{note.id}-reply-form", data: { controller: "reply-form" } }
-            %div{ class: "border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-400 cursor-text bg-white", data: { "reply-form-target": "placeholder", action: "click->reply-form#expand" } }
+          .mt-4{ id: "note-#{note.id}-reply-form" }
+            %div{ class: "border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-400 cursor-text bg-white#{' hidden' unless note.diff_note?}", data: { "reply-form-target": "placeholder", action: "click->reply-form#expand" } }
               Write a reply...
             %div{ class: "hidden", data: { "reply-form-target": "editor" } }
               = form_with url: namespace_project_notes_path(note.noteable.project.namespace.parent.full_path, note.noteable.project.path, target_id: note.noteable.id), scope: :note, local: false, class: "space-y-3" do |f|
