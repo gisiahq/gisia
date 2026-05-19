@@ -45,6 +45,10 @@ AI bot skills demo
 
 [Official Docs](https://gisia.dev/docs)
 
+## ⏫ Upgrade
+
+check the `docs/releases` to see how to upgrade to a specified version
+
 ## 🚀 Features
 
 | Feature | Status | Notes |
@@ -57,10 +61,6 @@ AI bot skills demo
 | **Webhooks** | ✅ Done | Webhooks to call URL of 3rd party services|
 | **AI Bot Skills** | ✅ Done | Machine-readable skill files, so AI bots can clone, push, and manage issues and epics via the API |
 | **Code Review** | 🔜 Working on | comment notifications |
-
-## ⏫ Upgrade
-
-check the `docs/releases` to see how to upgrade to a specified version
 
 ## 💡 Dev Philosophy
 
