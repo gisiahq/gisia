@@ -46,8 +46,8 @@
         = _('Settings')
       %ul{class: 'space-y-0.5'}
         %li
-          = link_to admin_settings_privacy_path, class: "flex items-center gap-3 px-3 py-2 text-sm font-medium #{current_page?(admin_settings_privacy_path) ? 'text-blue-700 bg-blue-50' : 'text-gray-800'} rounded hover:bg-gray-50 hover:text-blue-700 group" do
-            = icon 'shield', class: "w-4 h-4 #{current_page?(admin_settings_privacy_path) ? 'text-blue-600' : 'text-gray-600'} group-hover:text-blue-600"
-            %span= _('Privacy')
+          = link_to admin_settings_metrics_path, class: "flex items-center gap-3 px-3 py-2 text-sm font-medium #{current_page?(admin_settings_metrics_path) ? 'text-blue-700 bg-blue-50' : 'text-gray-800'} rounded hover:bg-gray-50 hover:text-blue-700 group" do
+            = icon 'chart-line', class: "w-4 h-4 #{current_page?(admin_settings_metrics_path) ? 'text-blue-600' : 'text-gray-600'} group-hover:text-blue-600"
+            %span= _('Metrics')
 
   = render 'shared/sidebar_footer'

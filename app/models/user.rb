@@ -202,6 +202,8 @@ class User < ApplicationRecord
   end
 
   def authorized_for_namespace?(ns)
+    return ns.creator_id == id if ns.is_a?(Namespaces::UserNamespace)
+
     ns.members.exists?(user_id: id)
   end
 

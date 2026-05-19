@@ -26,7 +26,7 @@ namespace :admin do
   end
   
   namespace :settings do
-    resource :privacy, only: [:show, :update], path: 'privacy', controller: 'privacy'
+    resource :metrics, only: [:show, :update], path: 'metrics', controller: 'metrics'
   end
 
   resources :jobs, only: [:index] do
