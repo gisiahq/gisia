@@ -2,10 +2,11 @@ import { Controller } from "@hotwired/stimulus"
 import { Editor } from "tiny-markdown-editor"
 
 export default class extends Controller {
-  static targets = ["hiddenField", "textarea", "preview", "editTab", "previewTab", "editorArea", "fileInput", "uploadButton"]
+  static targets = ["hiddenField", "textarea", "preview", "editTab", "previewTab", "editorArea", "fileInput", "uploadButton", "uploadOverlay"]
   static values = { initialContent: String, previewUrl: String, uploadUrl: String, uploadPrefix: String }
 
   connect() {
+    this.uploadCount = 0
     this.editor = new Editor({ textarea: this.textareaTarget, content: this.initialContentValue })
     this.editor.addEventListener("change", (e) => {
       if (this.hasHiddenFieldTarget) this.hiddenFieldTarget.value = e.content
@@ -119,10 +120,20 @@ export default class extends Controller {
     event.target.value = ""
   }
 
+  handlePaste(event) {
+    if (!this.uploadUrlValue) return
+    const files = Array.from(event.clipboardData?.files || [])
+    if (files.length === 0) return
+    event.preventDefault()
+    files.forEach(file => this.uploadFile(file))
+  }
+
   async uploadFile(file) {
     if (!this.uploadUrlValue) return
     const button = this.hasUploadButtonTarget ? this.uploadButtonTarget : null
     if (button) button.disabled = true
+    this.uploadCount++
+    if (this.hasUploadOverlayTarget) this.uploadOverlayTarget.classList.remove("hidden")
     const token = document.querySelector('meta[name="csrf-token"]')?.content
     const body = new FormData()
     body.append("file", file)
@@ -139,6 +150,8 @@ export default class extends Controller {
         this.editor.paste(`![${data.link.alt}](${url})`)
       }
     } finally {
+      this.uploadCount--
+      if (this.uploadCount === 0 && this.hasUploadOverlayTarget) this.uploadOverlayTarget.classList.add("hidden")
       if (button) button.disabled = false
     }
   }

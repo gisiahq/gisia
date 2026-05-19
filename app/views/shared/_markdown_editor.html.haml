@@ -45,11 +45,13 @@
                'data-markdown-editor-target': 'previewTab',
                'data-action': 'click->markdown-editor#showPreview',
                class: 'px-3 py-1.5 text-xs font-medium text-slate-500 border-b-2 border-transparent' } Preview
-    %div{ class: "bg-white #{min_height}", 'data-markdown-editor-target': 'editorArea' }
+    %div{ class: "relative bg-white #{min_height}", 'data-markdown-editor-target': 'editorArea', 'data-action': 'paste->markdown-editor#handlePaste' }
       %textarea{ 'data-markdown-editor-target': 'textarea',
                  id: textarea_id,
                  placeholder: placeholder,
                  class: 'hidden' }= initial_content
+      %div{ class: 'hidden absolute inset-0 flex items-center justify-center bg-white/60', 'data-markdown-editor-target': 'uploadOverlay' }
+        = icon 'spinner-gap', class: 'w-6 h-6 text-slate-500 animate-spin'
     %div{ class: "hidden px-3 py-2 bg-white markdown #{min_height}",
           'data-markdown-editor-target': 'preview' }
   = f.hidden_field field, 'data-markdown-editor-target': 'hiddenField'
