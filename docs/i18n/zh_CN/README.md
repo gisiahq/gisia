@@ -9,13 +9,18 @@
 
 Gisia 是一个开源 DevOps 平台，为那些希望完全掌控开发工作流程的个人和小团队而设计。它提供基本的 Git 托管、CI/CD 自动化、问题跟踪等功能。
 
-<p align="center">
-<img src="../../images/readme-banner.jpg" title="usage screenshots">
-</p>
+<div align="center">
+<table><tr>
+<td><img src="../../images/readme-banner.jpg" title="usage screenshots"></td>
+<td>
 
 AI bot 技能演示
 
 <video src="https://github.com/user-attachments/assets/70181798-058b-462f-a769-cf09537dcab9"></video>
+
+</td>
+</tr></table>
+</div>
 
 
 > [!WARNING]
