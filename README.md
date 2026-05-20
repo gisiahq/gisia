@@ -89,10 +89,6 @@ This project is licensed under the **GNU Affero General Public License v3.0 (AGP
 
 Please refer to the `NOTICE` and `.licenses` folders for detailed information on third-party licenses.
 
-### Commercial License
-
-If you need to use Gisia without the AGPLv3 obligations (e.g. keeping modifications private), a commercial license is available. See [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md) or contact us to discuss terms.
-
 ### ⚠️ Third-Party References Disclaimer
 
 You may notice references to **"GitLab"** in server responses, logs, or internal messages.
