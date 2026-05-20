@@ -8,5 +8,13 @@
         = f.check_box :squash_enabled, class: 'w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500'
         = f.label :squash_enabled, _('Enable squash merge'), class: 'text-sm font-medium text-gray-700'
 
+    %div{class: 'space-y-2 pt-4 border-t border-gray-200'}
+      %p{class: 'text-sm text-gray-600 mb-4'}
+        = _('When enabled, the source branch will be automatically deleted after a merge request is merged.')
+
+      %div{class: 'flex items-center gap-3'}
+        = f.check_box :remove_source_branch_after_merge, class: 'w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500'
+        = f.label :remove_source_branch_after_merge, _('Delete source branch after merge'), class: 'text-sm font-medium text-gray-700'
+
     %div{class: 'pt-4 border-t border-gray-200'}
       = f.submit _('Save'), class: 'px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors'

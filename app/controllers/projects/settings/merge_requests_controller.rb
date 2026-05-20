@@ -27,7 +27,7 @@ module Projects
       private
 
       def merge_requests_settings_params
-        @merge_requests_settings_params ||= params.require(:namespace_setting).permit(:squash_enabled)
+        @merge_requests_settings_params ||= params.require(:namespace_setting).permit(:squash_enabled, :remove_source_branch_after_merge)
       end
     end
   end
