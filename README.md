@@ -6,9 +6,17 @@
 </p>
 
 
-> **Self-hosted personal DevOps platform — lightweight, private, and fully yours.**
+> **Self-hosted personal DevOps platform — built by engineers, for engineers.**
 
 Gisia is an open-source, DevOps platform designed for individuals and small teams who want full control over their development workflow. It provides essential Git hosting, CI/CD automation, issue tracking.
+
+## Why Choose Gisia?
+
+- **Private** — your code stays on your server.
+- **Lightweight** — lean code, fast responses.
+- **Full control** — no vendor lock-in, no usage limits, no surprise pricing.
+- **Open source** — full transparency, every line of code is yours to read and trust.
+- **Built for individuals and small teams** — Git hosting, CI/CD, and issue tracking without the enterprise overhead.
 
 <div align="center">
 <table><tr>
