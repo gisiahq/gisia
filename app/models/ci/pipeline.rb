@@ -306,7 +306,6 @@ module Ci
 
         user = User.find_by_any_email(email, confirmed: true)
         next unless user
-        next if user.private_profile?
         next unless user.public_email.present? && user.public_email.casecmp?(email)
 
         user.username
