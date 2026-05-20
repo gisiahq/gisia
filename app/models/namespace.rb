@@ -21,6 +21,7 @@ class Namespace < ApplicationRecord
   include Namespaces::Traversal::Cached
   include Namespaces::Traversal::Traversable
   include Namespaces::HasReference
+  include Namespaces::HasSettings
 
   URL_MAX_LENGTH = 255
   NUMBER_OF_ANCESTORS_ALLOWED = 20
