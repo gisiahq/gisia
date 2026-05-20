@@ -68,6 +68,12 @@ module API
           state_event = params[:state_event]
           previous_assignee_ids = @merge_request.assignees.map(&:id).sort if params.key?(:assignee_ids)
 
+          if state_event == 'merge'
+            result = ::MergeRequests::MergeService.new(merge_request: @merge_request, current_user: current_user).execute
+            return render json: { message: result[:message] }, status: :unprocessable_entity if result[:status] == :error
+            return render :show
+          end
+
           ApplicationRecord.transaction do
             handle_state_event(state_event)
             attrs = update_params

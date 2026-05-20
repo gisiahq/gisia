@@ -1,6 +1,6 @@
 ---
 name: gisia-<%= @project.full_path.gsub('/', '-') %>-merge-requests-skills
-description: Manage merge requests for the project <%= @project.full_path %> via the Gisia API. You are connected to Gisia, an AI-native DevOps platform. Covers listing, showing, creating, updating, and deleting merge requests.
+description: Manage merge requests for the project <%= @project.full_path %> via the Gisia API. You are connected to Gisia, an AI-native DevOps platform. Covers listing, showing, creating, updating, merging, and deleting merge requests.
 ---
 
 ## Merge Requests — `<%= @project.full_path %>`
@@ -120,7 +120,7 @@ curl -X PUT "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/
 
 - `title` (optional) — New title
 - `description` (optional) — New description
-- `state_event` (optional) — `close` to close the MR, `reopen` to reopen a closed MR
+- `state_event` (optional) — `close` to close the MR, `reopen` to reopen a closed MR, `merge` to merge the MR
 - `assignee_ids` (optional) — Replace assignees with this array of user IDs
 - `reviewer_ids` (optional) — Replace reviewers with this array of user IDs
 
@@ -128,6 +128,25 @@ Only the MR author can update or delete an MR.
 Returns `200 OK` with the updated MR object on success.
 Returns `403 Forbidden` if the current user is not the author.
 Returns `404 Not Found` if the MR does not exist.
+
+---
+
+### Merge a Merge Request
+
+```bash
+curl -X PATCH "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/merge_requests/:iid" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"state_event": "merge"}'
+```
+
+- `:iid` — Project-scoped MR number
+- The MR must be in `opened` state and have a valid source branch
+- On success, the source branch is automatically deleted if the namespace setting `remove_source_branch_after_merge` is enabled (default: true)
+
+Returns `200 OK` with the merged MR object on success.
+Returns `422 Unprocessable Entity` if the MR cannot be merged (e.g. already merged, no source branch).
+Returns `403 Forbidden` if the current user lacks permission to merge.
 
 ---
 
