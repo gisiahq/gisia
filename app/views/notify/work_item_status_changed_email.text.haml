@@ -1,6 +1,6 @@
-= "#{@work_item_label} #{@reference_prefix}#{@work_item.iid} #{@work_item.title} was #{@work_item_status}."
+!= "#{@work_item_label} #{@reference_prefix}#{@work_item.iid} #{@work_item.title} was #{@work_item_status}."
 
 - if @updated_by
-  = "By: #{@updated_by.name}"
+  != "By: #{@updated_by.name}"
 
-= "View #{@work_item_label}: #{@target_url}"
+!= "View #{@work_item_label}: #{@target_url}"
