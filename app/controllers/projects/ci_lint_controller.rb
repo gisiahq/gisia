@@ -49,6 +49,8 @@ class Projects::CiLintController < Projects::ApplicationController
   end
 
   def find_ref!
+    return if @project.empty_repo?
+
     @ref = params.dig(:ci_lint, :ref).presence || @project.default_branch
     head :not_found unless @project.repository.branch_exists?(@ref)
   end
