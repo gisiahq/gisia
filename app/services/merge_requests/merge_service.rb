@@ -42,6 +42,8 @@ module MergeRequests
         merge_request.metrics.update!(merged_by: current_user, merged_at: Time.current)
       end
 
+      MergeRequests::DeleteSourceBranchJob.perform_later(merge_request.id, current_user.id)
+
       success
     rescue MergeError => e
       merge_request.update(merge_error: e.message)
