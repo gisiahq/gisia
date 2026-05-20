@@ -95,9 +95,6 @@ Gisia 的构建遵循以下原则：
 
 请参考 `NOTICE` 和 `.licenses` 文件夹以了解第三方许可证的详细信息。
 
-### 商业许可证
-
-如果你需要在不受 AGPLv3 约束的情况下使用 Gisia（例如保持修改内容私有），可申请商业许可证。请参阅 [COMMERCIAL_LICENSE.md](../../../COMMERCIAL_LICENSE.md) 或联系我们洽谈条款。
 
 ### ⚠️ 第三方引用免责声明
 
