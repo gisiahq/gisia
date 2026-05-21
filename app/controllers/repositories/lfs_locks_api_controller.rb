@@ -50,7 +50,7 @@ module Repositories
     end
 
     def build_payload(data, process)
-      data = LfsFileLockSerializer.new.represent(data) if process
+      data = render_lock(data) if process
 
       return data if @result[:status] == :success
 
@@ -72,8 +72,12 @@ module Repositories
       groups = locks.partition { |lock| user_id && lock.user_id == user_id }
 
       groups.map! do |records|
-        LfsFileLockSerializer.new.represent(records, root: false)
+        records.map { |lock| render_lock(lock) }
       end
+    end
+
+    def render_lock(lock)
+      JSON.parse(render_to_string(partial: 'lfs_file_lock', locals: { lfs_file_lock: lock }, formats: [:json]))
     end
 
     def download_request?

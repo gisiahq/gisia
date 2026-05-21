@@ -1,6 +1,8 @@
 class ApplicationController < BaseActionController
   include WorkhorseHelper
 
+  protect_from_forgery with: :exception, prepend: true
+
   allow_browser versions: :modern
   before_action :authenticate_user!
   before_action :set_current_organization

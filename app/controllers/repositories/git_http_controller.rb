@@ -15,8 +15,6 @@ module Repositories
 
     before_action :access_check
     prepend_before_action :deny_head_requests, only: [:info_refs]
-    skip_before_action :verify_authenticity_token, only: [:git_upload_pack, :git_receive_pack]
-
 
     rescue_from Gitlab::GitAccess::ForbiddenError, with: :render_403_with_exception
     rescue_from JWT::DecodeError, with: :render_403_with_exception
