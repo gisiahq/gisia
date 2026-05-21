@@ -70,6 +70,23 @@ module API
           render json: accessor.post_receive, status: :ok
         end
 
+        def lfs_authenticate
+          key = Key.auth.find_by_id(params[:key_id])
+          actor = API::Support::GitAccessActor.new(key: key)
+          project = Project.find_by_full_path(params[:project].to_s.delete_prefix('/').delete_suffix('.git'))
+
+          return render json: { message: 'Not Found' }, status: :not_found unless project&.lfs_enabled?
+          return render json: { message: 'Not Found' }, status: :not_found unless actor.key_or_user
+
+          # todo: actor.update_last_used_at!
+
+          payload = Gitlab::LfsToken
+            .new(actor.key_or_user, project)
+            .authentication_payload(project.lfs_http_url_to_repo)
+
+          render json: payload, status: :ok
+        end
+
         private
 
         def access_check!

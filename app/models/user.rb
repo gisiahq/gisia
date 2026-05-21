@@ -70,8 +70,18 @@ class User < ApplicationRecord
   scope :active, -> { with_state(:active).non_internal }
   scope :blocked_pending_approval, -> { with_state(:blocked_pending_approval) }
   scope :by_user_email, ->(emails) { iwhere(email: Array(emails)) }
+  scope :by_login, ->(login) do
+    return none if login.blank?
+
+    stripped_login = login.strip
+    login.include?('@') ? iwhere(email: stripped_login) : iwhere(username: stripped_login)
+  end
 
   class << self
+    def find_by_login(login)
+      by_login(login).take
+    end
+
     def find_by_ssh_key_id(key_id)
       find_by('EXISTS (?)', Key.select(1).where('keys.user_id = users.id').auth.regular_keys.where(id: key_id))
     end

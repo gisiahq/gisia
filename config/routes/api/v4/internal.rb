@@ -8,6 +8,7 @@ namespace :internal do
     post 'allowed'
     post 'pre_receive'
     post 'post_receive'
+    post 'lfs_authenticate'
   end
 
   namespace :workhorse do
