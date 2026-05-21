@@ -1,0 +1,79 @@
+# frozen_string_literal: true
+
+# ======================================================
+# Contains code from GitLab FOSS (MIT Licensed)
+# Copyright (c) GitLab Inc.
+# See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+# ======================================================
+
+class LfsObject < ApplicationRecord
+  include AfterCommitQueue
+  include Checksummable
+  include EachBatch
+  include FileStoreMounter
+  include ObjectStorable
+
+  STORE_COLUMN = :file_store
+
+  # `lfs_objects` is a gitlab_main_cell_local table and `lfs_objects_projects`
+  # is a gitlab_main_org table. Cross-schema foreign keys are not allowed, so
+  # we cannot use a DB-level `ON DELETE RESTRICT` FK. A loose FK is also not
+  # suitable here because it only supports async cascading deletes, not the
+  # RESTRICT action needed to prevent orphaned lfs_objects_projects rows.
+  # Therefore, we enforce this constraint at the application level instead.
+  has_many :lfs_objects_projects, dependent: :restrict_with_exception # rubocop:disable Cop/ActiveRecordDependent -- See comment above
+
+  has_many :projects, -> { distinct }, through: :lfs_objects_projects
+
+  scope :for_oids, ->(oids) { where(oid: oids) }
+
+  validates :oid, presence: true, uniqueness: true, format: { with: /\A\h{64}\z/ }
+
+  mount_file_store_uploader LfsObjectUploader
+
+  BATCH_SIZE = 3000
+
+  def self.for_oid_and_size(oid, size)
+    find_by(oid: oid, size: size)
+  end
+
+  def self.not_linked_to_project(project, repository_type: nil)
+    linked_to_project = project.lfs_objects_projects.where('lfs_objects_projects.lfs_object_id = lfs_objects.id')
+    linked_to_project = linked_to_project.where(repository_type: repository_type) if repository_type
+    where(
+      'NOT EXISTS (?)',
+      linked_to_project.select(1)
+    )
+  end
+
+  def project_allowed_access?(project)
+    if project.fork_network_member
+      lfs_objects_projects
+        .where("EXISTS(?)", project.fork_network.fork_network_members.select(1).where("fork_network_members.project_id = lfs_objects_projects.project_id"))
+        .exists?
+    else
+      lfs_objects_projects.where(project_id: project.id).exists?
+    end
+  end
+
+  def local_store?
+    file_store == LfsObjectUploader::Store::LOCAL
+  end
+
+  def self.unreferenced_in_batches
+    each_batch(of: BATCH_SIZE, order: :desc) do |lfs_objects|
+      relation = lfs_objects.where(
+        'NOT EXISTS (?)',
+        LfsObjectsProject.select(1).where('lfs_objects_projects.lfs_object_id = lfs_objects.id')
+      )
+
+      yield relation if relation.any?
+    end
+  end
+
+  def self.calculate_oid(path)
+    self.sha256_hexdigest(path)
+  end
+end
+
+LfsObject.prepend_mod_with('LfsObject')

@@ -1,0 +1,28 @@
+# frozen_string_literal: true
+
+# ======================================================
+# Contains code from GitLab FOSS (MIT Licensed)
+# Copyright (c) GitLab Inc.
+# See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+# ======================================================
+
+class LfsFileLock < ApplicationRecord
+  belongs_to :project
+  belongs_to :user
+
+  scope :for_paths, ->(paths) { where(path: paths) }
+  scope :not_for_users, ->(user_ids) { where.not(user_id: user_ids) }
+
+  validates :project_id, :user_id, :path, presence: true
+
+  def self.for_path!(path)
+    find_by!(path: path)
+  end
+
+  def can_be_unlocked_by?(current_user, forced = false)
+    return false unless current_user
+    return true if current_user.id == user_id
+
+    forced && current_user.can?(:admin_project, project)
+  end
+end
