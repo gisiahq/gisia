@@ -221,9 +221,12 @@ class Project < ApplicationRecord
     false
   end
 
+  # todo: read from project/namespace settings
   def lfs_enabled?
-    false
+    true
   end
+
+  alias_method :lfs_enabled, :lfs_enabled?
 
   def beyond_identity_integration; end
 

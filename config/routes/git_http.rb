@@ -23,6 +23,30 @@ scope(path: '*repository_path', format: false) do
         post '/ssh-upload-pack', action: :ssh_upload_pack
         post '/ssh-receive-pack', action: :ssh_receive_pack
       end
+
+      # Git LFS API (metadata)
+      scope(path: 'info/lfs/objects', controller: :lfs_api) do
+        post :batch
+        post '/', action: :deprecated
+        get '/*oid', action: :deprecated
+      end
+
+      scope(path: 'info/lfs') do
+        resources :lfs_locks, controller: :lfs_locks_api, path: 'locks' do
+          post :unlock, on: :member
+          post :verify, on: :collection
+        end
+      end
+
+      # GitLab LFS object storage
+      scope(path: 'gitlab-lfs/objects/*oid', controller: :lfs_storage, constraints: { oid: /[a-f0-9]{64}/ }) do
+        get '/', action: :download
+
+        constraints(size: /[0-9]+/) do
+          put '/*size/authorize', action: :upload_authorize
+          put '/*size', action: :upload_finalize
+        end
+      end
     end
   end
 
