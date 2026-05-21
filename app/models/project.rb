@@ -11,6 +11,7 @@
 
 class Project < ApplicationRecord
   extend Gitlab::ConfigHelper
+  extend Gitlab::Cache::RequestCache
   include Gitlab::VisibilityLevel
   include AfterCommitQueue
   include Gitlab::ConfigHelper
@@ -55,6 +56,9 @@ class Project < ApplicationRecord
   has_many :hooks, class_name: 'ProjectHook', through: :namespace, source: :web_hooks
   has_one :board, through: :namespace
   has_many :notification_settings, as: :source, dependent: :delete_all
+  has_many :lfs_objects, through: :lfs_objects_projects
+  has_many :lfs_objects_projects, dependent: :destroy
+  has_many :lfs_file_locks, dependent: :destroy
 
 
   accepts_nested_attributes_for :namespace
@@ -227,6 +231,11 @@ class Project < ApplicationRecord
   end
 
   alias_method :lfs_enabled, :lfs_enabled?
+
+  def any_lfs_file_locks?
+    lfs_file_locks.any?
+  end
+  request_cache(:any_lfs_file_locks?) { self.id }
 
   def beyond_identity_integration; end
 

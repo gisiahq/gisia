@@ -4,6 +4,9 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025-present Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module Gitlab
@@ -20,10 +23,10 @@ module Gitlab
           lfs_check = Checks::LfsIntegrity.new(project, newrevs, logger.time_left)
 
           if lfs_check.objects_missing?
-            Gitlab::Metrics::Lfs.check_objects_error_rate.increment(error: true, labels: {})
+            # Gitlab::Metrics::Lfs.check_objects_error_rate.increment(error: true, labels: {})
             raise GitAccess::ForbiddenError, ERROR_MESSAGE
           else
-            Gitlab::Metrics::Lfs.check_objects_error_rate.increment(error: false, labels: {})
+            # Gitlab::Metrics::Lfs.check_objects_error_rate.increment(error: false, labels: {})
           end
         end
       end
