@@ -19,6 +19,7 @@ module Repositories
     delegate :authentication_abilities, to: :authentication_result, allow_nil: true
     delegate :type, to: :authentication_result, allow_nil: true, prefix: :auth_result
 
+    skip_before_action :verify_authenticity_token
     prepend_before_action :authenticate_user, :parse_repo_path
 
     around_action :bypass_admin_mode!, if: :authenticated_user
