@@ -1739,6 +1739,106 @@ ALTER SEQUENCE public.labels_id_seq OWNED BY public.labels.id;
 
 
 --
+-- Name: lfs_file_locks; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.lfs_file_locks (
+    id bigint NOT NULL,
+    project_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    path character varying(511),
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: lfs_file_locks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.lfs_file_locks_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: lfs_file_locks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.lfs_file_locks_id_seq OWNED BY public.lfs_file_locks.id;
+
+
+--
+-- Name: lfs_objects; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.lfs_objects (
+    id bigint NOT NULL,
+    oid character varying NOT NULL,
+    size bigint NOT NULL,
+    file character varying,
+    file_store integer DEFAULT 1 NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: lfs_objects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.lfs_objects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: lfs_objects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.lfs_objects_id_seq OWNED BY public.lfs_objects.id;
+
+
+--
+-- Name: lfs_objects_projects; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.lfs_objects_projects (
+    id bigint NOT NULL,
+    lfs_object_id bigint NOT NULL,
+    project_id bigint NOT NULL,
+    repository_type smallint,
+    oid text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: lfs_objects_projects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.lfs_objects_projects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: lfs_objects_projects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.lfs_objects_projects_id_seq OWNED BY public.lfs_objects_projects.id;
+
+
+--
 -- Name: members; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3518,6 +3618,27 @@ ALTER TABLE ONLY public.labels ALTER COLUMN id SET DEFAULT nextval('public.label
 
 
 --
+-- Name: lfs_file_locks id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lfs_file_locks ALTER COLUMN id SET DEFAULT nextval('public.lfs_file_locks_id_seq'::regclass);
+
+
+--
+-- Name: lfs_objects id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lfs_objects ALTER COLUMN id SET DEFAULT nextval('public.lfs_objects_id_seq'::regclass);
+
+
+--
+-- Name: lfs_objects_projects id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lfs_objects_projects ALTER COLUMN id SET DEFAULT nextval('public.lfs_objects_projects_id_seq'::regclass);
+
+
+--
 -- Name: members id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4149,6 +4270,30 @@ ALTER TABLE ONLY public.labels
 
 
 --
+-- Name: lfs_file_locks lfs_file_locks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lfs_file_locks
+    ADD CONSTRAINT lfs_file_locks_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: lfs_objects lfs_objects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lfs_objects
+    ADD CONSTRAINT lfs_objects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: lfs_objects_projects lfs_objects_projects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lfs_objects_projects
+    ADD CONSTRAINT lfs_objects_projects_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: members members_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4660,6 +4805,20 @@ CREATE INDEX index_notes_on_updated_by_id ON ONLY public.notes USING btree (upda
 --
 
 CREATE INDEX epic_notes_updated_by_id_idx ON public.epic_notes USING btree (updated_by_id);
+
+
+--
+-- Name: idx_lfs_objects_projects_null_repo_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_lfs_objects_projects_null_repo_type ON public.lfs_objects_projects USING btree (project_id, lfs_object_id) WHERE (repository_type IS NULL);
+
+
+--
+-- Name: idx_lfs_objects_projects_with_repo_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_lfs_objects_projects_with_repo_type ON public.lfs_objects_projects USING btree (project_id, lfs_object_id, repository_type) WHERE (repository_type IS NOT NULL);
 
 
 --
@@ -5633,6 +5792,62 @@ CREATE INDEX index_labels_on_namespace_id ON public.labels USING btree (namespac
 --
 
 CREATE INDEX index_labels_on_rank ON public.labels USING btree (rank);
+
+
+--
+-- Name: index_lfs_file_locks_on_project_id_and_path; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_lfs_file_locks_on_project_id_and_path ON public.lfs_file_locks USING btree (project_id, path);
+
+
+--
+-- Name: index_lfs_file_locks_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_lfs_file_locks_on_user_id ON public.lfs_file_locks USING btree (user_id);
+
+
+--
+-- Name: index_lfs_objects_on_file; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_lfs_objects_on_file ON public.lfs_objects USING btree (file);
+
+
+--
+-- Name: index_lfs_objects_on_file_store; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_lfs_objects_on_file_store ON public.lfs_objects USING btree (file_store);
+
+
+--
+-- Name: index_lfs_objects_on_oid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_lfs_objects_on_oid ON public.lfs_objects USING btree (oid);
+
+
+--
+-- Name: index_lfs_objects_projects_on_lfs_object_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_lfs_objects_projects_on_lfs_object_id ON public.lfs_objects_projects USING btree (lfs_object_id);
+
+
+--
+-- Name: index_lfs_objects_projects_on_oid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_lfs_objects_projects_on_oid ON public.lfs_objects_projects USING btree (oid);
+
+
+--
+-- Name: index_lfs_objects_projects_on_project_id_and_lfs_object_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_lfs_objects_projects_on_project_id_and_lfs_object_id ON public.lfs_objects_projects USING btree (project_id, lfs_object_id);
 
 
 --
@@ -7083,6 +7298,7 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260521000000'),
 ('20260520130828'),
 ('20260520130827'),
 ('20260518110000'),
