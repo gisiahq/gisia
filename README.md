@@ -80,7 +80,7 @@ Gisia is built with these principles in mind:
 
 ## 🤝 Contributing
 
-Thank you for your interest in Gisia! This repository is currently a **mirror** of our main development branch. We are not accepting community contributions at this time.
+Thank you for your interest in Gisia! This repository is currently a **mirror** of our main development branch. We are **not** accepting community contributions at this time.
 
 We appreciate your support and understanding — please feel free to open an issue to share feedback or suggestions.
 
