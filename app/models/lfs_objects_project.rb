@@ -33,7 +33,7 @@ class LfsObjectsProject < ApplicationRecord
   end
 
   def self.update_statistics_for_project_id(project_id)
-    ProjectCacheWorker.perform_async(project_id, [], %w[lfs_objects_size]) # rubocop:disable CodeReuse/Worker
+    # todo: implement project cache worker for lfs_objects_size stats
   end
 
   private
