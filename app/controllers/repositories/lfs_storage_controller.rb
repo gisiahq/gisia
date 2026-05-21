@@ -4,6 +4,9 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025-present Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module Repositories
@@ -17,8 +20,8 @@ module Repositories
     # added here as a part of the refactor, will be removed
     # https://gitlab.com/gitlab-org/gitlab/-/issues/328692
     delegate :deploy_token, :user, to: :authentication_result, allow_nil: true
-    urgency :medium, [:download, :upload_authorize]
-    urgency :low, [:upload_finalize]
+    # urgency :medium, [:download, :upload_authorize]
+    # urgency :low, [:upload_finalize]
 
     def download
       return render_lfs_not_found unless project
