@@ -227,7 +227,6 @@ class Project < ApplicationRecord
     false
   end
 
-
   def beyond_identity_integration; end
 
   def merge_base_commit(first_commit_id, second_commit_id)
