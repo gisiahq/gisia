@@ -58,8 +58,6 @@
                     = link_to namespace_project_commits_path(@project.namespace.parent.full_path, @project.namespace.path, tag.name, ref_type: 'tags'), class: 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all duration-200 ml-1', data: { turbo: false } do
                       = icon 'git-commit', class: 'w-3.5 h-3.5'
                       %span= _('Commits')
-                    %button{class: 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all duration-200 ml-1', title: 'Download archive'}
-                      = icon 'download', class: 'w-3.5 h-3.5'
 
         - else
           %div{class: 'text-center py-16 bg-slate-50'}
