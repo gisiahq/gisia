@@ -52,9 +52,12 @@ module TreeViewable
   private
 
   def extract_ref_from_id
-    return if params[:id].blank?
-    id = params[:id]
-    repository.branch_names.find { |branch| id == branch }
+    return if @ref.blank?
+    if ref_type == ExtractsRef::RefExtractor::TAG_REF_TYPE
+      @ref if repository.tag_exists?(@ref)
+    else
+      @ref if repository.branch_exists?(@ref)
+    end
   end
 
   def ref_extractor_params

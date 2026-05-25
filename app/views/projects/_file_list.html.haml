@@ -5,10 +5,10 @@
         %div{ class: 'flex items-center space-x-3' }
           - path = "/#{@path}" if @path.present? && @path != '/'
           - if file.type == :tree
-            - file_url = namespace_project_tree_url(@project.namespace.parent.full_path, @project.path, "#{@current_ref}#{path}/#{file.name}")
+            - file_url = namespace_project_tree_url(@project.namespace.parent.full_path, @project.path, "#{@current_ref}#{path}/#{file.name}", ref_type: @ref_type)
             = icon('folder', class: 'w-4 h-4 text-blue-500')
           - else
-            - file_url = namespace_project_blob_url(@project.namespace.parent.full_path, @project.path, "#{@current_ref}#{path}/#{file.name}")
+            - file_url = namespace_project_blob_url(@project.namespace.parent.full_path, @project.path, "#{@current_ref}#{path}/#{file.name}", ref_type: @ref_type)
             = icon('file-text', class: 'w-4 h-4 text-slate-400')
           = link_to file.name, file_url, 'data-turbo': false, class: 'text-sm font-medium text-slate-900 hover:text-blue-600 hover:underline transition-colors'
         %div{ class: 'text-xs text-slate-500' }

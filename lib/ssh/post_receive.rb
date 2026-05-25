@@ -27,15 +27,19 @@ module Ssh
     end
 
     def process_project_changes(post_received, project)
-      project.repository&.expire_branches_cache
-
       user = identify_user(post_received)
       return false unless user
 
       push_options = post_received.push_options
       changes = post_received.changes
+      expire_ref_caches(project, changes)
 
       process_ref_changes(project, user, push_options: push_options, changes: changes)
+    end
+
+    def expire_ref_caches(project, changes)
+      project.repository&.expire_branches_cache if changes.branch_changes.any?
+      project.repository&.expire_tags_cache if changes.tag_changes.any?
     end
 
     def process_ref_changes(project, user, params = {})
