@@ -57,6 +57,7 @@
 /.playwright-mcp
 
 /node_modules
+.yarn/
 /config/credentials.yml.enc
 .rspec_status
 spec
