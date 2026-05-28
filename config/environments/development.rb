@@ -79,4 +79,6 @@ Rails.application.configure do
   config.solid_queue.connects_to = { database: { reading: :queue, writing: :queue } }
 
   config.web_console.whitelisted_ips = '192.168.1.0/24'
+
+  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 end

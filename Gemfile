@@ -172,8 +172,10 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem 'rack-mini-profiler', '~> 4.0', '>= 4.0.1', require: false
+  gem 'stackprof', '~> 0.2.28', require: false
   gem 'rubocop-rails-omakase', require: false
   gem 'licensed', '~> 5.0', '>= 5.0.4', require: false
+  gem 'listen', '~> 3.10'
 end
 
 group :development do
