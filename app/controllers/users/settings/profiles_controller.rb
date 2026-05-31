@@ -14,10 +14,6 @@ module Users
         else
           respond_to do |format|
             format.turbo_stream { render :update, status: :unprocessable_entity }
-            format.html do
-              flash.now[:alert] = 'Failed to update profile.'
-              render :edit, status: :unprocessable_entity
-            end
           end
         end
       end
