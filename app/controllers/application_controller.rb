@@ -10,6 +10,11 @@ class ApplicationController < BaseActionController
 
   private
 
+  def render(*args, **options)
+    options[:layout] = false if request.format.turbo_stream?
+    super(*args, **options)
+  end
+
   def set_locale(&block)
     if current_user
       Gitlab::I18n.with_user_locale(current_user, &block)

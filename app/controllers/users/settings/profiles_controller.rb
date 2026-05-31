@@ -12,9 +12,7 @@ module Users
         if @user.update(profile_params)
           redirect_to users_settings_profile_path, notice: 'Profile updated successfully.'
         else
-          respond_to do |format|
-            format.turbo_stream { render :update, status: :unprocessable_entity }
-          end
+          render :update
         end
       end
 
