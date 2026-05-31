@@ -42,7 +42,7 @@ class Projects::PipelinesController < Projects::ApplicationController
   def show; end
 
   def jobs
-    @jobs = pipeline.builds
+    @jobs = pipeline.builds.ordered_by_stage
   end
 
   private
