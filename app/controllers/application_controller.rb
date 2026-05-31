@@ -8,12 +8,12 @@ class ApplicationController < BaseActionController
   before_action :set_current_organization
   around_action :set_locale
 
-  private
-
   def render(*args, **options)
     options[:layout] = false if request.format.turbo_stream?
     super(*args, **options)
   end
+
+  private
 
   def set_locale(&block)
     if current_user
