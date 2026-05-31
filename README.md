@@ -49,14 +49,12 @@ AI bot skills demo
 
 ```shell
 # Initialize and start Gisia
-
 mkdir gisia && cd gisia
 docker run --rm -v ./:/output gisia/init:latest
 cp .env.example .env
 docker compose up -d
 
 # Get your root password
-
 docker exec -it gisia-web cat /rails/initial_root_password
 ```
 
