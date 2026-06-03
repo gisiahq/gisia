@@ -8,11 +8,7 @@
     %div{ class: 'flex justify-between items-center mb-6' }
       %h1{ class: 'text-2xl font-semibold text-gray-800' }= _('Run pipeline')
 
-    - if flash[:alert]
-      %div{ class: 'mb-4 px-4 py-3 rounded-lg bg-rose-50 text-rose-700 text-sm border border-rose-200' }
-        = flash[:alert]
-
-    = form_tag(pipelines_path(@project), method: :post, class: 'space-y-5' ) do
+    = form_tag(pipelines_path(@project), method: :post, class: 'space-y-5', data: { turbo: false }) do
       %div
         %label{ for: 'ref', class: 'block text-sm font-medium text-gray-700 mb-1' }= _('Branch or tag')
         %div{ data: { controller: 'pipeline-ref-select', 'pipeline-ref-select-branches-value': @branches.to_json, 'pipeline-ref-select-tags-value': @tags.to_json, 'pipeline-ref-select-selected-value': @ref.to_s }, class: 'trigger-pipeline relative' }
