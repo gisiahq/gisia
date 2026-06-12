@@ -4,8 +4,12 @@ module API
   module V4
     module Projects
       class MembersController < ::API::V4::ProjectBaseController
+        include ::Projects::MemberRoleAuthorizable
+
         before_action :find_member!, only: [:show, :update, :destroy]
-        before_action :authorize_manage_members!, only: [:create, :update, :destroy]
+        before_action :authorize_manage_members!, only: [:index, :create, :update, :destroy]
+        before_action :authorize_member_role!, only: [:create, :update, :destroy]
+        before_action :prevent_last_owner_removal!, only: [:destroy]
 
         def index
           @members = ProjectMember.with_project(@project).includes(:user)
@@ -57,10 +61,24 @@ module API
         end
 
         def authorize_manage_members!
-          return if current_user.admin?
+          return if current_user&.admin?
 
-          member = ProjectMember.with_project(@project).find_by(user_id: current_user.id)
+          member = ProjectMember.with_project(@project).find_by(user_id: current_user&.id)
           forbidden! unless member&.maintainer? || member&.owner?
+        end
+
+        def prevent_last_owner_removal!
+          return unless last_owner?(@member)
+
+          forbidden!('Cannot remove the last owner of the project')
+        end
+
+        def requested_access_level
+          params[:access_level]
+        end
+
+        def deny_member_access!
+          forbidden!
         end
       end
     end

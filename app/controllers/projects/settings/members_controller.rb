@@ -2,6 +2,7 @@ module Projects
   module Settings
     class MembersController < Projects::Settings::ApplicationController
       include MembersHelper
+      include Projects::MemberRoleAuthorizable
       before_action :set_member, only: [:edit_form, :update, :destroy]
       before_action :authorize_member_role!, only: [:create, :update, :destroy]
       before_action :prevent_last_owner_removal!, only: [:destroy]
@@ -76,34 +77,20 @@ module Projects
         @member = @project.namespace.members.find(params[:id])
       end
 
-      def authorize_member_role!
-        return if current_user&.admin?
-        return head :forbidden if @member && !can_assign_level?(@member.access_level)
-
-        requested_level = member_param_present? ? member_params[:access_level] : nil
-        head :forbidden if requested_level.present? && !can_assign_level?(requested_level)
-      end
-
       def prevent_last_owner_removal!
-        return unless @member.owner?
-        return if @project.namespace.members.owners.where.not(id: @member.id).exists?
+        return unless last_owner?(@member)
 
         redirect_to settings_members_path(@project), alert: 'Cannot remove the last owner of the project.'
       end
 
-      def member_param_present?
-        params.key?(:project_member) || params.key?(:member)
+      def requested_access_level
+        return unless params.key?(:project_member) || params.key?(:member)
+
+        member_params[:access_level]
       end
 
-      def can_assign_level?(level)
-        Gitlab::Access.level_encompasses?(
-          current_access_level: actor_access_level,
-          level_to_assign: Member.access_levels.fetch(level.to_s, level).to_i
-        )
-      end
-
-      def actor_access_level
-        @actor_access_level ||= @project.team.max_member_access(current_user.id)
+      def deny_member_access!
+        head :forbidden
       end
 
       def member_params
