@@ -111,6 +111,15 @@ export default class extends Controller {
     this.hideDropdown()
   }
 
+  removeUser(event) {
+    const userId = event.currentTarget.dataset.userId
+
+    if (this.selectedUsers) {
+      this.selectedUsers.delete(userId)
+      this.selectedValue = Array.from(this.selectedUsers).join(',')
+    }
+  }
+
   updateFormAndSubmit() {
     const userIds = Array.from(this.selectedUsers)
     const form = this.formTarget

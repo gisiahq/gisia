@@ -1,3 +1,6 @@
+- can_edit = local_assigns.fetch(:can_edit, false)
+- remove_url = local_assigns[:remove_url]
+
 = turbo_frame_tag "#{resource_type}-#{field_type}" do
   %div{ data: { 'user-select-dropdown-target': 'selectedUsers', field_type: field_type } }
     - if users&.any?
@@ -5,9 +8,12 @@
         - users.each do |user|
           %div{ class: 'flex items-center gap-2' }
             = render 'shared/user_avatar', user: user, size: 24, css_class: 'w-6 h-6 rounded-full'
-            %div
+            %div{ class: 'flex-1 min-w-0' }
               %div{ class: 'text-sm font-medium text-slate-900' }= user.name
               %div{ class: 'text-xs text-slate-500' }= "@#{user.username}"
+            - if can_edit && remove_url
+              = button_to remove_url, params: { user_id: user.id }, method: :post, form: { class: 'shrink-0' }, class: 'text-slate-400 hover:text-slate-500', data: { action: 'user-select-dropdown#removeUser', user_id: user.id }, aria: { label: "Remove #{user.name}" } do
+                = icon 'x', class: 'w-3.5 h-3.5'
     - else
       %div{ class: 'text-center py-3' }
         %div{ class: 'text-slate-400 mb-1' }
