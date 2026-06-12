@@ -20,6 +20,7 @@ resources :merge_requests, except: [:destroy], param: :iid, constraints: { iid: 
     get :pipelines
     post :merge
     post :search_links
+    post :remove_user
   end
   resources :links, only: [:create, :destroy], controller: 'merge_requests/links'
 

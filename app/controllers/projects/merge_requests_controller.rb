@@ -13,15 +13,15 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   include Projects::MergeRequestNotifiable
   include Projects::MergeRequestAuthorizable
   include Projects::ItemLinkFindable
-  before_action :authenticate_user!, only: %i[new create edit update merge]
-  before_action :require_project_member!, only: %i[new create edit update merge]
+  before_action :authenticate_user!, only: %i[new create edit update merge remove_user]
+  before_action :require_project_member!, only: %i[new create edit update merge remove_user]
   before_action :define_new_vars, only: %i[new edit]
-  before_action :set_mr, only: %i[show commits diffs pipelines edit update merge search_links]
+  before_action :set_mr, only: %i[show commits diffs pipelines edit update merge search_links remove_user]
   before_action :set_counts, only: [:index]
   before_action :authorize_create_merge_request!, only: %i[new create]
   before_action :authorize_read_merge_request!, only: %i[show commits diffs pipelines search_links]
-  before_action :authorize_update_merge_request!, only: %i[edit update merge]
-  before_action :set_notification_author, only: [:update]
+  before_action :authorize_update_merge_request!, only: %i[edit update merge remove_user]
+  before_action :set_notification_author, only: [:update, :remove_user]
   before_action :check_mr_open, only: [:edit]
 
   def index
@@ -118,6 +118,27 @@ class Projects::MergeRequestsController < Projects::ApplicationController
     end
   end
 
+  def remove_user
+    user_id = remove_user_params
+    reviewers = remove_user_field == 'reviewers'
+    previous_assignee_ids = @merge_request.assignees.map(&:id).sort unless reviewers
+
+    if reviewers
+      @merge_request.reviewer_ids = @merge_request.reviewer_ids - [user_id]
+    else
+      @merge_request.assignee_ids = @merge_request.assignee_ids - [user_id]
+    end
+
+    @merge_request.save
+    @merge_request.reload
+
+    notify_reassigned_merge_request(previous_assignee_ids) unless reviewers
+
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
   def merge
     result = MergeRequests::MergeService.new(merge_request: @merge_request, current_user: current_user).execute
     mr_path = namespace_project_merge_request_path(@merge_request.target_project.namespace.parent.full_path, @merge_request.target_project.path, @merge_request)
@@ -178,6 +199,14 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   def merge_request_params
     params.require(:merge_request).permit(:source_project_id, :source_branch, :target_project_id, :target_branch, :title, :description, :state_event,
       assignee_ids: [], reviewer_ids: [])
+  end
+
+  def remove_user_params
+    params[:user_id].to_i
+  end
+
+  def remove_user_field
+    params[:field_type] == 'reviewers' ? 'reviewers' : 'assignees'
   end
 
   def merge_request_create_params
