@@ -1,10 +1,15 @@
+- can_edit = local_assigns.fetch(:can_edit, false)
+
 = turbo_frame_tag "#{resource_type}-labels" do
   %div{ data: { 'label-select-dropdown-target': 'selectedLabels' } }
     - if labels&.any?
       %div{ class: 'flex flex-wrap gap-2' }
         - labels.each do |label|
-          %div{ class: 'inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium', style: "background-color: #{label.color}20; color: #{label.color}" }
+          %div{ class: 'inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium', style: "background-color: #{label.color}20; color: #{label.color}" }
             = label.title
+            - if can_edit
+              %button{ type: 'button', class: 'shrink-0 opacity-70 hover:opacity-100', data: { action: 'click->label-select-dropdown#removeLabel', label_id: label.id }, aria: { label: "Remove #{label.title}" } }
+                = icon 'x', class: 'w-3 h-3'
     - else
       %div{ class: 'text-center py-3' }
         %p{ class: 'text-xs text-slate-500' } No labels

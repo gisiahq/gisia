@@ -77,6 +77,11 @@ export default class extends Controller {
     this.hideDropdown()
   }
 
+  removeLabel(event) {
+    event.stopPropagation()
+    this.unlinkLabel(event.currentTarget.dataset.labelId)
+  }
+
   showDropdown() {
     this.dropdownTarget.classList.remove('hidden')
     if (this.hasSearchInputTarget) {

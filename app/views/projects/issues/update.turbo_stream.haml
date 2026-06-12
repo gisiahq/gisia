@@ -4,7 +4,7 @@
 
 - if params[:issue]&.key?('label_ids')
   = turbo_stream.replace 'issue-labels' do
-    = render 'shared/labels/selected_labels_turbo', resource: @issue, resource_type: 'issue', labels: @issue.labels, selected_label_ids: @issue.label_ids.join(',')
+    = render 'shared/labels/selected_labels_turbo', resource: @issue, resource_type: 'issue', labels: @issue.labels, selected_label_ids: @issue.label_ids.join(','), can_edit: current_user&.can?(:update_issue, @issue)
 
 - if params[:issue]&.key?('parent_id')
   = turbo_stream.replace 'issue-parent' do
