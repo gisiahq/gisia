@@ -65,6 +65,13 @@ export default class extends Controller {
     this.hideDropdown()
   }
 
+  clearParent(event) {
+    event.stopPropagation()
+
+    this.parentIdInputTarget.value = ''
+    this.formTarget.requestSubmit()
+  }
+
   showDropdown() {
     this.dropdownTarget.classList.remove('hidden')
     if (this.hasSearchInputTarget) {

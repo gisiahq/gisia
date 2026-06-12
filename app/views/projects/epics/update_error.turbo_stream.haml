@@ -1,3 +1,3 @@
 - if params[:epic]&.key?('parent_id')
   = turbo_stream.replace 'epic-parent' do
-    = render 'shared/epics/selected_epic_turbo', resource: @epic, resource_type: 'epic', parent: @epic.parent, error: @epic.errors.full_messages.first
+    = render 'shared/epics/selected_epic_turbo', resource: @epic, resource_type: 'epic', parent: @epic.parent, error: @epic.errors.full_messages.first, can_edit: current_user&.can?(:update_issue, @epic)

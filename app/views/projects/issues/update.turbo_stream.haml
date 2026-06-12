@@ -8,4 +8,4 @@
 
 - if params[:issue]&.key?('parent_id')
   = turbo_stream.replace 'issue-parent' do
-    = render 'shared/epics/selected_epic_turbo', resource: @issue, resource_type: 'issue', parent: @issue.parent
+    = render 'shared/epics/selected_epic_turbo', resource: @issue, resource_type: 'issue', parent: @issue.parent, can_edit: current_user&.can?(:update_issue, @issue)

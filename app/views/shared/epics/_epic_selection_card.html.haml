@@ -1,3 +1,5 @@
+- can_edit = local_assigns.fetch(:can_edit) { current_user.present? }
+
 %div{ class: 'bg-white border border-slate-200 rounded-lg p-4', data: { controller: 'epic-select-dropdown', 'epic-select-dropdown-url-value': search_url } }
 
   = form_with url: update_url, local: false, method: :patch, data: { turbo_frame: "#{resource_type}-parent", 'epic-select-dropdown-target': 'form' }, class: 'hidden' do |f|
@@ -11,10 +13,10 @@
 
   %div{ class: 'mb-3 flex items-center justify-between' }
     %h3{ class: 'text-sm font-semibold text-slate-900' }= title
-    - if current_user
+    - if can_edit
       %div{ class: 'relative' }
         %button{ class: 'inline-flex items-center px-2 py-1 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 font-medium rounded transition-colors', data: { action: 'click->epic-select-dropdown#toggleDropdown' } }
           Edit
         = render 'shared/epics/epic_search_droplist'
 
-  = render 'shared/epics/selected_epic_turbo', resource: resource, resource_type: resource_type, parent: parent
+  = render 'shared/epics/selected_epic_turbo', resource: resource, resource_type: resource_type, parent: parent, can_edit: can_edit
