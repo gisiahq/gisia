@@ -1,0 +1,2 @@
+= turbo_stream.replace 'epic-assignees' do
+  = render 'shared/assignees/selected_users_turbo', resource: @epic, resource_type: 'epic', users: @epic.assignees, field_type: 'assignees', avatar_color: 'from-blue-400 to-blue-500', empty_icon: 'user-plus', empty_message: 'No assignees', can_edit: current_user&.can?(:update_issue, @epic), remove_url: remove_assignee_namespace_project_epic_path(@project.namespace.parent.full_path, @project.path, @epic)

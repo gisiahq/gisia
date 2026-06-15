@@ -9,7 +9,7 @@
         = link_to namespace_project_epic_path(parent.project.namespace.parent.full_path, parent.project.path, parent), class: 'text-sm font-medium text-slate-700 hover:text-blue-600 hover:underline', data: { turbo: false } do
           = parent.title
         - if can_edit
-          %button{ type: 'button', class: 'shrink-0 text-slate-400 hover:text-slate-500', data: { action: 'click->epic-select-dropdown#clearParent' }, aria: { label: 'Remove parent epic' } }
+          %button{ type: 'button', class: 'shrink-0 text-slate-400 hover:text-slate-500 [&_line]:transition-all hover:[&_line]:[stroke-width:24]', data: { action: 'click->epic-select-dropdown#clearParent' }, aria: { label: 'Remove parent epic' } }
             = icon 'x', class: 'w-3.5 h-3.5'
     - else
       %p{ class: 'text-xs text-slate-500' } No parent epic

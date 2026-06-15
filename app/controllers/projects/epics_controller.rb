@@ -4,13 +4,13 @@ class Projects::EpicsController < Projects::ApplicationController
 
   before_action :authorize_read_issues!, only: [:index, :search_users, :search_epics]
   before_action :authorize_create_issue!, only: [:new, :create]
-  before_action :set_epic, only: [:show, :edit, :update, :destroy, :close, :reopen, :link_labels, :unlink_label, :search_labels]
-  before_action :set_notification_author, only: [:update, :close, :reopen, :link_labels, :unlink_label]
+  before_action :set_epic, only: [:show, :edit, :update, :destroy, :close, :reopen, :link_labels, :unlink_label, :search_labels, :remove_assignee]
+  before_action :set_notification_author, only: [:update, :close, :reopen, :link_labels, :unlink_label, :remove_assignee]
   before_action :authorize_read_issuable!, only: [:show, :search_labels]
-  before_action :authorize_update_issuable!, only: [:edit, :update, :close, :reopen, :link_labels, :unlink_label]
+  before_action :authorize_update_issuable!, only: [:edit, :update, :close, :reopen, :link_labels, :unlink_label, :remove_assignee]
   before_action :authorize_destroy_issuable!, only: [:destroy]
   before_action :set_counts, only: [:index]
-  before_action :set_updated_by, only: [:update, :link_labels, :unlink_label]
+  before_action :set_updated_by, only: [:update, :link_labels, :unlink_label, :remove_assignee]
 
   def index
     status_param = params[:status].presence || 'opened'
@@ -69,6 +69,16 @@ class Projects::EpicsController < Projects::ApplicationController
         format.html { render :edit, status: :unprocessable_entity }
         format.turbo_stream { render :update_error, status: :unprocessable_entity }
       end
+    end
+  end
+
+  def remove_assignee
+    @epic.assignee_ids = @epic.assignee_ids - [remove_assignee_params]
+    @epic.save
+    @epic.reload
+
+    respond_to do |format|
+      format.turbo_stream
     end
   end
 
@@ -185,6 +195,10 @@ class Projects::EpicsController < Projects::ApplicationController
 
   def epic_params
     params.require(:epic).permit(:title, :description, :confidential, :due_date, :parent_id, assignee_ids: [])
+  end
+
+  def remove_assignee_params
+    params[:user_id].to_i
   end
 
   def label_params

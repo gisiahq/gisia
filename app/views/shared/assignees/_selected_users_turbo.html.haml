@@ -11,8 +11,8 @@
             %div{ class: 'flex-1 min-w-0' }
               %div{ class: 'text-sm font-medium text-slate-900' }= user.name
               %div{ class: 'text-xs text-slate-500' }= "@#{user.username}"
-            - if can_edit && remove_url
-              = button_to remove_url, params: { user_id: user.id, field_type: field_type }, method: :post, form: { class: 'shrink-0' }, class: 'text-slate-400 hover:text-slate-500', data: { action: 'user-select-dropdown#removeUser', user_id: user.id }, aria: { label: "Remove #{user.name}" } do
+            - if can_edit
+              = button_to remove_url, params: { user_id: user.id, field_type: field_type }, method: :post, form: { class: 'shrink-0' }, class: 'text-slate-400 hover:text-slate-500 [&_line]:transition-all hover:[&_line]:[stroke-width:24]', data: { action: 'user-select-dropdown#removeUser', user_id: user.id }, aria: { label: "Remove #{user.name}" } do
                 = icon 'x', class: 'w-3.5 h-3.5'
     - else
       %div{ class: 'text-center py-3' }
