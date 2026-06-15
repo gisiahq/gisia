@@ -57,10 +57,11 @@ export default class extends Controller {
     const isSelected = event.currentTarget.dataset.selected === 'true'
 
     if (isSelected) {
-      this.unlinkLabel(labelId)
-    } else {
-      this.linkLabel(labelId)
+      this.hideDropdown()
+      return
     }
+
+    this.linkLabel(labelId)
   }
 
   linkLabel(labelId) {

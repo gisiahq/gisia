@@ -101,10 +101,11 @@ export default class extends Controller {
     const userId = event.currentTarget.dataset.userId
 
     if (this.selectedUsers.has(userId)) {
-      this.selectedUsers.delete(userId)
-    } else {
-      this.selectedUsers.add(userId)
+      this.hideDropdown()
+      return
     }
+
+    this.selectedUsers.add(userId)
 
     this.syncSelectedUsers()
     this.updateFormAndSubmit()
@@ -112,12 +113,15 @@ export default class extends Controller {
   }
 
   removeUser(event) {
+    event.stopPropagation()
+
     const userId = event.currentTarget.dataset.userId
 
-    if (this.selectedUsers) {
-      this.selectedUsers.delete(userId)
-      this.selectedValue = Array.from(this.selectedUsers).join(',')
-    }
+    if (!this.selectedUsers) return
+
+    this.selectedUsers.delete(userId)
+    this.syncSelectedUsers()
+    this.updateFormAndSubmit()
   }
 
   updateFormAndSubmit() {

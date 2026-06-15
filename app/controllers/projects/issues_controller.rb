@@ -6,14 +6,14 @@ class Projects::IssuesController < Projects::ApplicationController
 
   before_action :authorize_read_issues!, only: [:index, :search_users, :search_epics, :search_links]
   before_action :authorize_create_issue!, only: [:new, :create]
-  before_action :set_issue, only: [:show, :edit, :update, :destroy, :close, :reopen, :move_stage, :link_labels, :unlink_label, :remove_assignee, :search_labels, :search_links]
-  before_action :check_issue_visibility!, only: [:show, :edit, :update, :destroy, :close, :reopen, :move_stage, :link_labels, :unlink_label, :remove_assignee, :search_labels, :search_links]
+  before_action :set_issue, only: [:show, :edit, :update, :destroy, :close, :reopen, :move_stage, :link_labels, :unlink_label, :search_labels, :search_links]
+  before_action :check_issue_visibility!, only: [:show, :edit, :update, :destroy, :close, :reopen, :move_stage, :link_labels, :unlink_label, :search_labels, :search_links]
   before_action :authorize_read_issuable!, only: [:show, :search_labels]
-  before_action :authorize_update_issuable!, only: [:edit, :update, :close, :reopen, :move_stage, :link_labels, :unlink_label, :remove_assignee]
+  before_action :authorize_update_issuable!, only: [:edit, :update, :close, :reopen, :move_stage, :link_labels, :unlink_label]
   before_action :authorize_destroy_issuable!, only: [:destroy]
   before_action :set_counts, only: [:index]
-  before_action :set_notification_author, only: [:update, :close, :reopen, :link_labels, :unlink_label, :remove_assignee]
-  before_action :set_updated_by, only: [:update, :move_stage, :link_labels, :unlink_label, :remove_assignee]
+  before_action :set_notification_author, only: [:update, :close, :reopen, :link_labels, :unlink_label]
+  before_action :set_updated_by, only: [:update, :move_stage, :link_labels, :unlink_label]
 
   def index
     status_param = params[:status].presence || 'opened'
@@ -135,16 +135,6 @@ class Projects::IssuesController < Projects::ApplicationController
     end
   end
 
-  def remove_assignee
-    @issue.assignee_ids = @issue.assignee_ids - [remove_assignee_params]
-    @issue.save
-    @issue.reload
-
-    respond_to do |format|
-      format.turbo_stream
-    end
-  end
-
   def search_users
     @users = @project.users.limit(10)
 
@@ -239,9 +229,5 @@ class Projects::IssuesController < Projects::ApplicationController
 
   def unlink_label_params
     params[:label_id]
-  end
-
-  def remove_assignee_params
-    params[:user_id].to_i
   end
 end

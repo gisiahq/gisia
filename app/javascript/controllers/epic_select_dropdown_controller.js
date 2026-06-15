@@ -59,7 +59,12 @@ export default class extends Controller {
     const epicId = event.currentTarget.dataset.epicId
     const isSelected = event.currentTarget.dataset.selected === 'true'
 
-    this.parentIdInputTarget.value = isSelected ? '' : epicId
+    if (isSelected) {
+      this.hideDropdown()
+      return
+    }
+
+    this.parentIdInputTarget.value = epicId
     this.formTarget.requestSubmit()
     this.clearSearchInput()
     this.hideDropdown()

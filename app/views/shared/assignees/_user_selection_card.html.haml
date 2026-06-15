@@ -1,5 +1,4 @@
 - can_edit = local_assigns.fetch(:can_edit) { current_user.present? }
-- remove_url = local_assigns[:remove_url]
 
 %div{ class: 'bg-white border border-slate-200 rounded-lg p-4', data: { controller: 'user-select-dropdown', 'user-select-dropdown-url-value': search_url, 'user-select-dropdown-selected-value': selected_user_ids, 'user-select-dropdown-field-type-value': field_type, 'user-select-dropdown-resource-id-value': resource.id, 'user-select-dropdown-resource-type-value': resource_type } }
 
@@ -25,4 +24,4 @@
         = render 'shared/assignees/user_search_droplist', field_type: field_type
 
   / Selected users display area
-  = render 'shared/assignees/selected_users_turbo', resource: resource, resource_type: resource_type, users: users, field_type: field_type, avatar_color: avatar_color, empty_icon: empty_icon, empty_message: empty_message, can_edit: can_edit, remove_url: remove_url
+  = render 'shared/assignees/selected_users_turbo', resource: resource, resource_type: resource_type, users: users, field_type: field_type, avatar_color: avatar_color, empty_icon: empty_icon, empty_message: empty_message, can_edit: can_edit

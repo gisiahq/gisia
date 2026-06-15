@@ -11,6 +11,5 @@ resources :epics, param: :iid, constraints: { iid: /\d+/ } do
     get :search_labels
     patch :link_labels
     delete :unlink_label
-    post :remove_assignee
   end
 end

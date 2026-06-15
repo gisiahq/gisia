@@ -47,7 +47,7 @@
               %span= _('Edit')
 
           - if @merge_request.open?
-            = link_to merge_namespace_project_merge_request_path(@merge_request.target_project.namespace.parent.full_path, @merge_request.target_project.path, @merge_request), method: :post, class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors', data: { confirm: _('Are you sure you want to merge this merge request?'), turbo_method: :post } do
+            = button_to merge_namespace_project_merge_request_path(@merge_request.target_project.namespace.parent.full_path, @merge_request.target_project.path, @merge_request), method: :post, class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors', data: { turbo: false, turbo_confirm: _('Are you sure you want to merge this merge request?') } do
               = icon 'git-merge', class: 'w-4 h-4'
               %span= _('Merge')
 

@@ -1,7 +1,7 @@
 - if params[:merge_request]&.key?('assignee_ids')
   = turbo_stream.replace 'merge_request-assignees' do
-    = render 'shared/assignees/selected_users_turbo', resource: @merge_request, resource_type: 'merge_request', users: @merge_request.assignees, field_type: 'assignees', avatar_color: 'from-blue-400 to-blue-500', empty_icon: 'user-plus', empty_message: 'No assignees', can_edit: current_user&.can?(:update_merge_request, @merge_request), remove_url: remove_user_namespace_project_merge_request_path(@merge_request.target_project.namespace.parent.full_path, @merge_request.target_project.path, @merge_request)
+    = render 'shared/assignees/selected_users_turbo', resource: @merge_request, resource_type: 'merge_request', users: @merge_request.assignees, field_type: 'assignees', avatar_color: 'from-blue-400 to-blue-500', empty_icon: 'user-plus', empty_message: 'No assignees', can_edit: current_user&.can?(:update_merge_request, @merge_request)
 
 - elsif params[:merge_request]&.key?('reviewer_ids')
   = turbo_stream.replace 'merge_request-reviewers' do
-    = render 'shared/assignees/selected_users_turbo', resource: @merge_request, resource_type: 'merge_request', users: @merge_request.reviewers, field_type: 'reviewers', avatar_color: 'from-emerald-400 to-emerald-500', empty_icon: 'eye', empty_message: 'No reviewers', can_edit: current_user&.can?(:update_merge_request, @merge_request), remove_url: remove_user_namespace_project_merge_request_path(@merge_request.target_project.namespace.parent.full_path, @merge_request.target_project.path, @merge_request)
+    = render 'shared/assignees/selected_users_turbo', resource: @merge_request, resource_type: 'merge_request', users: @merge_request.reviewers, field_type: 'reviewers', avatar_color: 'from-emerald-400 to-emerald-500', empty_icon: 'eye', empty_message: 'No reviewers', can_edit: current_user&.can?(:update_merge_request, @merge_request)

@@ -11,7 +11,6 @@ resources :issues, param: :iid, constraints: { iid: /\d+/ } do
     post :move_stage
     patch :link_labels
     delete :unlink_label
-    post :remove_assignee
     get :search_labels
     post :search_links
   end
