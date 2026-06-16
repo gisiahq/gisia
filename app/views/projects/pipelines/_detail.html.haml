@@ -24,6 +24,8 @@
               = link_to " !#{@pipeline.merge_request.iid}", merge_request_path(@pipeline.merge_request), class: 'text-blue-600 hover:text-blue-700 font-medium transition-colors'
           - else
             %span= _('For %{ref}') % { ref: @pipeline.ref }
+          - if @pipeline.protected?
+            %span Protected
           - if @pipeline.source_pipeline.present?
             - upstream = @pipeline.source_pipeline.source_pipeline
             %span •

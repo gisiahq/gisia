@@ -55,6 +55,11 @@
                   = icon 'git-branch', class: 'w-3 h-3'
                   %span= pipeline.ref
 
+            - if pipeline.protected?
+              %div{ class: 'flex items-center gap-1 px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md text-xs font-medium' }
+                = icon 'shield', class: 'w-3 h-3'
+                %span Protected
+
         / Status badge - fixed width
         %div{ class: 'flex-shrink-0 w-20' }
           %span{ class: "inline-flex items-center justify-center w-full px-2 py-1 text-xs font-semibold rounded-lg #{badge_colors.fetch(pipeline.status, 'bg-slate-500/10 text-slate-700 ring-1 ring-slate-500/20')}" }
