@@ -11,7 +11,7 @@
 
 module Git
   class Branch < Base
-    include HasBranchHook
+    include HasPipeline
     include MergeRequests::Refreshable
     include Wisper::Publisher
 

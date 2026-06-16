@@ -11,19 +11,17 @@
 
 module Git
   class Tag < Base
+    include HasPipeline
     include Wisper::Publisher
 
     delegate :oldrev, :newrev, :ref, to: :change
 
     def push
+      create_pipelines!
       publish_webhook_event
     end
 
     private
-
-    def change
-      @change ||= OpenStruct.new(params[:change])
-    end
 
     def publish_webhook_event
       commits = project.repository.commits_between(oldrev, newrev)

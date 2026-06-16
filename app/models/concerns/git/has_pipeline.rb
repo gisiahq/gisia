@@ -10,11 +10,11 @@
 # ======================================================
 
 module Git
-  module HasBranchHook
+  module HasPipeline
     extend ActiveSupport::Concern
 
     def create_pipelines!
-      Ci::Pipeline.build_from(project, current_user, branch_pipeline_params, :push, branch_pipeline_options)
+      Ci::Pipeline.build_from(project, current_user, pipeline_params, :push, pipeline_options)
     end
 
     private
@@ -23,7 +23,7 @@ module Git
       @change ||= OpenStruct.new(params[:change])
     end
 
-    def branch_pipeline_params
+    def pipeline_params
       strong_memoize(:pipeline_params) do
         {
           before: oldrev,
@@ -67,7 +67,7 @@ module Git
       end
     end
 
-    def branch_pipeline_options
+    def pipeline_options
       return {} unless ci_inputs_from_push_options
 
       {
