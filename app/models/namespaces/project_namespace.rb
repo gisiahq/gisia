@@ -42,5 +42,9 @@ module Namespaces
     def team
       @team ||= ProjectTeam.new(project)
     end
+
+    def pin_class
+      Namespaces::ProjectNamespacePin
+    end
   end
 end

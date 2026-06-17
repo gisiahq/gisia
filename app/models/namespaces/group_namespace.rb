@@ -22,5 +22,9 @@ module Namespaces
     def self.polymorphic_name
       'Namespaces::GroupNamespace'
     end
+
+    def pin_class
+      Namespaces::GroupNamespacePin
+    end
   end
 end

@@ -49,6 +49,8 @@ class Namespace < ApplicationRecord
   has_many :labels, foreign_key: :namespace_id, inverse_of: :namespace, dependent: :destroy
   has_many :web_hooks, class_name: 'WebHook', foreign_key: :namespace_id, inverse_of: :namespace, dependent: :destroy
   has_one :board, foreign_key: :namespace_id, inverse_of: :namespace, dependent: :destroy
+  has_many :namespace_pins, class_name: 'Namespaces::Pin', foreign_key: :namespace_id, inverse_of: :namespace,
+    dependent: :destroy
 
   before_validation :prepare_route
   after_validation :set_path_errors

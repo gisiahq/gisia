@@ -37,6 +37,7 @@ class User < ApplicationRecord
     where(requested_at: nil).where('access_level >= ?', Gitlab::Access::GUEST)
   }, class_name: 'GroupMember'
   has_many :groups, through: :group_members
+  has_many :namespace_pins, class_name: 'Namespaces::Pin', dependent: :destroy, inverse_of: :user
   has_many :merge_request_assignees, dependent: :destroy, inverse_of: :assignee
   has_many :assigned_merge_requests, through: :merge_request_assignees, source: :merge_request
   has_many :merge_request_reviewers, inverse_of: :reviewer
