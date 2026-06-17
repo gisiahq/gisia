@@ -36,6 +36,7 @@ Rails.application.routes.draw do
     namespace :dashboard do
       resources :projects, except: %i[edit show]
       resources :groups, except: %i[show]
+      resources :pins, only: %i[create destroy]
     end
 
     draw 'users/settings'
