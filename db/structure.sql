@@ -2237,6 +2237,39 @@ CREATE TABLE public.namespace_descendants (
 
 
 --
+-- Name: namespace_pins; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.namespace_pins (
+    id bigint NOT NULL,
+    namespace_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    type character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: namespace_pins_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.namespace_pins_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: namespace_pins_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.namespace_pins_id_seq OWNED BY public.namespace_pins.id;
+
+
+--
 -- Name: namespace_settings; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3687,6 +3720,13 @@ ALTER TABLE ONLY public.merge_requests ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
+-- Name: namespace_pins id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.namespace_pins ALTER COLUMN id SET DEFAULT nextval('public.namespace_pins_id_seq'::regclass);
+
+
+--
 -- Name: namespace_settings id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4386,6 +4426,14 @@ ALTER TABLE ONLY public.merge_requests
 
 ALTER TABLE ONLY public.namespace_descendants
     ADD CONSTRAINT namespace_descendants_pkey PRIMARY KEY (namespace_id);
+
+
+--
+-- Name: namespace_pins namespace_pins_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.namespace_pins
+    ADD CONSTRAINT namespace_pins_pkey PRIMARY KEY (id);
 
 
 --
@@ -6137,6 +6185,27 @@ CREATE INDEX index_namespace_descendants_on_namespace_id ON public.namespace_des
 
 
 --
+-- Name: index_namespace_pins_on_namespace_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_namespace_pins_on_namespace_id ON public.namespace_pins USING btree (namespace_id);
+
+
+--
+-- Name: index_namespace_pins_on_user_id_and_namespace_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_namespace_pins_on_user_id_and_namespace_id ON public.namespace_pins USING btree (user_id, namespace_id);
+
+
+--
+-- Name: index_namespace_pins_on_user_id_and_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_namespace_pins_on_user_id_and_type ON public.namespace_pins USING btree (user_id, type);
+
+
+--
 -- Name: index_namespace_settings_on_namespace_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7297,6 +7366,7 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260617033653'),
 ('20260531084105'),
 ('20260521000000'),
 ('20260520130828'),
