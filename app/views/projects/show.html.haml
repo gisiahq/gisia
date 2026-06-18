@@ -1,5 +1,5 @@
 - content_for :breadcrumb do
-  - nodes = [{ label: 'Your work', path: '/' }, { label: 'Projects', path: dashboard_projects_path }]
+  - nodes = project_breadcrumb_nodes(@project)
   = render 'shared/breadcrumb', nodes: nodes
 
 %div{ class: 'w-full bg-white p-6' }
