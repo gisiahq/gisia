@@ -8,7 +8,7 @@ class Dashboard::ProjectsController < Dashboard::ApplicationController
   before_action :authorize_destroy_project!, only: %i[destroy]
 
   def index
-    @projects = current_user.projects.order(id: :desc)
+    @projects = order_pinned_first(current_user.projects)
   end
 
   def new

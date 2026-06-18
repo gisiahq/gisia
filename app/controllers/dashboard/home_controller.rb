@@ -1,7 +1,7 @@
 class Dashboard::HomeController < Dashboard::ApplicationController
   def home
     if current_user.projects.exists?
-      @projects = current_user.projects.order(id: :desc)
+      @projects = order_pinned_first(current_user.projects)
       render 'dashboard/projects/index'
     else
       @username = current_user.name
