@@ -9,7 +9,7 @@ class Dashboard::GroupsController < Dashboard::ApplicationController
   before_action -> { authorize_group!(:remove_namespace, @group.namespace) || redirect_unauthorized }, only: %i[destroy]
 
   def index
-    @groups = order_pinned_first(current_user.authorized_groups)
+    @groups = order_pinned_first(current_user.authorized_groups).page(params[:page]).per(20)
   end
 
   def new

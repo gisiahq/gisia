@@ -27,7 +27,7 @@ class Dashboard::PinsController < Dashboard::ApplicationController
   end
 
   def pin_params
-    @pin_params ||= params.permit(:namespace_id)
+    @pin_params ||= params.permit(:namespace_id, :page)
   end
 
   def pinnable_namespace_ids
@@ -38,13 +38,15 @@ class Dashboard::PinsController < Dashboard::ApplicationController
   def render_list
     case @namespace
     when Namespaces::ProjectNamespace
+      @collection = order_pinned_first(current_user.projects).page(pin_params[:page]).per(20)
       @stream_target = 'project_list'
       @stream_partial = 'dashboard/projects/project_list'
-      @stream_locals = { projects: order_pinned_first(current_user.projects), pinnable: true }
+      @stream_locals = { projects: @collection, pinnable: true }
     when Namespaces::GroupNamespace
+      @collection = order_pinned_first(current_user.authorized_groups).page(pin_params[:page]).per(20)
       @stream_target = 'group_list'
       @stream_partial = 'dashboard/groups/group_list'
-      @stream_locals = { groups: order_pinned_first(current_user.authorized_groups) }
+      @stream_locals = { groups: @collection }
     end
 
     render 'list'

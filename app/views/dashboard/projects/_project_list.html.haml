@@ -1,8 +1,9 @@
 - namespace_prefix = local_assigns[:namespace_prefix]
+- pinnable = local_assigns[:pinnable]
 - if projects.any?
   %div{class: 'space-y-0 bg-white'}
     - projects.each do |project|
-      %div{id: "project-#{project.id}", class: 'px-1 py-3 border-b border-gray-100 hover:bg-slate-50/50 transition-all duration-200'}
+      %div{id: "project-#{project.id}", class: 'group px-1 py-3 border-b border-gray-100 hover:bg-slate-50/50 transition-all duration-200'}
         %div{class: 'flex items-center justify-between'}
           %div{class: 'flex items-center gap-3 flex-1 min-w-0'}
             = icon 'folder', class: 'w-4 h-4 text-blue-500 flex-shrink-0'
@@ -22,6 +23,8 @@
                   %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 flex-shrink-0'}
                     = icon 'globe', class: 'w-2.5 h-2.5 mr-0.5'
                     = _('Public')
+                - if pinnable
+                  = render 'dashboard/pins/button', namespace_id: project.namespace_id, pinned: project.pin_id.present?, page: projects.current_page
               - if project.description.present?
                 %p{class: 'text-gray-500 text-xs truncate mt-0.5'}= project.description
           %div{class: 'flex items-center gap-3 flex-shrink-0'}

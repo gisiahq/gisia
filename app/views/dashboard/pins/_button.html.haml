@@ -1,0 +1,7 @@
+- if pinned
+  = button_to dashboard_pin_path(namespace_id, page: page), method: :delete, form: { class: 'group/pin inline-flex flex-shrink-0 transition-opacity' }, class: 'p-0.5 text-gray-700 hover:text-red-600', title: _('Unpin') do
+    = icon 'push-pin', class: 'w-3.5 h-3.5 group-hover/pin:hidden'
+    = icon 'push-pin-slash', class: 'w-3.5 h-3.5 hidden group-hover/pin:inline'
+- else
+  = button_to dashboard_pins_path, params: { namespace_id: namespace_id, page: page }, form: { class: 'inline-flex flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity' }, class: 'p-0.5 text-gray-400 hover:text-blue-600', title: _('Pin') do
+    = icon 'push-pin', class: 'w-3.5 h-3.5'

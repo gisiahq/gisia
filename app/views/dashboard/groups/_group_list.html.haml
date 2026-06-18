@@ -1,0 +1,45 @@
+- if groups.any?
+  %div{class: 'space-y-0 bg-white'}
+    - groups.each do |group|
+      %div{class: 'group px-1 py-3 border-b border-gray-100 hover:bg-slate-50/50 transition-all duration-200'}
+        %div{class: 'flex items-center justify-between'}
+          %div{class: 'flex items-center gap-3 flex-1 min-w-0'}
+            = icon 'circles-three', class: 'w-4 h-4 text-purple-500 flex-shrink-0'
+            %div{class: 'flex-1 min-w-0'}
+              %div{class: 'flex items-center gap-2'}
+                = link_to namespace_show_path(group.namespace.full_path), class: 'font-medium text-gray-900 hover:text-blue-600 transition-colors truncate', data: { turbo_frame: "_top" } do
+                  = group.full_name
+                - if group.private?
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 flex-shrink-0'}
+                    = icon 'lock', class: 'w-2.5 h-2.5 mr-0.5'
+                    = _('Private')
+                - elsif group.internal?
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 flex-shrink-0'}
+                    = icon 'users', class: 'w-2.5 h-2.5 mr-0.5'
+                    = _('Internal')
+                - elsif group.public?
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 flex-shrink-0'}
+                    = icon 'globe', class: 'w-2.5 h-2.5 mr-0.5'
+                    = _('Public')
+                = render 'dashboard/pins/button', namespace_id: group.namespace_id, pinned: group.pin_id.present?, page: groups.current_page
+              - if group.description.present?
+                %p{class: 'text-gray-500 text-xs truncate mt-0.5'}= group.description
+          %div{class: 'flex items-center gap-3 flex-shrink-0'}
+            %div{class: 'text-xs text-gray-400'}
+              = _('Updated %{time} ago') % { time: time_ago_in_words(group.updated_at) }
+            - if can_admin_group?(group) || can_destroy_group?(group)
+              %div{class: 'relative', data: { controller: "dashboard" }}
+                = link_to '#', class: 'p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-slate-100 block', data: { action: "click->dashboard#toggleMenu" } do
+                  = icon 'dots-three-vertical', class: 'w-4 h-4'
+                %div{class: 'absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-sm hidden z-10 py-1 min-w-24', data: { "dashboard-target": "menu" }}
+                  - if can_admin_group?(group)
+                    = link_to edit_dashboard_group_path(group), class: 'flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50' do
+                      = icon 'pencil', class: 'w-4 h-4'
+                      = _('Edit')
+                  - if can_destroy_group?(group)
+                    = button_to dashboard_group_path(group), method: :delete, data: { turbo_confirm: _('Are you sure you want to delete this group?') }, class: 'flex items-center gap-2 px-3 py-2 text-sm text-red-700 hover:bg-red-50 w-full text-left' do
+                      = icon 'trash', class: 'w-4 h-4'
+                      = _('Delete')
+- else
+  %div{class: 'text-center py-16'}
+    %div{class: 'w-16 h-16 rounded-full bg-purple-50 flex items-center justify-center mx-auto mb-4'}
