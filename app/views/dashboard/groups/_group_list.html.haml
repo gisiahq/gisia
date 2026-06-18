@@ -1,7 +1,7 @@
 - if groups.any?
   %div{class: 'space-y-0 bg-white'}
     - groups.each do |group|
-      %div{class: 'group px-1 py-3 border-b border-gray-100 hover:bg-slate-50/50 transition-all duration-200'}
+      %div{id: "group-#{group.id}", class: 'group px-1 py-3 border-b border-gray-100 hover:bg-slate-50/50 transition-all duration-200'}
         %div{class: 'flex items-center justify-between'}
           %div{class: 'flex items-center gap-3 flex-1 min-w-0'}
             = icon 'circles-three', class: 'w-4 h-4 text-purple-500 flex-shrink-0'
