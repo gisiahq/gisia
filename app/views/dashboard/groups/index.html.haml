@@ -22,4 +22,4 @@
 
       %div{id: 'group_list'}
         = render 'dashboard/groups/group_list', groups: @groups
-      = render 'shared/pagination', collection: @groups, url_params: params.except(:page).permit!, turbo_frame: 'show_group'
+      = render 'shared/pagination', collection: @groups, url_params: {}, turbo_frame: 'show_group'

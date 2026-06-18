@@ -15,6 +15,7 @@ class Projects::PipelinesController < Projects::ApplicationController
 
     @refs = project.ci_refs.pluck(:ref_path).map { |ref_path| ref_path.sub(/\Arefs\/(heads|tags)\//, '') }.compact.sort
     @statuses = Ci::HasStatus::AVAILABLE_STATUSES
+    @pagination_params = pipeline_params
   end
 
   def new

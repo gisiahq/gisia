@@ -34,6 +34,8 @@ class Projects::IssuesController < Projects::ApplicationController
                      .order(order_column)
                      .page(params[:page])
                      .per(20)
+
+    @pagination_params = params.permit(:status, :search, :author_id, :labels)
   end
 
   def show

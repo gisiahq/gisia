@@ -63,9 +63,7 @@
                     = link_to namespace_project_epics_path(@project.namespace.parent.full_path, @project.namespace.path, link_params), id: "epic_#{epic.id}_label_#{label.id}", class: 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium hover:opacity-80 transition-opacity', style: "background-color: #{label.color}20; color: #{label.color}" do
                       = label.title
 
-      - if @epics.respond_to?(:current_page)
-        %div{ class: 'mt-8 flex justify-center' }
-          = paginate @epics
+      = render 'shared/pagination', collection: @epics, url_params: @pagination_params, turbo_frame: nil
 
     - else
       %div{ class: 'text-center py-16 bg-white border border-slate-200 rounded-lg' }

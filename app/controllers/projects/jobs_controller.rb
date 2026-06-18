@@ -23,6 +23,7 @@ class Projects::JobsController < Projects::ApplicationController
     @jobs = @jobs.where(status: job_params[:status]) if job_params[:status].present?
     @jobs = @jobs.order(id: :desc).page(params[:page]).per(20)
     @statuses = Ci::HasStatus::AVAILABLE_STATUSES
+    @pagination_params = job_params
   end
 
   def show; end

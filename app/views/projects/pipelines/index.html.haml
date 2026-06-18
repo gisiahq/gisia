@@ -26,4 +26,4 @@
     %div{ class: 'space-y-4' }
       = render 'pipelines'
 
-      = render 'shared/pagination', collection: @pipelines, url_params: params.except(:page).permit!, turbo_frame: nil
+      = render 'shared/pagination', collection: @pipelines, url_params: @pagination_params, turbo_frame: nil

@@ -101,7 +101,7 @@
               - else
                 %span{ class: 'text-xs text-slate-500' }= _('No assignees')
 
-      = render 'shared/pagination', collection: @merge_requests, url_params: params.except(:page).permit!, turbo_frame: nil
+      = render 'shared/pagination', collection: @merge_requests, url_params: @pagination_params, turbo_frame: nil
 
     - else
       %div{ class: 'text-center py-16 bg-white border border-slate-200 rounded-lg' }

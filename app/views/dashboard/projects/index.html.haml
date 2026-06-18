@@ -22,5 +22,5 @@
 
       %div{id: 'project_list'}
         = render 'dashboard/projects/project_list', projects: @projects, pinnable: true
-      = render 'shared/pagination', collection: @projects, url_params: params.except(:page).permit!, turbo_frame: 'show_project'
+      = render 'shared/pagination', collection: @projects, url_params: {}, turbo_frame: 'show_project'
 

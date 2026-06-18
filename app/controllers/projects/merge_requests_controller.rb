@@ -48,6 +48,8 @@ class Projects::MergeRequestsController < Projects::ApplicationController
     @merge_requests = @merge_requests.includes(:author, :assignees, :reviewers, metrics: :latest_closed_by)
                                      .page(params[:page])
                                      .per(20)
+
+    @pagination_params = params.permit(:status, :search, :author_id, :assignee_id, :reviewer_id)
   end
 
   def new; end

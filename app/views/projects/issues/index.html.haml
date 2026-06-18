@@ -62,9 +62,7 @@
                     = link_to namespace_project_issues_path(@project.namespace.parent.full_path, @project.path, link_params), id: "issue_#{issue.id}_label_#{label.id}", class: 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium hover:opacity-80 transition-opacity', style: "background-color: #{label.color}20; color: #{label.color}" do
                       = label.title
 
-      - if @issues.respond_to?(:current_page)
-        %div{ class: 'mt-8 flex justify-center' }
-          = paginate @issues
+      = render 'shared/pagination', collection: @issues, url_params: @pagination_params, turbo_frame: nil
 
     - else
       %div{ class: 'text-center py-16 bg-white border border-slate-200 rounded-lg' }

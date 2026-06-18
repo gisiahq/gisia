@@ -18,4 +18,4 @@
     %div{id: 'jobs-list', class: 'space-y-4'}
       = render 'projects/pipelines/jobs'
 
-      = render 'shared/pagination', collection: @jobs, url_params: params.except(:page).permit!, turbo_frame: nil if respond_to?(:render)
+      = render 'shared/pagination', collection: @jobs, url_params: @pagination_params, turbo_frame: nil if respond_to?(:render)
