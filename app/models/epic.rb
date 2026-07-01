@@ -23,7 +23,7 @@ class Epic < WorkItem
   end
 
   def to_ability_name
-    'work_item'
+    'issue'
   end
 
   def self.internal_id_scope_usage

@@ -16,6 +16,7 @@ class MergeRequest < ApplicationRecord
   include Issuable
   include Noteable
   include Participable
+  include Mentionable
 
   include Diffable
   include HasDescription
@@ -31,6 +32,8 @@ class MergeRequest < ApplicationRecord
   attr_accessor :closing_user
 
   MERGE_LEASE_TIMEOUT = 15.minutes.to_i
+
+  attr_mentionable :description
 
   belongs_to :target_project, class_name: 'Project'
   belongs_to :source_project, class_name: 'Project'

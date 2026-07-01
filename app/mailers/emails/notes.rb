@@ -24,6 +24,7 @@ module Emails
       setup_note_mail(note_id, recipient_id)
 
       @merge_request = @note.noteable
+      @reference_prefix = @merge_request.class.reference_prefix
       @target_url = merge_request_url_for(@merge_request, anchor: "note_#{@note.id}")
       mail_answer_note_thread(@merge_request, @note, note_thread_options(reason))
     end

@@ -1,8 +1,12 @@
-%p
-  = "#{@note.author.name} commented on merge request"
-  = link_to "!#{@merge_request.iid}", @target_url
+%p{style: "margin:0 0 6px;font-size:15px;color:#4b5563;line-height:1.6;"}
+  = @note.author.name
+  commented on merge request
+  %a{href: @target_url, style: "color:#1e2a4a;font-weight:600;text-decoration:none;"}
+    = "#{@reference_prefix}#{@merge_request.iid}"
 
-%p= @note.note
+%p{style: "margin:0 0 24px;font-size:14px;color:#374151;line-height:1.7;border-left:3px solid #e5e7eb;padding-left:12px;"}= @note.note
 
-%p
-  = link_to 'View Comment', @target_url
+%table{width: "100%", cellpadding: "0", cellspacing: "0", border: "0", style: "margin-top:8px;"}
+  %tr
+    %td{align: "center"}
+      %a{href: @target_url, style: "display:inline-block;padding:11px 28px;background-color:#4a5e82;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;border-radius:6px;"} View Comment

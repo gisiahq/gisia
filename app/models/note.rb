@@ -148,7 +148,13 @@ class Note < ApplicationRecord
     false
   end
 
+  # Epic overrides #to_ability_name to 'issue' (there is no dedicated read_epic
+  # ability), so the noteable_type string alone ("Epic") would point at a
+  # nonexistent :read_epic ability. Prefer the noteable's own ability name
+  # when it customizes one.
   def noteable_ability_name
+    return noteable.to_ability_name if noteable.respond_to?(:to_ability_name)
+
     noteable_type.demodulize.underscore
   end
 
