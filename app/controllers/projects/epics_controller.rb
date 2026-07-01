@@ -13,26 +13,16 @@ class Projects::EpicsController < Projects::ApplicationController
   before_action :set_updated_by, only: [:update, :link_labels, :unlink_label]
 
   def index
-    status_param = params[:status].presence || 'opened'
-    search_params = {
-      state_id_eq: WorkItems::HasState::STATE_ID_MAP[status_param],
-      author_id_eq: params[:author_id],
-      title_or_description_i_cont: params[:search]
-    }.compact
+    @epics = EpicsFinder.new(@project, current_user, filter_params).execute
+                        .includes(:author, :updated_by, :closed_by, :labels)
+                        .page(params[:page])
+                        .per(20)
 
-    @epics = @project.namespace.work_items.where(type: 'Epic')
-                     .ransack(search_params)
-                     .result(distinct: true)
+    @label_options = @project.namespace.labels.order(:title)
+    @sort_scopes = @label_options.map(&:title).grep(/::/).map { |t| t.split('::').first }.uniq
+    @user_options = @project.users.active.order(:username)
 
-    @epics = filter_by_labels(@epics, params[:labels]) if params[:labels].present?
-
-    order_column = status_param == 'closed' ? { closed_at: :desc } : { created_at: :desc }
-    @epics = @epics.includes(:author, :updated_by, :closed_by, :labels)
-                     .order(order_column)
-                     .page(params[:page])
-                     .per(20)
-
-    @pagination_params = params.permit(:status, :search, :author_id, :labels)
+    @pagination_params = params.permit(:status, :search, :author, :assignee, :sort, label: [])
   end
 
   def show
@@ -174,15 +164,8 @@ class Projects::EpicsController < Projects::ApplicationController
     @closed_count = @project.namespace.work_items.where(type: 'Epic', state_id: WorkItems::HasState::STATE_ID_MAP['closed']).count
   end
 
-  def filter_by_labels(epics, labels_param)
-    label_titles = labels_param.include?('|') ? labels_param.split('|').map(&:strip) : labels_param.split(',').map(&:strip)
-
-    if labels_param.include?('|')
-      epics.joins(:labels).where(labels: { title: label_titles }).distinct
-    else
-      label_link_ids = LabelLink.joins(:label).joins("INNER JOIN work_items ON work_items.id = label_links.labelable_id AND label_links.labelable_type = 'WorkItem'").where(labels: { title: label_titles }, work_items: { namespace_id: @project.namespace_id }).group('labelable_id').having('COUNT(*) = ?', label_titles.size).pluck('labelable_id')
-      epics.where(id: label_link_ids)
-    end
+  def filter_params
+    params.permit(:status, :search, :author, :assignee, :sort, label: [])
   end
 
   def epic_params
