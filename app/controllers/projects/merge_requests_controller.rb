@@ -16,40 +16,25 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   before_action :authenticate_user!, only: %i[new create edit update merge]
   before_action :require_project_member!, only: %i[new create edit update merge]
   before_action :define_new_vars, only: %i[new edit]
-  before_action :set_mr, only: %i[show commits diffs pipelines edit update merge search_links]
+  before_action :set_mr, only: %i[show commits diffs pipelines edit update merge search_links search_labels link_labels unlink_label]
   before_action :set_counts, only: [:index]
   before_action :authorize_create_merge_request!, only: %i[new create]
-  before_action :authorize_read_merge_request!, only: %i[show commits diffs pipelines search_links]
-  before_action :authorize_update_merge_request!, only: %i[edit update merge]
+  before_action :authorize_read_merge_request!, only: %i[show commits diffs pipelines search_links search_labels]
+  before_action :authorize_update_merge_request!, only: %i[edit update merge link_labels unlink_label]
   before_action :set_notification_author, only: [:update]
   before_action :check_mr_open, only: [:edit]
 
   def index
-    status_param = params[:status].presence || 'opened'
-    search_params = {
-      status_eq: MergeRequest.statuses[status_param],
-      assignees_id_eq: params[:assignee_id],
-      reviewers_id_eq: params[:reviewer_id],
-      author_id_eq: params[:author_id],
-      title_or_description_i_cont: params[:search]
-    }.compact
+    @merge_requests = MergeRequestsFinder.new(project, current_user, filter_params).execute
+                                         .includes(:author, :assignees, :reviewers, :labels, metrics: :latest_closed_by)
+                                         .page(params[:page])
+                                         .per(20)
 
-    order_clause = case status_param
-                   when 'closed' then 'merge_request_metrics.latest_closed_at DESC NULLS LAST'
-                   when 'merged' then 'merge_request_metrics.merged_at DESC NULLS LAST'
-                   end
+    @label_options = project.namespace.labels.order(:title)
+    @sort_scopes = @label_options.map(&:title).grep(/::/).map { |t| t.split('::').first }.uniq
+    @user_options = project.users.active.order(:username)
 
-    base = project.merge_requests.ransack(search_params).result(distinct: true)
-    @merge_requests = if order_clause
-                        MergeRequest.where(id: base.select(:id)).joins(:metrics).order(Arel.sql(order_clause))
-                      else
-                        base.order(id: :desc)
-                      end
-    @merge_requests = @merge_requests.includes(:author, :assignees, :reviewers, metrics: :latest_closed_by)
-                                     .page(params[:page])
-                                     .per(20)
-
-    @pagination_params = params.permit(:status, :search, :author_id, :assignee_id, :reviewer_id)
+    @pagination_params = params.permit(:status, :search, :author, :assignee, :reviewer, :sort, label: [])
   end
 
   def new; end
@@ -175,7 +160,49 @@ class Projects::MergeRequestsController < Projects::ApplicationController
     end
   end
 
+  def search_labels
+    @labels = project.namespace.labels.limit(10)
+    @labels = @labels.ransack(title_cont: params[:q]).result if params[:q]
+    @selected_ids = @merge_request.label_ids
+
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
+  def link_labels
+    @merge_request.relink_label_ids(label_params)
+    @merge_request.save
+
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
+  def unlink_label
+    label_id = unlink_label_params.to_i
+    @merge_request.label_ids = @merge_request.label_ids - [label_id]
+    @merge_request.save
+    @merge_request.reload
+
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
   private
+
+  def filter_params
+    params.permit(:status, :search, :author, :assignee, :reviewer, :sort, label: [])
+  end
+
+  def label_params
+    params.dig(:merge_request, :label_ids)&.map(&:to_i) || []
+  end
+
+  def unlink_label_params
+    params[:label_id]
+  end
 
   def merge_request_params
     params.require(:merge_request).permit(:source_project_id, :source_branch, :target_project_id, :target_branch, :title, :description, :state_event,

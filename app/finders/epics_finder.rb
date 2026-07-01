@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-class EpicsFinder < WorkItemsFinder
+class EpicsFinder
+  include Filterable
+
   private
 
   def base_scope

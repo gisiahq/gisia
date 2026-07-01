@@ -28,12 +28,26 @@
             = icon 'plus', class: 'w-4 h-4'
             %span= _('New merge request')
 
-    = render 'shared/filters/merge_requests_filters',
-      url: namespace_project_merge_requests_path(@project.namespace.parent.full_path, @project.namespace.path),
-      clear_url: namespace_project_merge_requests_path(@project.namespace.parent.full_path, @project.namespace.path),
-      authors: @authors,
-      assignees: @assignees,
-      reviewers: @reviewers
+    %div{ class: 'bg-gray-50 rounded-lg p-4 mb-6' }
+      %div{ class: 'relative',
+            data: { controller: 'search-token',
+                    search_token_status_options_value: ['Open', 'Closed', 'Merged'].to_json,
+                    search_token_label_options_value: @label_options.map(&:title).to_json,
+                    search_token_author_options_value: @user_options.map(&:username).to_json,
+                    search_token_assignee_options_value: @user_options.map(&:username).to_json,
+                    search_token_reviewer_options_value: @user_options.map(&:username).to_json,
+                    search_token_sort_scopes_value: @sort_scopes.to_json,
+                    search_token_initial_value: { status: params[:status], label: Array(params[:label]), author: params[:author], assignee: params[:assignee], reviewer: params[:reviewer], sort: params[:sort], search: params[:search] }.to_json } }
+        = form_tag namespace_project_merge_requests_path(@project.namespace.parent.full_path, @project.namespace.path), method: :get, local: true, data: { search_token_target: 'form' } do
+          %div{ data: { search_token_target: 'hiddenFields' } }
+          %div{ class: 'flex flex-wrap gap-2 items-center border border-gray-300 rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500',
+                data: { search_token_target: 'box' } }
+            %input{ type: 'text', autocomplete: 'off', placeholder: 'Search or filter merge requests...',
+                    class: 'flex-1 min-w-[120px] outline-none text-sm px-1 py-0.5 bg-transparent',
+                    data: { search_token_target: 'input',
+                            action: 'focus->search-token#open click->search-token#open input->search-token#onInput keydown->search-token#onKeydown' } }
+        %div{ class: 'hidden absolute left-0 right-0 top-full mt-1 z-10 bg-white border border-slate-200 rounded-lg shadow-lg max-h-64 overflow-y-auto',
+              data: { search_token_target: 'dropdown' } }
 
     - if @merge_requests&.any?
       %div{ class: 'space-y-0' }
@@ -84,6 +98,14 @@
                   %div{ class: 'flex items-center gap-1 text-slate-500' }
                     = icon 'clock', class: 'w-3 h-3'
                     %span= _('updated %{time} ago') % { time: time_ago_in_words(merge_request.updated_at) }
+
+              - if merge_request.labels.any?
+                %div{ class: 'flex flex-wrap gap-2 mt-3' }
+                  - merge_request.labels.each do |label|
+                    - link_params = { label: [label.title] }
+                    - link_params[:search] = params[:search] if params[:search].present?
+                    = link_to namespace_project_merge_requests_path(@project.namespace.parent.full_path, @project.namespace.path, link_params), id: "merge_request_#{merge_request.id}_label_#{label.id}", class: 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium hover:opacity-80 transition-opacity', style: "background-color: #{label.color}20; color: #{label.color}" do
+                      = label.title
 
             %div{ class: 'flex-shrink-0 w-32' }
               - if merge_request.assignees&.any?

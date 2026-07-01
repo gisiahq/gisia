@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-class IssuesFinder < WorkItemsFinder
+class IssuesFinder
+  include Filterable
+
   private
 
   def base_scope

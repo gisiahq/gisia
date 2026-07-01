@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkItemsFinder
+module Filterable
   attr_reader :project, :current_user, :params
 
   def initialize(project, current_user, params = {})

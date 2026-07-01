@@ -12,6 +12,7 @@ export default class extends Controller {
     labelOptions: Array,
     authorOptions: Array,
     assigneeOptions: Array,
+    reviewerOptions: Array,
     sortScopes: Array,
     initial: Object
   }
@@ -22,8 +23,9 @@ export default class extends Controller {
       { key: 'label', label: 'Label' },
       { key: 'author', label: 'Author' },
       { key: 'assignee', label: 'Assignee' },
-      { key: 'sort', label: 'Sort' },
     ]
+    if (this.hasReviewerOptionsValue) this.types.push({ key: 'reviewer', label: 'Reviewer' })
+    this.types.push({ key: 'sort', label: 'Sort' })
 
     this.sortOptions = [
       ...this.sortScopesValue.flatMap(scope => [
@@ -59,6 +61,7 @@ export default class extends Controller {
     ;(init.label || []).forEach(l => tokens.push({ type: 'label', value: l, display: l }))
     if (init.author) tokens.push({ type: 'author', value: init.author, display: init.author })
     if (init.assignee) tokens.push({ type: 'assignee', value: init.assignee, display: init.assignee })
+    if (init.reviewer) tokens.push({ type: 'reviewer', value: init.reviewer, display: init.reviewer })
     if (init.sort) {
       const opt = this.sortOptions.find(o => o.value === init.sort)
       tokens.push({ type: 'sort', value: init.sort, display: opt ? opt.display : init.sort })
@@ -77,6 +80,7 @@ export default class extends Controller {
       case 'label': return this.labelOptionsValue
       case 'author': return this.authorOptionsValue
       case 'assignee': return this.assigneeOptionsValue
+      case 'reviewer': return this.reviewerOptionsValue
       default: return []
     }
   }
@@ -299,6 +303,9 @@ export default class extends Controller {
 
     const assignee = this.tokens.find(t => t.type === 'assignee')
     if (assignee) add('assignee', assignee.value)
+
+    const reviewer = this.tokens.find(t => t.type === 'reviewer')
+    if (reviewer) add('reviewer', reviewer.value)
 
     const sort = this.tokens.find(t => t.type === 'sort')
     if (sort) add('sort', sort.value)

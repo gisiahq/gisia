@@ -55,6 +55,14 @@ class MergeRequest < ApplicationRecord
   has_many :activities, class_name: 'MergeRequestActivity', foreign_key: :trackable_id, dependent: :destroy
   has_many :diff_notes, -> { where(type: 'DiffNote') }, as: :noteable, class_name: 'DiffNote', dependent: :destroy
 
+  has_many :label_links, as: :labelable, dependent: :destroy
+  has_many :labels, through: :label_links
+
+  def label_ids=(ids)
+    @prev_activity_label_ids ||= LabelLink.where(labelable: self).pluck(:label_id).sort if persisted?
+    super
+  end
+
   before_update :capture_previous_reviewer_ids
 
   after_update :clear_memoized_shas
@@ -85,12 +93,62 @@ class MergeRequest < ApplicationRecord
   scope :preload_project_and_latest_diff, -> { preload(:source_project, :latest_merge_request_diff) }
   scope :from_fork, -> { where('source_project_id <> target_project_id') }
 
+  scope :with_assignee, ->(user_id) { joins(:assignees).where(users: { id: user_id }) }
+  scope :with_reviewer, ->(user_id) { joins(:reviewers).where(users: { id: user_id }) }
+
+  scope :with_label_ids, ->(label_ids) do
+    if label_ids.blank?
+      all
+    else
+      label_link_ids = LabelLink.joins(:label)
+                                .where(labels: { id: label_ids }, labelable_type: 'MergeRequest')
+                                .group('labelable_id')
+                                .having('COUNT(*) = ?', label_ids.size)
+                                .pluck('labelable_id')
+      where(id: label_link_ids)
+    end
+  end
+
+  # orders by the `rank` of the item's label within the given scope
+  # (e.g. scope_name "Priority" matches labels titled "Priority::*").
+  # items without a label in that scope sort last.
+  scope :order_by_label_rank, ->(scope_name, direction) do
+    dir = direction == :desc ? 'DESC' : 'ASC'
+    rank_subquery = sanitize_sql_array([
+      "SELECT MIN(labels.rank) FROM label_links
+       INNER JOIN labels ON labels.id = label_links.label_id
+       WHERE label_links.labelable_id = merge_requests.id
+         AND label_links.labelable_type = 'MergeRequest'
+         AND labels.title ILIKE ?",
+      "#{sanitize_sql_like(scope_name)}::%"
+    ])
+    order(Arel.sql("(#{rank_subquery}) IS NULL"), Arel.sql("(#{rank_subquery}) #{dir}"))
+  end
+
   def self.ransackable_attributes(_auth_object = nil)
     %w[status author_id title description source_branch target_branch]
   end
 
   def self.ransackable_associations(_auth_object = nil)
-    %w[assignees reviewers]
+    %w[assignees reviewers labels]
+  end
+
+  def relink_label_ids(extra_label_ids)
+    return if extra_label_ids.blank?
+
+    old_label_ids = label_links.pluck(:label_id)
+    new_labels = Label.where(id: extra_label_ids, namespace_id: project.namespace_id)
+    new_scopes = new_labels.select { |l| l.title.include?('::') }.group_by { |l| l.title.split('::').first }.keys
+
+    ids_to_remove = []
+    if old_label_ids.present? && new_scopes.present?
+      old_labels = Label.where(id: old_label_ids, namespace_id: project.namespace_id)
+      new_scopes.each do |scope|
+        ids_to_remove.concat(old_labels.select { |l| l.title.start_with?("#{scope}::") }.map(&:id))
+      end
+    end
+
+    self.label_ids = (old_label_ids | extra_label_ids) - ids_to_remove
   end
 
   def clear_memoized_shas
