@@ -65,21 +65,37 @@ class Admin::UsersController < Admin::ApplicationController
 
   def block
     if @user.block
-      redirect_to admin_user_path(@user), notice: 'User was successfully blocked.'
+      respond_with_user_update(notice: 'User was successfully blocked.')
     else
-      redirect_to admin_user_path(@user), alert: @user.errors.full_messages.to_sentence.presence || 'User could not be blocked.'
+      respond_with_user_update(alert: @user.errors.full_messages.to_sentence.presence || 'User could not be blocked.')
     end
   end
 
   def unblock
     if @user.activate
-      redirect_to admin_user_path(@user), notice: 'User was successfully unblocked.'
+      respond_with_user_update(notice: 'User was successfully unblocked.')
     else
-      redirect_to admin_user_path(@user), alert: @user.errors.full_messages.to_sentence.presence || 'User could not be unblocked.'
+      respond_with_user_update(alert: @user.errors.full_messages.to_sentence.presence || 'User could not be unblocked.')
     end
   end
 
   private
+
+  def respond_with_user_update(notice: nil, alert: nil)
+    respond_to do |format|
+      format.turbo_stream do
+        flash.now[:notice] = notice if notice
+        flash.now[:alert] = alert if alert
+        render turbo_stream: [
+          turbo_stream.replace('flash', partial: 'shared/flash'),
+          turbo_stream.replace('user-header', partial: 'admin/users/header', locals: { user: @user }),
+          turbo_stream.replace('user-status', partial: 'admin/users/status_badge', locals: { user: @user }),
+          turbo_stream.replace('user-block-toggle', partial: 'admin/users/edit_block_button', locals: { user: @user })
+        ]
+      end
+      format.html { redirect_to admin_user_path(@user), notice: notice, alert: alert, status: :see_other }
+    end
+  end
 
   def deny_user_deletion
     redirect_to admin_user_path(@user), alert: 'User deletion is not implemented yet.'

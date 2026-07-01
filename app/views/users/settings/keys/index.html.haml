@@ -22,7 +22,7 @@
     - if @keys.any?
       %div{class: 'space-y-3'}
         - @keys.each do |key|
-          %div{class: 'flex items-center justify-between py-4 border-b border-gray-100 last:border-b-0'}
+          %div{ id: dom_id(key), class: 'flex items-center justify-between py-4 border-b border-gray-100 last:border-b-0' }
             %div{class: 'flex-1 min-w-0'}
               %div{class: 'flex items-center gap-3 mb-2'}
                 = icon 'key', class: 'w-5 h-5 text-blue-500', variant: 'regular'
@@ -51,7 +51,7 @@
                   = link_to edit_users_settings_key_path(key), class: 'flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50' do
                     = icon 'pencil', class: 'w-4 h-4'
                     = _('Edit')
-                  = button_to users_settings_key_path(key), method: :delete, data: { confirm: _('Are you sure?') }, class: 'flex items-center gap-2 px-3 py-2 text-sm text-red-700 hover:bg-red-50 w-full text-left' do
+                  = button_to users_settings_key_path(key), method: :delete, form: { data: { turbo_confirm: _('Are you sure?') } }, class: 'flex items-center gap-2 px-3 py-2 text-sm text-red-700 hover:bg-red-50 w-full text-left' do
                     = icon 'trash', class: 'w-4 h-4'
                     = _('Delete')
     - else

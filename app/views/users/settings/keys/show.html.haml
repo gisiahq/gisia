@@ -73,6 +73,6 @@
         = link_to edit_users_settings_key_path(@key), class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200' do
           = icon 'pencil', class: 'w-4 h-4'
           = _('Edit')
-        = button_to users_settings_key_path(@key), method: :delete, data: { confirm: _('Are you sure you want to delete this SSH key?'), turbo: false }, class: 'inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200' do
+        = button_to users_settings_key_path(@key, format: :html), method: :delete, form: { data: { turbo_confirm: _('Are you sure you want to delete this SSH key?') } }, class: 'inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200' do
           = icon 'trash', class: 'w-4 h-4'
           = _('Delete')

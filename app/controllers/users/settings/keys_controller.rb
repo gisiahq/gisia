@@ -43,7 +43,16 @@ module Users
       def destroy
         @key.destroy!
 
-        redirect_to users_settings_keys_path, status: :see_other, notice: 'Key was successfully destroyed.'
+        respond_to do |format|
+          format.turbo_stream do
+            flash.now[:notice] = 'Key was successfully destroyed.'
+            render turbo_stream: [
+              turbo_stream.remove(@key),
+              turbo_stream.replace('flash', partial: 'shared/flash')
+            ]
+          end
+          format.html { redirect_to users_settings_keys_path, status: :see_other, notice: 'Key was successfully destroyed.' }
+        end
       end
 
       private

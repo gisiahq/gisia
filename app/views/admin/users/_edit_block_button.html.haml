@@ -1,0 +1,9 @@
+%div{ id: 'user-block-toggle', class: 'inline-block' }
+  - if user.blocked?
+    = link_to unblock_admin_user_path(user), data: { turbo_method: :post }, class: 'inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-all duration-200' do
+      = icon 'user-check', class: 'w-4 h-4'
+      = _('Unblock User')
+  - else
+    = link_to block_admin_user_path(user), data: { turbo_method: :post, turbo_confirm: _('Are you sure you want to block this user?') }, class: 'inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200' do
+      = icon 'prohibit', class: 'w-4 h-4'
+      = _('Block User')
