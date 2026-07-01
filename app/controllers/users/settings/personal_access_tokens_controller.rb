@@ -25,7 +25,10 @@ module Users
             format.html { redirect_to users_settings_personal_access_tokens_path }
           end
         else
-          render :new, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream { render :new, status: :unprocessable_entity }
+            format.html { render :new, status: :unprocessable_entity }
+          end
         end
       end
 
