@@ -117,6 +117,14 @@ class User < ApplicationRecord
     Ability.allowed?(self, action, subject, **)
   end
 
+  def active_for_authentication?
+    super && can?(:log_in)
+  end
+
+  def inactive_message
+    blocked? ? :blocked : super
+  end
+
   def requires_ldap_check?
     false
   end

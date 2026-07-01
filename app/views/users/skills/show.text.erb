@@ -189,11 +189,39 @@ Returns the updated user fields on success.
 
 ---
 
+### Block a User (admin only)
+
+Blocks a user so they can no longer sign in, use the API, or access git. Their existing
+data and contributions are preserved. This is the reversible alternative to deletion.
+
+```bash
+curl -X POST "<%= Gitlab.config.gitlab.url %>/api/v4/users/:id/block" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+Returns `204 No Content` on success. The user's `state` becomes `blocked`.
+
+---
+
+### Unblock a User (admin only)
+
+Reactivates a blocked user. Their `state` returns to `active` and they can sign in again.
+
+```bash
+curl -X POST "<%= Gitlab.config.gitlab.url %>/api/v4/users/:id/unblock" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+Returns `204 No Content` on success.
+
+---
+
 ### Delete a User (admin only)
+
+> **Not implemented.** User deletion is not available. Block the user instead (see above).
+> This endpoint returns `501 Not Implemented`.
 
 ```bash
 curl -X DELETE "<%= Gitlab.config.gitlab.url %>/api/v4/users/:id" \
   -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
 ```
-
-Returns `204 No Content` on success.

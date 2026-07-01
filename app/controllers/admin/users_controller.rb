@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class Admin::UsersController < Admin::ApplicationController
-  before_action :set_user, only: %i[show edit update destroy]
+  before_action :set_user, only: %i[show edit update destroy block unblock]
   before_action :set_user_stats, only: [:index]
+  before_action :deny_user_deletion, only: :destroy
 
 
   def index
@@ -62,7 +63,27 @@ class Admin::UsersController < Admin::ApplicationController
     redirect_to admin_users_path, notice: 'User was successfully deleted.'
   end
 
+  def block
+    if @user.block
+      redirect_to admin_user_path(@user), notice: 'User was successfully blocked.'
+    else
+      redirect_to admin_user_path(@user), alert: @user.errors.full_messages.to_sentence.presence || 'User could not be blocked.'
+    end
+  end
+
+  def unblock
+    if @user.activate
+      redirect_to admin_user_path(@user), notice: 'User was successfully unblocked.'
+    else
+      redirect_to admin_user_path(@user), alert: @user.errors.full_messages.to_sentence.presence || 'User could not be unblocked.'
+    end
+  end
+
   private
+
+  def deny_user_deletion
+    redirect_to admin_user_path(@user), alert: 'User deletion is not implemented yet.'
+  end
 
   def set_user
     @user = User.find(params[:id])

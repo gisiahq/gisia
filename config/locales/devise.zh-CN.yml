@@ -7,6 +7,7 @@
     failure:
       already_authenticated: "您已登录。"
       inactive: "您的账户尚未激活。"
+      blocked: "您的账户已被封锁，请联系管理员。"
       invalid: "无效的 %{authentication_keys} 或密码。"
       locked: "您的账户已被锁定。"
       last_attempt: "您还有一次尝试机会，之后您的账户将被锁定。"

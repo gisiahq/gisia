@@ -90,7 +90,7 @@ class Projects::EpicsController < Projects::ApplicationController
   end
 
   def search_users
-    @users = @project.users.limit(10)
+    @users = @project.users.active.limit(10)
 
     @users = if params[:ids]
                @users.where(id: params[:ids].split(',').map(&:to_i))

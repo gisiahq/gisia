@@ -23,9 +23,18 @@
                 = link_to admin_user_path(user), class: 'font-medium text-gray-900 hover:text-blue-600 transition-colors truncate', data: { turbo: false } do
                   = user.username
                 - if user.admin?
-                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 flex-shrink-0'}= _('Admin')
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-amber-500 text-white flex-shrink-0'}= _('Admin')
                 - if user == current_user
                   %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700 flex-shrink-0'}= _("It's you")
+                - case user.state
+                - when 'active'
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 flex-shrink-0'}= _('Active')
+                - when 'blocked'
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 flex-shrink-0'}= _('Blocked')
+                - when 'banned'
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 flex-shrink-0'}= _('Banned')
+                - else
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 flex-shrink-0'}= user.state.humanize
                 - if user.confirmed_at.nil?
                   %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 flex-shrink-0'}= _('Pending')
               %p{class: 'text-gray-500 text-xs truncate mt-0.5'}= user.email

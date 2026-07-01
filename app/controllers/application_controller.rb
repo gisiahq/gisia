@@ -5,6 +5,7 @@ class ApplicationController < BaseActionController
 
   allow_browser versions: :modern
   before_action :authenticate_user!
+  before_action :enforce_user_active!
   before_action :set_current_organization
   around_action :set_locale
 
@@ -14,6 +15,23 @@ class ApplicationController < BaseActionController
   end
 
   private
+
+  def enforce_user_active!
+    return if current_user.nil? || current_user.active?
+
+    sign_out current_user
+    flash[:alert] = blocked_account_reason(current_user)
+    redirect_to new_user_session_path
+  end
+
+  def blocked_account_reason(user)
+    case user.state
+    when 'banned'
+      _('Your account has been banned. Please contact an administrator.')
+    else
+      _('Your account is not active. Please contact an administrator.')
+    end
+  end
 
   def set_locale(&block)
     if current_user

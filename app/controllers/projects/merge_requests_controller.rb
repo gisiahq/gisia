@@ -158,7 +158,7 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   end
 
   def search_users
-    @users = project.users.limit(10)
+    @users = project.users.active.limit(10)
 
     @users = if params[:ids]
                @users.where(id: params[:ids].split(',').map(&:to_i))
@@ -192,7 +192,7 @@ class Projects::MergeRequestsController < Projects::ApplicationController
     @merge_request ||= MergeRequest.new(source_project: project, target_project: project)
     @branches = project.repository.branch_names
     @projects = Project.all
-    @users = project.users
+    @users = project.users.active
   end
 
   def set_mr

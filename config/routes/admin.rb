@@ -13,7 +13,12 @@ namespace :admin do
   root 'dashboard#index'
   
   get 'dashboard', to: 'dashboard#index'
-  resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
+    member do
+      post :block
+      post :unblock
+    end
+  end
   resources :projects, only: [:index, :show, :edit, :update, :destroy]
   resources :groups, only: [:index, :show, :edit, :update, :destroy]
   
