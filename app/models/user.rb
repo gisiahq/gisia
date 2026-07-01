@@ -28,6 +28,16 @@ class User < ApplicationRecord
     '@'
   end
 
+  # Pattern used to extract `@username` user references from text
+  def self.reference_pattern
+    @reference_pattern ||=
+      %r{
+        (?<!\w)
+        #{Regexp.escape(reference_prefix)}
+        (?<username>#{Gitlab::PathRegex::FULL_NAMESPACE_FORMAT_REGEX})
+      }x
+  end
+
   has_many :notification_settings, dependent: :destroy
   has_many :keys
   has_many :personal_access_tokens, dependent: :destroy
@@ -71,6 +81,7 @@ class User < ApplicationRecord
   scope :active, -> { with_state(:active).non_internal }
   scope :blocked_pending_approval, -> { with_state(:blocked_pending_approval) }
   scope :by_user_email, ->(emails) { iwhere(email: Array(emails)) }
+  scope :by_username, ->(usernames) { iwhere(username: Array(usernames).map(&:to_s)) }
   scope :by_login, ->(login) do
     return none if login.blank?
 

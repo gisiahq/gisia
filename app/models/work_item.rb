@@ -14,6 +14,7 @@ class WorkItem < ApplicationRecord
   include Noteable
   include Issuable
   include Participable
+  include Mentionable
   include Referable
   include WorkItems::HasState
   include WorkItems::HasWorkflows
@@ -43,6 +44,8 @@ class WorkItem < ApplicationRecord
     @prev_activity_label_ids ||= LabelLink.where(labelable: self).pluck(:label_id).sort if persisted?
     super
   end
+
+  attr_mentionable :description
 
   validates :title, presence: true
   validates :confidential, inclusion: { in: [true, false] }

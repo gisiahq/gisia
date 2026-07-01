@@ -13,6 +13,15 @@ class NotePolicy < BasePolicy
   delegate { @subject.resource_parent }
 
   condition(:is_author) { @user && @subject.author == @user }
+  condition(:can_read_noteable) { can?(:"read_#{@subject.noteable_ability_name}") }
+
+  # Anyone who can read the noteable (issue, etc.) can read its notes.
+  rule { can_read_noteable }.enable :read_note
+
+  rule { ~can_read_noteable }.policy do
+    prevent :read_note
+    prevent :admin_note
+  end
 
   rule { is_author }.policy do
     enable :read_note

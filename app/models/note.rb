@@ -13,8 +13,11 @@ class Note < ApplicationRecord
   include AfterCommitQueue
   include EachBatch
   include Notes::Discussable
+  include Mentionable
 
   self.primary_key = :id
+
+  attr_mentionable :note
 
   # Attribute used to determine whether keep_around_commits will be skipped for diff notes.
   attr_accessor :skip_keep_around_commits
@@ -142,6 +145,18 @@ class Note < ApplicationRecord
 
   def for_commit?
     false
+  end
+
+  def noteable_ability_name
+    noteable_type.demodulize.underscore
+  end
+
+  # STI subclasses (IssueNote, EpicNote, ...) each get their own class name from
+  # ActiveRecord::Naming, which would otherwise make NotificationRecipient#read_ability
+  # look for a nonexistent ability like `:read_issue_note`. Every subclass is a Note
+  # as far as NotePolicy is concerned, so pin the ability name here.
+  def to_ability_name
+    'note'
   end
 
   private

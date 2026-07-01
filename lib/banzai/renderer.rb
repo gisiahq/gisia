@@ -14,9 +14,11 @@ module Banzai
     def self.render(text, context = {})
       return '' unless text.present?
 
-      html = CommonMarker.render_html(text, :DEFAULT, [:table, :strikethrough, :autolink, :tagfilter, :tasklist])
+      result = MentionScanner.scan(text)
+      html = result.doc.to_html(:UNSAFE, MentionScanner::EXTENSIONS)
 
-      # Basic sanitization
+      # Basic sanitization. Mentions are injected as raw inline HTML above, so
+      # this Sanitize pass is the only XSS protection for the rendered output.
       Sanitize.fragment(html, Sanitize::Config::RELAXED).html_safe
     end
 
