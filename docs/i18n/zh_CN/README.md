@@ -49,6 +49,7 @@ AI bot 技能演示
 ```shell
 # Initialize and start Gisia
 mkdir gisia && cd gisia
+docker pull gisia/init:latest
 docker run --rm -v ./:/output gisia/init:latest
 cp .env.example .env
 docker compose up -d
