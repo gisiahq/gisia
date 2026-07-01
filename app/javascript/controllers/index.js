@@ -31,6 +31,7 @@ import LinkItemFormController from "./link_item_form_controller"
 import PipelineRefSelectController from "./pipeline_ref_select_controller"
 import CiLintController from "./ci_lint_controller"
 import EmailChangeController from "./email_change_controller"
+import SearchTokenController from "./search_token_controller"
 
 // Register controllers manually to ensure they're loaded
 application.register("search", SearchController)
@@ -63,5 +64,6 @@ application.register("link-item-form", LinkItemFormController)
 application.register("pipeline-ref-select", PipelineRefSelectController)
 application.register("ci-lint", CiLintController)
 application.register("email-change", EmailChangeController)
+application.register("search-token", SearchTokenController)
 
 eagerLoadControllersFrom("controllers", application)

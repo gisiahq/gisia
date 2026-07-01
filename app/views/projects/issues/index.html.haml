@@ -26,11 +26,24 @@
                 %span= _('New issue')
 
     %div{ class: 'bg-gray-50 rounded-lg p-4 mb-6' }
-      = form_tag project_issues_path(@project), method: :get, local: true, class: 'flex flex-wrap gap-4 items-end' do
-        = hidden_field_tag :status, params[:status] if params[:status].present?
-
-        %div{ class: 'flex-1 min-w-64' }
-          = text_field_tag :search, params[:search], placeholder: _('Type to search'), class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500', onkeypress: 'if(event.key==="Enter"){this.form.submit();}', autocomplete: 'off'
+      %div{ class: 'relative',
+            data: { controller: 'search-token',
+                    search_token_status_options_value: ['Open', 'Closed'].to_json,
+                    search_token_label_options_value: @label_options.map(&:title).to_json,
+                    search_token_author_options_value: @user_options.map(&:username).to_json,
+                    search_token_assignee_options_value: @user_options.map(&:username).to_json,
+                    search_token_sort_scopes_value: @sort_scopes.to_json,
+                    search_token_initial_value: { status: params[:status], label: Array(params[:label]), author: params[:author], assignee: params[:assignee], sort: params[:sort], search: params[:search] }.to_json } }
+        = form_tag project_issues_path(@project), method: :get, local: true, data: { search_token_target: 'form' } do
+          %div{ data: { search_token_target: 'hiddenFields' } }
+          %div{ class: 'flex flex-wrap gap-2 items-center border border-gray-300 rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500',
+                data: { search_token_target: 'box' } }
+            %input{ type: 'text', autocomplete: 'off', placeholder: _('Search or filter issues...'),
+                    class: 'flex-1 min-w-[120px] outline-none text-sm px-1 py-0.5 bg-transparent',
+                    data: { search_token_target: 'input',
+                            action: 'focus->search-token#open click->search-token#open input->search-token#onInput keydown->search-token#onKeydown' } }
+        %div{ class: 'hidden absolute left-0 right-0 top-full mt-1 z-10 bg-white border border-slate-200 rounded-lg shadow-lg max-h-64 overflow-y-auto',
+              data: { search_token_target: 'dropdown' } }
 
     - if @issues&.any?
       %div{ class: 'space-y-0' }
@@ -57,7 +70,7 @@
               - if issue.labels.any?
                 %div{ class: 'flex flex-wrap gap-2' }
                   - issue.labels.each do |label|
-                    - link_params = { labels: label.title }
+                    - link_params = { label: [label.title] }
                     - link_params[:search] = params[:search] if params[:search].present?
                     = link_to namespace_project_issues_path(@project.namespace.parent.full_path, @project.path, link_params), id: "issue_#{issue.id}_label_#{label.id}", class: 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium hover:opacity-80 transition-opacity', style: "background-color: #{label.color}20; color: #{label.color}" do
                       = label.title

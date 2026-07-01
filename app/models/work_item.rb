@@ -72,6 +72,22 @@ class WorkItem < ApplicationRecord
     end
   end
 
+  # orders by the `rank` of the item's label within the given scope
+  # (e.g. scope_name "Priority" matches labels titled "Priority::*").
+  # items without a label in that scope sort last.
+  scope :order_by_label_rank, ->(scope_name, direction) do
+    dir = direction == :desc ? 'DESC' : 'ASC'
+    rank_subquery = sanitize_sql_array([
+      "SELECT MIN(labels.rank) FROM label_links
+       INNER JOIN labels ON labels.id = label_links.label_id
+       WHERE label_links.labelable_id = work_items.id
+         AND label_links.labelable_type = 'WorkItem'
+         AND labels.title ILIKE ?",
+      "#{sanitize_sql_like(scope_name)}::%"
+    ])
+    order(Arel.sql("(#{rank_subquery}) IS NULL"), Arel.sql("(#{rank_subquery}) #{dir}"))
+  end
+
   def self.ransackable_attributes(_auth_object = nil)
     %w[title description state_id author_id created_at updated_at iid]
   end
