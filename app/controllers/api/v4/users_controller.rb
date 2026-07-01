@@ -91,6 +91,9 @@ module API
       end
 
       def user_params
+        # Permits :admin - safe only because every action using this is admin-gated (require_admin!).
+        # If a self-service route (e.g. PUT /user) is ever added, use a param set that excludes :admin
+        # to prevent privilege escalation.
         @user_params ||= params.permit(:email, :name, :username, :password, :admin)
       end
 
