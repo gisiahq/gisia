@@ -37,6 +37,7 @@ class Note < ApplicationRecord
 
   before_validation :convert_note_to_html
   after_create_commit :create_note_activity
+  after_create_commit :notify_on_create
 
   scope :new_diff_notes, -> { where(type: 'DiffNote') }
   scope :system, -> { where(system: true) }
@@ -179,5 +180,9 @@ class Note < ApplicationRecord
       note_id: id,
       created_at: created_at
     )
+  end
+
+  def notify_on_create
+    NotificationService.new.new_note(self)
   end
 end
