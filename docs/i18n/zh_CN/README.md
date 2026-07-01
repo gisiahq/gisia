@@ -74,7 +74,7 @@ docker exec -it gisia-web cat /rails/initial_root_password
 | **合并请求** | ✅ 已完成 | 内联对比和评论线程 |
 | **Webhooks** | ✅ 已完成 | Webhooks 调用第三方服务的 URL |
 | **AI Bot 技能** | ✅ 已完成 | 机器可读的技能文件，让 AI 机器人可以通过 API 克隆、推送并管理问题和史诗 |
-| **代码审查** | 🔜 开发中 | 评论通知 |
+| **代码审查** | ✅ 已完成 | 评论通知 |
 | **命名空间 Runner** | 🔜 开发中 | 项目/群组级别的 runner |
 
 ## 💡 开发哲学
