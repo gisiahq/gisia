@@ -1,3 +1,14 @@
+# frozen_string_literal: true
+
+# ======================================================
+# Contains code from GitLab FOSS (MIT Licensed)
+# Copyright (c) GitLab Inc.
+# See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025-present Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
+# ======================================================
+
 class ApplicationController < BaseActionController
   include WorkhorseHelper
 
@@ -11,10 +22,18 @@ class ApplicationController < BaseActionController
 
   def render(*args, **options)
     options[:layout] = false if request.format.turbo_stream?
-    super(*args, **options)
+    super(*args, **options).tap do
+      if (400..599).cover?(response.status) && workhorse_excluded_content_types.include?(response.media_type)
+        response.headers['X-GitLab-Custom-Error'] = '1'
+      end
+    end
   end
 
   private
+
+  def workhorse_excluded_content_types
+    @workhorse_excluded_content_types ||= %w[text/html application/json text/vnd.turbo-stream.html]
+  end
 
   def enforce_user_active!
     return if current_user.nil? || current_user.active?
