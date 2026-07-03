@@ -2,9 +2,10 @@
 
 class Dashboard::ProjectsController < Dashboard::ApplicationController
   include Projects::Parameterizable
+  include VerifiesParentNamespace
   before_action :set_project, only: %i[destroy]
   before_action :set_available_namespaces, only: %i[new create]
-  before_action :verify_namespace_ownership, only: %i[create]
+  before_action :verify_parent_namespace!, only: %i[create]
   before_action :authorize_destroy_project!, only: %i[destroy]
 
   def index
@@ -55,13 +56,12 @@ class Dashboard::ProjectsController < Dashboard::ApplicationController
     @available_namespaces = current_user.namespaces_for_project_creation
   end
 
-  def verify_namespace_ownership
-    return unless params[:project]&.dig(:namespace_parent_id).present?
+  def requested_parent_namespace_id
+    create_params[:namespace_parent_id]
+  end
 
-    namespace_parent_id = params[:project][:namespace_parent_id].to_i
-    unless current_user.namespaces_for_project_creation.exists?(id: namespace_parent_id)
-      redirect_to dashboard_projects_path, alert: 'You are not authorized to use this namespace.'
-    end
+  def reject_parent_namespace!
+    redirect_to dashboard_projects_path, alert: _('You are not authorized to use this namespace.')
   end
 
   def authorize_destroy_project!

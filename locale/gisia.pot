@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gisia 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-03 12:11+0800\n"
-"PO-Revision-Date: 2026-07-03 12:11+0800\n"
+"POT-Creation-Date: 2026-07-03 14:43+0800\n"
+"PO-Revision-Date: 2026-07-03 14:43+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -100,6 +100,9 @@ msgid "ref must include a valid prefix"
 msgstr ""
 
 msgid "Cannot remove the last owner of the project."
+msgstr ""
+
+msgid "Only an owner of the project can move it to another namespace."
 msgstr ""
 
 msgid ""
@@ -264,6 +267,12 @@ msgid "must be a project namespace"
 msgstr ""
 
 msgid "cannot be lower than inherited membership (%{level})"
+msgstr ""
+
+msgid "cannot be the namespace itself or one of its descendants"
+msgstr ""
+
+msgid "cannot be more permissive than the parent group"
 msgstr ""
 
 msgid "Invalid feature"

@@ -5,8 +5,10 @@ module API
     class ProjectsController < ::API::V4::UserBaseController
       include API::V4::ProjectFindable
       include ::Projects::Parameterizable
+      include VerifiesParentNamespace
 
       before_action :find_project!, only: [:show, :update, :destroy]
+      before_action :verify_parent_namespace!, only: [:create]
       before_action -> { authorize_project!(:admin_project) }, only: [:update]
       before_action -> { authorize_project!(:remove_project) }, only: [:destroy]
 
@@ -48,6 +50,10 @@ module API
 
       def update_params
         params.permit(:name, :description, :visibility_level).compact
+      end
+
+      def requested_parent_namespace_id
+        create_params[:namespace_parent_id]
       end
     end
   end

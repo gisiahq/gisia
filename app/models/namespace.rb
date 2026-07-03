@@ -65,6 +65,8 @@ class Namespace < ApplicationRecord
     format: { with: Gitlab::Regex.oci_repository_path_regex, message: Gitlab::Regex.oci_repository_path_regex_message },
     if: :path_changed?
   validate :path_not_reserved, if: -> { parent_id.nil? && path_changed? }
+  validate :parent_not_own_descendant, if: -> { persisted? && parent_id_changed? && parent_id.present? }
+  validate :visibility_not_above_parent, if: -> { parent_id.present? && (parent_id_changed? || visibility_level_changed?) }
 
   delegate :name, to: :creator, allow_nil: false, prefix: true
 
@@ -203,5 +205,19 @@ class Namespace < ApplicationRecord
 
   def path_not_reserved
     errors.add(:path, 'is a reserved name') if Gitlab::PathRegex::TOP_LEVEL_ROUTES.include?(path.to_s.downcase)
+  end
+
+  def parent_not_own_descendant
+    return unless self_and_descendant_ids(skope: Namespace).where(id: parent_id).exists?
+
+    errors.add(:parent_id, _('cannot be the namespace itself or one of its descendants'))
+  end
+
+  def visibility_not_above_parent
+    parent_namespace = parent || Namespace.find_by(id: parent_id)
+    return unless parent_namespace&.group_namespace?
+    return if visibility_level <= parent_namespace.visibility_level
+
+    errors.add(:visibility_level, _('cannot be more permissive than the parent group'))
   end
 end

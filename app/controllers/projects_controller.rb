@@ -10,6 +10,7 @@
 # ======================================================
 
 class ProjectsController < Projects::ApplicationController
+  include VerifiesParentNamespace
   include ExtractsPath
   include TreeViewable
   include Projects::Parameterizable
@@ -54,7 +55,7 @@ class ProjectsController < Projects::ApplicationController
   end
 
   def project_params
-    params.require(:project).permit(
+    @project_params ||= params.require(:project).permit(
       :name,
       :path,
       :description,
@@ -76,11 +77,24 @@ class ProjectsController < Projects::ApplicationController
   end
 
   def verify_namespace_ownership
-    return unless params[:project]&.dig(:namespace_parent_id).present?
+    parent_id = requested_parent_namespace_id&.to_i
+    return unless parent_id
+    return if parent_id == @project.namespace.parent_id
 
-    namespace_parent_id = params[:project][:namespace_parent_id].to_i
-    unless current_user.namespaces_for_project_creation.exists?(id: namespace_parent_id)
-      redirect_to namespace_project_path(@project.namespace.parent.full_path, @project.path), alert: 'You are not authorized to use this namespace.'
-    end
+    verify_parent_namespace!
+    return if performed?
+    return if current_user.admin? || @project.team.member?(current_user, Accessible::OWNER)
+
+    redirect_to namespace_project_path(@project.namespace.parent.full_path, @project.path),
+      alert: _('Only an owner of the project can move it to another namespace.')
+  end
+
+  def requested_parent_namespace_id
+    project_params[:namespace_parent_id].presence
+  end
+
+  def reject_parent_namespace!
+    redirect_to namespace_project_path(@project.namespace.parent.full_path, @project.path),
+      alert: _('You are not authorized to use this namespace.')
   end
 end

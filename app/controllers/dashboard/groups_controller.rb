@@ -2,6 +2,7 @@
 
 class Dashboard::GroupsController < Dashboard::ApplicationController
   include Groups::Authorizable
+  include VerifiesParentNamespace
 
   before_action :set_group, only: %i[edit update destroy]
   before_action :set_available_namespaces, only: %i[new create edit update]
@@ -61,11 +62,15 @@ class Dashboard::GroupsController < Dashboard::ApplicationController
     @available_namespaces = current_user.namespaces_for_group_creation
   end
 
-  def verify_parent_namespace!
-    parent_id = group_params[:namespace_parent_id].presence
-    return unless parent_id
-    return if current_user.namespaces_for_group_creation.exists?(id: parent_id.to_i)
+  def requested_parent_namespace_id
+    group_params[:namespace_parent_id]
+  end
 
+  def creatable_parent_namespaces
+    current_user.namespaces_for_group_creation
+  end
+
+  def reject_parent_namespace!
     redirect_to dashboard_groups_path, alert: _('You are not authorized to use this namespace.')
   end
 
