@@ -212,11 +212,12 @@ class ProjectTeam
       resource_ids: user_ids,
       default_value: Gitlab::Access::NO_ACCESS
     ) do |user_ids|
-      project.members
-             .active
-             .where(user: user_ids)
-             .group(:user_id)
-             .maximum(:access_level)
+      Member.non_request
+            .non_minimal_access
+            .where(namespace_id: project.namespace.traversal_ids)
+            .where(user_id: user_ids)
+            .group(:user_id)
+            .maximum(:access_level)
     end
   end
 

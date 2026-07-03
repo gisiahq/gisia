@@ -1,0 +1,27 @@
+- editing = defined?(@member) && @member.persisted?
+- member = editing ? @member : GroupMember.new
+- url = editing ? namespace_settings_member_path(@namespace.full_path, @member) : namespace_settings_members_path(@namespace.full_path)
+- method = editing ? :patch : :post
+
+= form_with(model: member, url: url, method: method, local: false, scope: :member, class: 'space-y-6') do |form|
+  %div
+    = form.label :user_id, _('User'), class: 'block text-sm font-medium text-gray-900 mb-2'
+    - if editing
+      %div{class: 'flex items-center gap-3 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg'}
+        = render 'shared/user_avatar', user: @member.user, size: 32, css_class: 'w-8 h-8 rounded-full'
+        %span{class: 'text-sm text-gray-700'}
+          = "#{@member.user.name} (@#{@member.user.username})"
+    - else
+      = form.select :user_id, @users.map { |u| ["#{u.name} (@#{u.username})", u.id] }, { prompt: _('Select a user') }, class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+
+  %div
+    = form.label :access_level, _('Role'), class: 'block text-sm font-medium text-gray-900 mb-2'
+    = form.select :access_level, assignable_access_levels.map { |k, _| [Gitlab::Access.human_access(_), k] }, {}, class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+
+  %div
+    = form.label :expires_at, _('Expiration date (optional)'), class: 'block text-sm font-medium text-gray-900 mb-2'
+    = form.date_field :expires_at, class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+
+  %div{class: 'flex gap-3 pt-4'}
+    = form.submit(editing ? _('Update Member') : _('Add Member'), class: 'px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium cursor-pointer')
+    = link_to _('Cancel'), namespace_settings_members_path(@namespace.full_path), class: 'px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50'

@@ -10,6 +10,22 @@
 # ======================================================
 
 constraints(::Constraints::GroupUrlConstrainer.new) do
+  scope(path: '*namespace_id/-',
+    constraints: { namespace_id: Gitlab::PathRegex.full_namespace_route_regex },
+    module: :namespaces,
+    as: :namespace) do
+    namespace :settings do
+      resources :members, only: [:index, :create, :update, :destroy] do
+        collection do
+          post :new_form
+        end
+        member do
+          post :edit_form
+        end
+      end
+    end
+  end
+
   get '*namespace_id', to: 'namespaces/namespaces#show', as: :namespace_show,
     constraints: { namespace_id: Gitlab::PathRegex.full_namespace_route_regex }
 end

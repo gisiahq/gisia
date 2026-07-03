@@ -15,6 +15,7 @@ class Namespaces::ApplicationController < ApplicationController
   skip_before_action :authenticate_user!
   before_action :namespace
   before_action :authenticate_unless_public!
+  before_action :authorize_namespace_access!
 
   private
 
@@ -22,7 +23,17 @@ class Namespaces::ApplicationController < ApplicationController
     return if @namespace&.user_namespace?
     return if @namespace&.public?
 
-    authenticate_user!
+    head :not_found unless current_user
+  end
+
+  def authorize_namespace_access!
+    return if @namespace&.user_namespace?
+    return if @namespace&.public?
+    return if current_user&.admin?
+    return if @namespace&.internal? && current_user
+    return if current_user&.member_of_namespace_tree?(@namespace)
+
+    render_404
   end
 
   def namespace

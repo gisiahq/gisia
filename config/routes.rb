@@ -25,10 +25,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  namespace :api do
-    resources :members
-  end
-
   draw 'api/v4'
 
   root 'dashboard/home#home'

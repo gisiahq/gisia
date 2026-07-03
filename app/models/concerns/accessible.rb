@@ -52,4 +52,10 @@ module Accessible
     scope :by_access_level, ->(access_level) { where(access_level: access_level) }
     scope :with_at_least_access_level, ->(access_level) { where(access_level: access_level..) }
   end
+
+  class_methods do
+    def access_level_value(level)
+      access_levels.fetch(level.to_s) { level.to_i }
+    end
+  end
 end

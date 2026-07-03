@@ -1,6 +1,5 @@
+= turbo_stream.replace 'flash' do
+  = render 'shared/flash'
 = turbo_stream.replace 'members-content' do
   = turbo_frame_tag 'members-content' do
     = render 'form'
-
-= turbo_stream.replace 'flash' do
-  %div#flash{ class: 'fixed top-0 left-64 right-0 z-21' }

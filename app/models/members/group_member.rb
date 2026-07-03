@@ -16,6 +16,16 @@ class GroupMember < Member
   belongs_to :namespace, class_name: 'Namespaces::GroupNamespace', foreign_key: 'namespace_id'
   has_one :group, through: :namespace
 
+  validate :namespace_must_be_group_namespace
+
   scope :of_groups, ->(groups) { where(source_id: groups) }
   scope :count_users_by_namespace_id, -> { group(:namespace_id).count }
+
+  private
+
+  def namespace_must_be_group_namespace
+    return if namespace.is_a?(Namespaces::GroupNamespace)
+
+    errors.add(:namespace, _('must be a group namespace'))
+  end
 end

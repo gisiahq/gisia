@@ -8,7 +8,7 @@ class Dashboard::ProjectsController < Dashboard::ApplicationController
   before_action :authorize_destroy_project!, only: %i[destroy]
 
   def index
-    @projects = order_pinned_first(current_user.projects).page(params[:page]).per(20)
+    @projects = order_pinned_first(current_user.authorized_projects).page(params[:page]).per(20)
   end
 
   def new
@@ -52,14 +52,14 @@ class Dashboard::ProjectsController < Dashboard::ApplicationController
   end
 
   def set_available_namespaces
-    @available_namespaces = available_namespaces_for_user
+    @available_namespaces = current_user.namespaces_for_project_creation
   end
 
   def verify_namespace_ownership
     return unless params[:project]&.dig(:namespace_parent_id).present?
 
     namespace_parent_id = params[:project][:namespace_parent_id].to_i
-    unless available_namespaces_for_user.exists?(id: namespace_parent_id)
+    unless current_user.namespaces_for_project_creation.exists?(id: namespace_parent_id)
       redirect_to dashboard_projects_path, alert: 'You are not authorized to use this namespace.'
     end
   end

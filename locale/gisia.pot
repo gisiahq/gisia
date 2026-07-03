@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gisia 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:32+0800\n"
-"PO-Revision-Date: 2026-03-14 14:32+0800\n"
+"POT-Creation-Date: 2026-07-03 12:11+0800\n"
+"PO-Revision-Date: 2026-07-03 12:11+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -17,6 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "Settings saved."
+msgstr ""
+
+msgid "Your account has been banned. Please contact an administrator."
+msgstr ""
+
+msgid "Your account is not active. Please contact an administrator."
+msgstr ""
 
 msgid "Git LFS is not enabled on this GitLab server, contact your admin."
 msgstr ""
@@ -27,10 +36,81 @@ msgstr ""
 msgid "Not found."
 msgstr ""
 
+msgid "This item is already linked."
+msgstr ""
+
 msgid "Invalid file."
 msgstr ""
 
 msgid "Error uploading file"
+msgstr ""
+
+msgid "Group was successfully created."
+msgstr ""
+
+msgid "Group was successfully updated."
+msgstr ""
+
+msgid "Group was successfully destroyed."
+msgstr ""
+
+msgid "You are not authorized to use this namespace."
+msgstr ""
+
+msgid "You are not authorized to perform this action."
+msgstr ""
+
+msgid "Member was successfully added."
+msgstr ""
+
+msgid "Member was successfully updated."
+msgstr ""
+
+msgid "Member was successfully removed."
+msgstr ""
+
+msgid "Cannot remove the last owner of the group."
+msgstr ""
+
+msgid "Cannot demote the last owner of the group."
+msgstr ""
+
+msgid "Item not found."
+msgstr ""
+
+msgid "Cannot link an item to itself."
+msgstr ""
+
+msgid "Only issues and merge requests can be linked."
+msgstr ""
+
+msgid "Job was successfully canceled."
+msgstr ""
+
+msgid "Job cannot be canceled."
+msgstr ""
+
+msgid "Only issues can be linked to a merge request."
+msgstr ""
+
+msgid "Pipeline created successfully."
+msgstr ""
+
+msgid "ref must include a valid prefix"
+msgstr ""
+
+msgid "Cannot remove the last owner of the project."
+msgstr ""
+
+msgid ""
+"Server supports batch API only, please update your Git LFS client to version 1"
+".0.1 and up."
+msgstr ""
+
+msgid "Object does not exist on the server or you don't have permissions to access it"
+msgstr ""
+
+msgid "You cannot write to this read-only GitLab instance."
 msgstr ""
 
 msgid "Allow unauthenticated users to use search"
@@ -39,7 +119,7 @@ msgstr ""
 msgid "Restrict global search to authenticated users only"
 msgstr ""
 
-msgid "Show issues in global search results"
+msgid "Show work items in global search results"
 msgstr ""
 
 msgid "Show merge requests in global search results"
@@ -49,6 +129,9 @@ msgid "Show snippets in global search results"
 msgstr ""
 
 msgid "Show users in global search results"
+msgstr ""
+
+msgid "System default (automatic)"
 msgstr ""
 
 msgid ""
@@ -174,6 +257,15 @@ msgstr ""
 msgid "source diff"
 msgstr ""
 
+msgid "must be a group namespace"
+msgstr ""
+
+msgid "must be a project namespace"
+msgstr ""
+
+msgid "cannot be lower than inherited membership (%{level})"
+msgstr ""
+
 msgid "Invalid feature"
 msgstr ""
 
@@ -222,19 +314,33 @@ msgid_plural "merge requests"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "For %{link_to_pipeline_ref}"
+msgid "Pipeline|In %{pipeline_ref}"
 msgstr ""
 
-msgid "For %{ref}"
+msgid "You have no permissions"
 msgstr ""
 
-msgid "not authorized to create member"
+msgid "Lock not found"
 msgstr ""
 
-msgid "not authorized to update member"
+msgid "You must have maintainer access to force delete a lock"
 msgstr ""
 
-msgid "the member access level can't be higher than the current user's one"
+msgid "'%{lock_path}' is locked by @%{lock_user_name}"
+msgstr ""
+
+msgid "InviteUserToOrganization|not authorized to create member"
+msgstr ""
+
+msgid "InviteUserToOrganization|not authorized to update member"
+msgstr ""
+
+msgid ""
+"InviteUserToOrganization|the member access level can't be higher than the curr"
+"ent user's one"
+msgstr ""
+
+msgid "InviteUserToOrganization|already belongs to another organization"
 msgstr ""
 
 msgid "is too large. Maximum size allowed is %{size}"
@@ -591,6 +697,9 @@ msgstr ""
 msgid "Offline"
 msgstr ""
 
+msgid "Paused"
+msgstr ""
+
 msgid "No description"
 msgstr ""
 
@@ -640,9 +749,6 @@ msgid "Only administrators can view this."
 msgstr ""
 
 msgid "Add notes such as the runner owner or what it should be used for."
-msgstr ""
-
-msgid "Paused"
 msgstr ""
 
 msgid "Stop the runner from accepting new jobs."
@@ -796,6 +902,50 @@ msgstr ""
 msgid "View all %{count} jobs"
 msgstr ""
 
+msgid "Metrics"
+msgstr ""
+
+msgid "Configure usage statistics and telemetry settings"
+msgstr ""
+
+msgid "Version Check"
+msgstr ""
+
+msgid "Check if a newer version of Gisia is available."
+msgstr ""
+
+msgid "Enable version check"
+msgstr ""
+
+msgid ""
+"This Gisia instance periodically checks for newer versions. It will not upgrad"
+"e automatically."
+msgstr ""
+
+msgid "Save changes"
+msgstr ""
+
+msgid "Unblock User"
+msgstr ""
+
+msgid "Are you sure you want to block this user?"
+msgstr ""
+
+msgid "Block User"
+msgstr ""
+
+msgid "Banned"
+msgstr ""
+
+msgid "Blocked"
+msgstr ""
+
+msgid "Unblock"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
 msgid "Name"
 msgstr ""
 
@@ -812,6 +962,15 @@ msgid "Edit %{username}"
 msgstr ""
 
 msgid "Update user information and permissions"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Full Name"
 msgstr ""
 
 msgid "Password"
@@ -841,12 +1000,6 @@ msgstr ""
 msgid "Update User"
 msgstr ""
 
-msgid "Are you sure you want to delete this user?"
-msgstr ""
-
-msgid "Delete User"
-msgstr ""
-
 msgid "New user"
 msgstr ""
 
@@ -874,16 +1027,7 @@ msgstr ""
 msgid "Create User"
 msgstr ""
 
-msgid "Are you sure?"
-msgstr ""
-
 msgid "Account Details"
-msgstr ""
-
-msgid "Username"
-msgstr ""
-
-msgid "Email"
 msgstr ""
 
 msgid "Last activity"
@@ -908,6 +1052,9 @@ msgid "Updated %{time} ago"
 msgstr ""
 
 msgid "No projects found."
+msgstr ""
+
+msgid "Choose who can see this group"
 msgstr ""
 
 msgid "Your work"
@@ -974,6 +1121,12 @@ msgstr ""
 msgid "Get Help"
 msgstr ""
 
+msgid "Unpin"
+msgstr ""
+
+msgid "Pin"
+msgstr ""
+
 msgid "Are you sure you want to delete this project?"
 msgstr ""
 
@@ -992,13 +1145,55 @@ msgstr ""
 msgid "New Project"
 msgstr ""
 
+msgid "User"
+msgstr ""
+
+msgid "Select a user"
+msgstr ""
+
+msgid "Role"
+msgstr ""
+
+msgid "Expiration date (optional)"
+msgstr ""
+
+msgid "Update Member"
+msgstr ""
+
+msgid "Add Member"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "Expiration"
+msgstr ""
+
+msgid "Direct member"
+msgstr ""
+
+msgid "No expiration"
+msgstr ""
+
+msgid "Are you sure you want to remove this member?"
+msgstr ""
+
+msgid "No members found."
+msgstr ""
+
+msgid "Members Settings"
+msgstr ""
+
+msgid "Manage group members and their roles"
+msgstr ""
+
+msgid "Branch:"
+msgstr ""
+
 msgid "No files found"
 msgstr ""
 
 msgid "This directory appears to be empty."
-msgstr ""
-
-msgid "Branch:"
 msgstr ""
 
 msgid "History"
@@ -1020,6 +1215,9 @@ msgid "Select a Namespace"
 msgstr ""
 
 msgid "Choose who can see this project"
+msgstr ""
+
+msgid "Tag:"
 msgstr ""
 
 msgid "Branches for Project:"
@@ -1052,6 +1250,27 @@ msgstr ""
 msgid "This repository doesn't have any branches yet."
 msgstr ""
 
+msgid "CI Lint"
+msgstr ""
+
+msgid "Branch"
+msgstr ""
+
+msgid "Validate"
+msgstr ""
+
+msgid "CI configuration is valid."
+msgstr ""
+
+msgid "Warnings"
+msgstr ""
+
+msgid "CI configuration is invalid."
+msgstr ""
+
+msgid "Repository"
+msgstr ""
+
 msgid "committed by"
 msgstr ""
 
@@ -1062,9 +1281,6 @@ msgid "committed %{time} ago"
 msgstr ""
 
 msgid "branch history"
-msgstr ""
-
-msgid "Back to files"
 msgstr ""
 
 msgid "No commits found"
@@ -1117,6 +1333,12 @@ msgstr ""
 msgid "Push an existing Git repository"
 msgstr ""
 
+msgid "closed %{time} ago by"
+msgstr ""
+
+msgid "opened %{time} ago by"
+msgstr ""
+
 msgid "Edit issue"
 msgstr ""
 
@@ -1129,13 +1351,10 @@ msgstr ""
 msgid "New issue"
 msgstr ""
 
-msgid "Type to search"
+msgid "Search or filter issues..."
 msgstr ""
 
 msgid "Confidential"
-msgstr ""
-
-msgid "opened %{time} ago by"
 msgstr ""
 
 msgid "due %{date}"
@@ -1213,6 +1432,39 @@ msgstr ""
 msgid "Overview"
 msgstr ""
 
+msgid "These branches already have an open merge request:"
+msgstr ""
+
+msgid "Unable to save merge request"
+msgstr ""
+
+msgid "Source Branch"
+msgstr ""
+
+msgid "Target Branch"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Enter merge request title"
+msgstr ""
+
+msgid "Describe the changes in this merge request"
+msgstr ""
+
+msgid "Create Merge Request"
+msgstr ""
+
+msgid "Update Merge Request"
+msgstr ""
+
+msgid "Edit Merge Request"
+msgstr ""
+
+msgid "Update the details of your merge request."
+msgstr ""
+
 msgid "New merge request"
 msgstr ""
 
@@ -1238,33 +1490,6 @@ msgid ""
 "s."
 msgstr ""
 
-msgid "Unable to create merge request"
-msgstr ""
-
-msgid "Source Branch"
-msgstr ""
-
-msgid "Target Branch"
-msgstr ""
-
-msgid "Title"
-msgstr ""
-
-msgid "Enter merge request title"
-msgstr ""
-
-msgid "Describe the changes in this merge request"
-msgstr ""
-
-msgid "Assignees"
-msgstr ""
-
-msgid "Reviewers"
-msgstr ""
-
-msgid "Create Merge Request"
-msgstr ""
-
 msgid "Jobs (%{count})"
 msgstr ""
 
@@ -1272,6 +1497,9 @@ msgid "Status %{status}"
 msgstr ""
 
 msgid "For Merge Request"
+msgstr ""
+
+msgid "For %{ref}"
 msgstr ""
 
 msgid "Upstream"
@@ -1286,10 +1514,19 @@ msgstr ""
 msgid "Pipelines for Project:"
 msgstr ""
 
+msgid "Run pipeline"
+msgstr ""
+
 msgid "Search by SHA"
 msgstr ""
 
 msgid "e.g., abc123..."
+msgstr ""
+
+msgid "Branch or tag"
+msgstr ""
+
+msgid "Search branches and tags…"
 msgstr ""
 
 msgid "CI/CD Settings"
@@ -1310,7 +1547,35 @@ msgstr ""
 msgid "Manage project members and their roles"
 msgstr ""
 
-msgid "Add Member"
+msgid "Merge Options"
+msgstr ""
+
+msgid "Control merge behavior for merge requests in this project."
+msgstr ""
+
+msgid ""
+"When enabled, all commits from a merge request will be squashed into a single "
+"commit on merge."
+msgstr ""
+
+msgid "Enable squash merge"
+msgstr ""
+
+msgid ""
+"When enabled, the source branch will be automatically deleted after a merge re"
+"quest is merged."
+msgstr ""
+
+msgid "Delete source branch after merge"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Merge Request Settings"
+msgstr ""
+
+msgid "Configure merge request behavior for this project"
 msgstr ""
 
 msgid "General pipelines"
@@ -1362,28 +1627,7 @@ msgstr ""
 msgid "Per-job timeout in seconds. Must be at least 60 seconds."
 msgstr ""
 
-msgid "Save changes"
-msgstr ""
-
-msgid "Protected Branches"
-msgstr ""
-
-msgid "Restrict pushes and merges to important branches."
-msgstr ""
-
-msgid "Add Protection Rule"
-msgstr ""
-
-msgid "Protect important branches by restricting who can push to them and how"
-msgstr ""
-
 msgid "Branch pattern"
-msgstr ""
-
-msgid "Select branch..."
-msgstr ""
-
-msgid "Custom pattern..."
 msgstr ""
 
 msgid "Required access level"
@@ -1398,31 +1642,13 @@ msgstr ""
 msgid "Owner"
 msgstr ""
 
-msgid "Additional permissions"
-msgstr ""
-
 msgid "Allow push"
-msgstr ""
-
-msgid "Users can push commits"
 msgstr ""
 
 msgid "Force push"
 msgstr ""
 
-msgid "Allow rewriting history"
-msgstr ""
-
 msgid "Allow merge"
-msgstr ""
-
-msgid "Can merge pull requests"
-msgstr ""
-
-msgid "Protect Branch"
-msgstr ""
-
-msgid "Protected Branches (%{count})"
 msgstr ""
 
 msgid "Push"
@@ -1432,6 +1658,42 @@ msgid "Force Push"
 msgstr ""
 
 msgid "Remove protection from %{name}?"
+msgstr ""
+
+msgid "Protected Branches"
+msgstr ""
+
+msgid "Restrict pushes and merges to important branches."
+msgstr ""
+
+msgid "Add Protection Rule"
+msgstr ""
+
+msgid "Protect important branches by restricting who can push to them and how"
+msgstr ""
+
+msgid "Select branch..."
+msgstr ""
+
+msgid "Custom pattern..."
+msgstr ""
+
+msgid "Additional permissions"
+msgstr ""
+
+msgid "Users can push commits"
+msgstr ""
+
+msgid "Allow rewriting history"
+msgstr ""
+
+msgid "Can merge pull requests"
+msgstr ""
+
+msgid "Protect Branch"
+msgstr ""
+
+msgid "Protected Branches (%{count})"
 msgstr ""
 
 msgid "No protected branches configured"
@@ -1578,6 +1840,9 @@ msgstr ""
 msgid "Project Info"
 msgstr ""
 
+msgid "Project ID:"
+msgstr ""
+
 msgid "Created on:"
 msgstr ""
 
@@ -1615,9 +1880,6 @@ msgid "Board"
 msgstr ""
 
 msgid "Epics"
-msgstr ""
-
-msgid "Repository"
 msgstr ""
 
 msgid "Branches"
@@ -1695,6 +1957,9 @@ msgstr ""
 msgid "Expires %{date}"
 msgstr ""
 
+msgid "Are you sure?"
+msgstr ""
+
 msgid "No SSH keys found"
 msgstr ""
 
@@ -1726,9 +1991,6 @@ msgid "Last Used"
 msgstr ""
 
 msgid "Never used"
-msgstr ""
-
-msgid "No expiration"
 msgstr ""
 
 msgid "User ID"
@@ -1821,6 +2083,9 @@ msgstr ""
 msgid "Create a new personal access token"
 msgstr ""
 
+msgid "Please fix the following errors:"
+msgstr ""
+
 msgid "Edit Profile"
 msgstr ""
 
@@ -1833,10 +2098,7 @@ msgstr ""
 msgid "PNG, JPG, GIF up to 200KB. Ideal size: 192x192 pixels."
 msgstr ""
 
-msgid "Full Name"
-msgstr ""
-
-msgid "Mobile"
+msgid "Changing your email address will require confirmation before taking effect."
 msgstr ""
 
 msgid "Timezone"
@@ -1852,9 +2114,6 @@ msgid "Sign Out"
 msgstr ""
 
 msgid "Profile Information"
-msgstr ""
-
-msgid "Not provided"
 msgstr ""
 
 msgid "Member since %{date}"
@@ -1891,13 +2150,18 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The Planner role is suitable for team members who need to manage projects and "
-"track work items but do not need to contribute code."
+"MemberRole|The Planner role is suitable for team members who need to manage pr"
+"ojects and track work items but do not need to contribute code."
 msgstr ""
 
 msgid ""
 "MemberRole|The Reporter role is suitable for team members who need to stay inf"
 "ormed about a project or group but do not actively contribute code."
+msgstr ""
+
+msgid ""
+"MemberRole|The Security Manager role is for security team members who need to "
+"view and manage security features for the group or project."
 msgstr ""
 
 msgid ""
@@ -1987,13 +2251,13 @@ msgstr ""
 msgid "SubgroupCreationlevel|Maintainers"
 msgstr ""
 
-msgid "Default role"
+msgid "MemberRole|Default role: %{role}"
 msgstr ""
 
 msgid "INFO: Your SSH key has expired. Please generate a new key."
 msgstr ""
 
-msgid "INFO: Your SSH key is expiring soon. Please generate a new key."
+msgid "INFO: Your SSH key expires soon. Please generate a new key."
 msgstr ""
 
 msgid "'%{lock_path}' is locked in Git LFS by @%{lock_user_name}"
@@ -2032,4 +2296,16 @@ msgid "Project Templates"
 msgstr ""
 
 msgid "Potentially unwanted character detected: Unicode BiDi Control"
+msgstr ""
+
+msgid "VisibilityLevel|Private"
+msgstr ""
+
+msgid "VisibilityLevel|Internal"
+msgstr ""
+
+msgid "VisibilityLevel|Public"
+msgstr ""
+
+msgid "VisibilityLevel|Unknown"
 msgstr ""

@@ -5,6 +5,7 @@ class Dashboard::GroupsController < Dashboard::ApplicationController
 
   before_action :set_group, only: %i[edit update destroy]
   before_action :set_available_namespaces, only: %i[new create edit update]
+  before_action :verify_parent_namespace!, only: %i[create update]
   before_action -> { authorize_group!(:admin_namespace, @group.namespace) || redirect_unauthorized }, only: %i[edit update]
   before_action -> { authorize_group!(:remove_namespace, @group.namespace) || redirect_unauthorized }, only: %i[destroy]
 
@@ -21,7 +22,7 @@ class Dashboard::GroupsController < Dashboard::ApplicationController
     @group.build_namespace unless @group.namespace
     @group.namespace.creator_id = current_user.id
     if @group.save
-      redirect_to namespace_show_path(@group.namespace.full_path), notice: 'Group was successfully created.'
+      redirect_to namespace_show_path(@group.namespace.full_path), notice: _('Group was successfully created.')
     else
       render :new
     end
@@ -33,7 +34,7 @@ class Dashboard::GroupsController < Dashboard::ApplicationController
 
   def update
     if @group.update(group_params)
-      redirect_to namespace_show_path(@group.namespace.full_path), notice: 'Group was successfully updated.'
+      redirect_to namespace_show_path(@group.namespace.full_path), notice: _('Group was successfully updated.')
     else
       render :edit
     end
@@ -42,7 +43,7 @@ class Dashboard::GroupsController < Dashboard::ApplicationController
   def destroy
     @group.destroy!
 
-    redirect_to dashboard_groups_path, status: :see_other, notice: 'Group was successfully destroyed.'
+    redirect_to dashboard_groups_path, status: :see_other, notice: _('Group was successfully destroyed.')
   end
 
   private
@@ -52,14 +53,23 @@ class Dashboard::GroupsController < Dashboard::ApplicationController
   end
 
   def group_params
-    params.require(:group).permit(:name, :path, :namespace_parent_id, :description)
+    @group_params ||= params.require(:group).permit(:name, :path, :namespace_parent_id, :description,
+      namespace_attributes: %i[id visibility_level])
   end
 
   def set_available_namespaces
-    @available_namespaces = user_groups
+    @available_namespaces = current_user.namespaces_for_group_creation
+  end
+
+  def verify_parent_namespace!
+    parent_id = group_params[:namespace_parent_id].presence
+    return unless parent_id
+    return if current_user.namespaces_for_group_creation.exists?(id: parent_id.to_i)
+
+    redirect_to dashboard_groups_path, alert: _('You are not authorized to use this namespace.')
   end
 
   def redirect_unauthorized
-    redirect_to dashboard_groups_path, alert: 'You are not authorized to perform this action.'
+    redirect_to dashboard_groups_path, alert: _('You are not authorized to perform this action.')
   end
 end

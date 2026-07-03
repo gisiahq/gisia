@@ -223,6 +223,10 @@ class User < ApplicationRecord
   end
 
 
+  def self.available_for_membership_in(ns)
+    active.where.not(id: ns.members.select(:user_id))
+  end
+
   def authorized_groups
     project_parent_ns = Namespace.where(id: project_members.select(:namespace_id)).select(:parent_id)
 
@@ -234,21 +238,56 @@ class User < ApplicationRecord
   def authorized_for_namespace?(ns)
     return ns.creator_id == id if ns.is_a?(Namespaces::UserNamespace)
 
-    ns.members.exists?(user_id: id)
+    Member.non_request.where(namespace_id: ns.traversal_ids, user_id: id).exists?
+  end
+
+  def max_member_access_for_namespace(ns)
+    GroupMember.non_request
+      .where(namespace_id: ns.traversal_ids, user_id: id)
+      .maximum(:access_level) || Gitlab::Access::NO_ACCESS
+  end
+
+  def member_of_namespace_tree?(ns)
+    memberships = Member.non_request.where(user_id: id)
+
+    memberships.where(namespace_id: ns.traversal_ids).exists? ||
+      memberships.joins(:namespace)
+                 .where('namespaces.traversal_ids @> ARRAY[?]::bigint[]', ns.id)
+                 .exists?
+  end
+
+  def authorized_projects
+    Project.joins(:namespace).where(authorized_namespace_condition)
   end
 
   def visible_projects_in_namespace(ns)
     all_projects = ns.descendant_projects
     return all_projects if authorized_for_namespace?(ns)
 
-    member_ns_ids = project_members.select(:namespace_id)
-    all_projects.joins(:namespace)
-                .where(namespaces: { visibility_level: Gitlab::VisibilityLevel::PUBLIC })
-                .or(all_projects.joins(:namespace).where(namespace_id: member_ns_ids))
+    ns.public_descendant_projects
+      .or(all_projects.joins(:namespace).where(authorized_namespace_condition))
   end
 
-  def accessible_namespaces
-    Namespace.where(id: namespace.id).or(Namespace.where(id: groups.select(:namespace_id)))
+  def maintained_group_namespaces
+    Namespaces::GroupNamespace.where(
+      ApplicationRecord.sanitize_sql_array(
+        ['namespaces.traversal_ids && ARRAY(SELECT namespace_id FROM members WHERE user_id = :user_id AND requested_at IS NULL AND access_level >= :maintainer)::bigint[]',
+          { user_id: id, maintainer: Gitlab::Access::MAINTAINER }]
+      )
+    )
+  end
+
+  def namespaces_for_project_creation
+    own_namespace = Namespace.where(id: namespace.id)
+    return own_namespace.or(Namespace.where(type: Group.sti_name)) if admin?
+
+    own_namespace.or(Namespace.where(id: maintained_group_namespaces.select(:id)))
+  end
+
+  def namespaces_for_group_creation
+    return Namespaces::GroupNamespace.all if admin?
+
+    maintained_group_namespaces
   end
 
   def organization_id
@@ -269,6 +308,13 @@ class User < ApplicationRecord
   end
 
   private
+
+  def authorized_namespace_condition
+    ApplicationRecord.sanitize_sql_array(
+      ['namespaces.traversal_ids && ARRAY(SELECT namespace_id FROM members WHERE user_id = :user_id AND requested_at IS NULL AND access_level > :minimal)::bigint[]',
+        { user_id: id, minimal: Gitlab::Access::MINIMAL_ACCESS }]
+    )
+  end
 
   def set_default_name
     self.name = username if name.nil?

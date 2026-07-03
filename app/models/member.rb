@@ -22,6 +22,16 @@ class Member < ApplicationRecord
   scope :request, -> { where.not(requested_at: nil) }
   scope :non_request, -> { where(requested_at: nil) }
 
+  def self.members_for_listing(namespace)
+    direct_first = non_request
+      .where(namespace_id: namespace.traversal_ids)
+      .select('DISTINCT ON (user_id) members.*')
+      .order(Arel.sql(sanitize_sql_array(
+        ['user_id, CASE WHEN namespace_id = :namespace_id THEN 0 ELSE 1 END', { namespace_id: namespace.id }])))
+
+    from("(#{direct_first.to_sql}) AS members")
+  end
+
   def request?
     requested_at.present?
   end

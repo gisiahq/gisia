@@ -1,0 +1,9 @@
+= turbo_stream.replace 'flash' do
+  %div#flash{ class: 'fixed top-0 left-64 right-0 z-21' }
+= turbo_stream.replace 'members-content' do
+  = turbo_frame_tag 'members-content' do
+    %div{class: 'flex justify-end mb-4'}
+      = button_to new_form_namespace_settings_members_path(@namespace.full_path), method: :post, class: 'px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm border-none cursor-pointer' do
+        = icon 'plus', class: 'w-4 h-4 inline-block mr-2'
+        = _('Add Member')
+    = render 'list'

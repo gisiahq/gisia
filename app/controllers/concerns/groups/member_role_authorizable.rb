@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Projects
+module Groups
   module MemberRoleAuthorizable
     extend ActiveSupport::Concern
 
@@ -22,8 +22,12 @@ module Projects
       )
     end
 
+    def assignable_access_levels
+      Gitlab::Access.sym_options_with_owner.select { |_, level| can_assign_level?(level) }
+    end
+
     def actor_access_level
-      @actor_access_level ||= @project.team.max_member_access(current_user.id)
+      @actor_access_level ||= current_user.max_member_access_for_namespace(@namespace)
     end
 
     def normalize_access_level(level)
@@ -33,7 +37,10 @@ module Projects
     def last_owner?(member)
       return false unless member.owner?
 
-      !@project.namespace.members.owners.where.not(id: member.id).exists?
+      !GroupMember.non_request.owners
+        .where(namespace_id: @namespace.traversal_ids)
+        .where.not(id: member.id)
+        .exists?
     end
   end
 end

@@ -169,6 +169,11 @@ class Namespace < ApplicationRecord
     Project.where(namespace: nps)
   end
 
+  def public_descendant_projects
+    descendant_projects.joins(:namespace)
+                       .where(namespaces: { visibility_level: Gitlab::VisibilityLevel::PUBLIC })
+  end
+
   def descendant_groups
     nps = self_and_descendant_ids(skope: Namespaces::GroupNamespace).id_not_in(id)
 

@@ -1,0 +1,23 @@
+- content_for :title, _('Members Settings')
+- content_for :breadcrumb do
+  - nodes = [{ label: @namespace.group.name, path: namespace_show_path(@namespace.full_path) }, { label: _('Members'), path: namespace_settings_members_path(@namespace.full_path) }]
+  = render 'shared/breadcrumb', nodes: nodes
+
+%div{class: 'w-full bg-white p-2 rounded-lg'}
+  %div{class: 'w-full max-w-6xl mx-auto'}
+    %div{class: 'py-6'}
+      %div{class: 'flex items-center justify-between mb-6'}
+        %div{class: 'flex items-center gap-4'}
+          %div{class: 'w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold'}
+            = icon 'users', class: 'w-8 h-8'
+          %div
+            %h1{class: 'text-2xl font-bold text-gray-900'}
+              = _('Members')
+            %p{class: 'text-gray-600'}
+              = _('Manage group members and their roles')
+      = turbo_frame_tag 'members-content' do
+        %div{class: 'flex justify-end mb-4'}
+          = button_to new_form_namespace_settings_members_path(@namespace.full_path), method: :post, class: 'px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm border-none cursor-pointer' do
+            = icon 'plus', class: 'w-4 h-4 inline-block mr-2'
+            = _('Add Member')
+        = render 'list'
