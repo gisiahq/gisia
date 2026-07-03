@@ -40,6 +40,8 @@
                     = button_to dashboard_group_path(group), method: :delete, data: { turbo_confirm: _('Are you sure you want to delete this group?') }, class: 'flex items-center gap-2 px-3 py-2 text-sm text-red-700 hover:bg-red-50 w-full text-left' do
                       = icon 'trash', class: 'w-4 h-4'
                       = _('Delete')
+            - else
+              %div{class: 'w-8'}
 - else
   %div{class: 'text-center py-16'}
     %div{class: 'w-16 h-16 rounded-full bg-purple-50 flex items-center justify-center mx-auto mb-4'}
