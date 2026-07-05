@@ -1,0 +1,127 @@
+---
+name: gisia-<%= @namespace.full_path.gsub('/', '-') %>-group-skills
+description: Gisia group API skill guide for <%= @namespace.full_path %>. You are connected to Gisia, an AI-native DevOps platform. Use this to discover and operate the group and its members via the Gisia REST API.
+---
+
+## Group Skills for `<%= @namespace.full_path %>`
+
+**Base URL:** <%= Gitlab.config.gitlab.url %>/api/v4
+
+**Authentication:**
+
+```bash
+curl <%= Gitlab.config.gitlab.url %>/api/v4/... \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+Group membership is inherited by every project under this group: a member's access level here applies to all projects in the group tree. Manage project-specific members from each project's own `-/members/skill.md`.
+
+---
+
+### Access Levels
+
+| Level | Value |
+|-------|-------|
+| `guest` | Read-only access |
+| `developer` | Can push to non-protected branches, create MRs |
+| `maintainer` | Can manage members and settings |
+| `owner` | Full control including deletion |
+
+---
+
+### Show the Group
+
+```bash
+curl "<%= Gitlab.config.gitlab.url %>/api/v4/groups/<%= @namespace.id %>" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+---
+
+### Members
+
+Manage members for this group. All requests require a personal access token in the `PRIVATE-TOKEN` header. Only group maintainers and owners may add, update, or remove members.
+
+#### List Members
+
+```bash
+curl "<%= Gitlab.config.gitlab.url %>/api/v4/groups/<%= @namespace.id %>/members" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+**Response fields per member:**
+
+| Field | Description |
+|-------|-------------|
+| `id` | User ID |
+| `username` | Username |
+| `name` | Display name |
+| `state` | Account state (`active`, `blocked`) |
+| `access_level` | Role in this group |
+| `expires_at` | Membership expiry date (`YYYY-MM-DD`), or `null` if no expiry set (membership never expires) |
+| `expired` | `true` if the membership has passed its expiry date; always `false` when `expires_at` is `null` |
+| `web_url` | URL to the user's profile |
+
+#### Get a Single Member
+
+```bash
+curl "<%= Gitlab.config.gitlab.url %>/api/v4/groups/<%= @namespace.id %>/members/:user_id" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+- `:user_id` — The numeric ID of the user
+- Returns `404 Not Found` if the user is not a member of this group
+
+#### Add a Member
+
+Requires maintainer or owner access.
+
+```bash
+curl -X POST "<%= Gitlab.config.gitlab.url %>/api/v4/groups/<%= @namespace.id %>/members" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"user_id": 123, "access_level": "developer"}'
+```
+
+**Fields:**
+
+- `user_id` (required) — Numeric ID of the user to add
+- `access_level` (required) — One of `guest`, `developer`, `maintainer`, `owner`
+- `expires_at` (optional) — Membership expiry date in `YYYY-MM-DD` format. Omit or pass `null` for no expiry
+
+Returns `201 Created` with the member object on success.
+Returns `404 Not Found` if the user does not exist.
+Returns `422 Unprocessable Entity` if the user is already a member.
+
+#### Update a Member's Access Level
+
+Requires maintainer or owner access.
+
+```bash
+curl -X PUT "<%= Gitlab.config.gitlab.url %>/api/v4/groups/<%= @namespace.id %>/members/:user_id" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"access_level": "maintainer"}'
+```
+
+- `:user_id` — The numeric ID of the user
+- `access_level` (required) — New role: `guest`, `developer`, `maintainer`, or `owner`
+- `expires_at` (optional) — New expiry date in `YYYY-MM-DD` format, or `null` to clear expiry. Omit to leave the current value unchanged
+
+Returns `200 OK` with the updated member object.
+Returns `404 Not Found` if the user is not a member.
+
+#### Remove a Member
+
+Requires maintainer or owner access.
+
+```bash
+curl -X DELETE "<%= Gitlab.config.gitlab.url %>/api/v4/groups/<%= @namespace.id %>/members/:user_id" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+- `:user_id` — The numeric ID of the user to remove
+
+Returns `204 No Content` on success.
+Returns `404 Not Found` if the user is not a member.
+Returns `403 Forbidden` when removing the last owner of the group.

@@ -19,6 +19,7 @@ class GroupMember < Member
   validate :namespace_must_be_group_namespace
 
   scope :of_groups, ->(groups) { where(source_id: groups) }
+  scope :with_namespace, ->(namespace) { where(namespace_id: namespace.id) }
   scope :count_users_by_namespace_id, -> { group(:namespace_id).count }
 
   private

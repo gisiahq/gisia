@@ -14,6 +14,8 @@ constraints(::Constraints::GroupUrlConstrainer.new) do
     constraints: { namespace_id: Gitlab::PathRegex.full_namespace_route_regex },
     module: :namespaces,
     as: :namespace) do
+    get 'skill.md', to: 'skills#group_skill', format: false, as: :skill_md
+
     namespace :settings do
       resources :members, only: [:index, :create, :update, :destroy] do
         collection do
