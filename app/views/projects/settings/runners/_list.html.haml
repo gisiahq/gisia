@@ -11,7 +11,8 @@
           %div{class: 'text-xs font-medium text-gray-500 uppercase tracking-wider w-32'}= _('Last Contact')
           %div{class: 'text-xs font-medium text-gray-500 uppercase tracking-wider w-24'}= _('Actions')
     - @runners.each do |runner|
-      - manageable = can_admin && @manageable_runner_ids.include?(runner.id)
+      - owned_here = @manageable_runner_ids.include?(runner.id)
+      - manageable = can_admin && owned_here
       %div{class: 'px-6 py-4 border-b border-gray-100 hover:bg-slate-50/50 transition-all duration-200 last:border-b-0'}
         %div{class: 'flex items-center justify-between'}
           %div{class: 'flex items-center gap-3 flex-1 min-w-0'}
@@ -62,7 +63,7 @@
                   = button_to _('Pause'), pause_project_runner_path(@project, runner), method: :post, class: 'p-2 text-orange-600 hover:text-orange-800 hover:bg-orange-50 rounded-lg text-xs border-none bg-transparent cursor-pointer'
                 - else
                   = button_to _('Resume'), resume_project_runner_path(@project, runner), method: :post, class: 'p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg text-xs border-none bg-transparent cursor-pointer'
-              - else
+              - elsif !owned_here
                 %span{class: 'text-xs text-gray-400'}= _('Inherited')
 
   = render 'shared/pagination', collection: @runners, url_params: {}
