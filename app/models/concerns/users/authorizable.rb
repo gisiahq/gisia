@@ -14,7 +14,12 @@ module Users
     extend ActiveSupport::Concern
 
     def max_access(project)
-      project_members.with_project(project).max_access
+      namespace_ids = project.namespace.traversal_ids
+
+      [
+        project_members.with_project(project).maximum(:access_level),
+        group_members.where(namespace_id: namespace_ids).maximum(:access_level)
+      ].compact.max || Gitlab::Access::NO_ACCESS
     end
   end
 end

@@ -21,12 +21,6 @@ class ProjectMember < Member
   scope :with_namespace, ->(namespace) { where(namespace_id: namespace.id) }
   scope :with_roles, ->(roles) { where(access_level: roles) }
 
-  class << self
-    def max_access
-      maximum(:access_level)
-    end
-  end
-
   private
 
   def namespace_must_be_project_namespace
