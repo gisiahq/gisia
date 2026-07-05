@@ -1119,6 +1119,36 @@ CREATE TABLE public.ci_runner_machines (
 
 
 --
+-- Name: ci_runner_namespaces; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ci_runner_namespaces (
+    id bigint NOT NULL,
+    runner_id bigint NOT NULL,
+    namespace_id bigint NOT NULL
+);
+
+
+--
+-- Name: ci_runner_namespaces_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.ci_runner_namespaces_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: ci_runner_namespaces_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.ci_runner_namespaces_id_seq OWNED BY public.ci_runner_namespaces.id;
+
+
+--
 -- Name: ci_runner_taggings; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2280,7 +2310,8 @@ CREATE TABLE public.namespace_settings (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     squash_enabled boolean DEFAULT true NOT NULL,
-    remove_source_branch_after_merge boolean DEFAULT true NOT NULL
+    remove_source_branch_after_merge boolean DEFAULT true NOT NULL,
+    shared_runners_enabled boolean DEFAULT true NOT NULL
 );
 
 
@@ -3560,6 +3591,13 @@ ALTER TABLE ONLY public.ci_refs ALTER COLUMN id SET DEFAULT nextval('public.ci_r
 
 
 --
+-- Name: ci_runner_namespaces id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ci_runner_namespaces ALTER COLUMN id SET DEFAULT nextval('public.ci_runner_namespaces_id_seq'::regclass);
+
+
+--
 -- Name: ci_runner_taggings id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4155,6 +4193,14 @@ ALTER TABLE ONLY public.ci_runner_machine_builds
 
 ALTER TABLE ONLY public.ci_runner_machines
     ADD CONSTRAINT ci_runner_machines_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ci_runner_namespaces ci_runner_namespaces_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ci_runner_namespaces
+    ADD CONSTRAINT ci_runner_namespaces_pkey PRIMARY KEY (id);
 
 
 --
@@ -5567,6 +5613,20 @@ CREATE INDEX index_ci_runner_machines_on_ip_address ON public.ci_runner_machines
 --
 
 CREATE INDEX index_ci_runner_machines_on_version ON public.ci_runner_machines USING btree (version);
+
+
+--
+-- Name: index_ci_runner_namespaces_on_namespace_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ci_runner_namespaces_on_namespace_id ON public.ci_runner_namespaces USING btree (namespace_id);
+
+
+--
+-- Name: index_ci_runner_namespaces_on_runner_id_and_namespace_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_ci_runner_namespaces_on_runner_id_and_namespace_id ON public.ci_runner_namespaces USING btree (runner_id, namespace_id);
 
 
 --
@@ -7367,6 +7427,8 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260703072431'),
+('20260703071649'),
 ('20260617033653'),
 ('20260531084105'),
 ('20260521000000'),
