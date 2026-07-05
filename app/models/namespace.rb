@@ -157,6 +157,18 @@ class Namespace < ApplicationRecord
     ProjectCiCdSetting::NO_ONE_ALLOWED_ROLE
   end
 
+  def allow_runner_registration_token?
+    Gitlab::CurrentSettings.allow_runner_registration_token
+  end
+
+  def shared_runners_disabled?
+    NamespaceSetting.shared_runners_disabled_for?(traversal_ids)
+  end
+
+  def ancestor_shared_runners_disabled?
+    NamespaceSetting.shared_runners_disabled_for?(traversal_ids[0...-1])
+  end
+
   def user_namespace?
     type == Namespaces::UserNamespace.sti_name
   end

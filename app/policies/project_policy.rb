@@ -359,6 +359,9 @@ class ProjectPolicy < BasePolicy
   rule { maintainer }.enable :maintainer_access
   rule { owner | admin | organization_owner }.enable :owner_access
 
+  rule { admin | maintainer }.enable :read_project_runners
+  rule { admin | maintainer }.enable :admin_project_runners
+
   rule { can?(:public_user_access) }.policy do
     enable :guest_access
     enable :public_access

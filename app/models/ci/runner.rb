@@ -96,6 +96,8 @@ module Ci
     has_many :taggings, class_name: 'Ci::RunnerTagging', inverse_of: :runner
     has_many :tags, class_name: 'Ci::Tag', through: :taggings, source: :tag
 
+    has_many :runner_namespaces, inverse_of: :runner, class_name: 'Ci::RunnerNamespace', dependent: :destroy
+
     # currently we have only 1 namespace assigned, but order is here for consistency
     has_one :owner_runner_namespace, -> { order(:id) }, class_name: 'Ci::RunnerNamespace'
 
@@ -109,6 +111,25 @@ module Ci
     scope :active, ->(value = true) { where(active: value) }
     scope :with_recent_runner_queue, -> { where(arel_table[:contacted_at].gt(recent_queue_deadline)) }
     scope :with_tags, -> { preload(:tags) }
+    scope :belonging_to_namespaces, ->(namespace_ids) do
+      joins(:runner_namespaces).where(runner_namespaces: { namespace_id: namespace_ids })
+    end
+
+    def self.runners_namespace_ids(runners)
+      ::Ci::RunnerNamespace.where(runner_id: runners.map(&:id)).pluck(:runner_id, :namespace_id).to_h
+    end
+
+    validate :exactly_one_namespace, if: -> { group_type? || project_type? }
+
+    def namespace_ids
+      strong_memoize(:namespace_ids) do
+        runner_namespaces.pluck(:namespace_id).compact
+      end
+    end
+
+    def tagging_tag_ids
+      taggings.pluck(:tag_id)
+    end
 
     def heartbeat(creation_state: nil)
       values = { contacted_at: Time.current }
@@ -212,6 +233,14 @@ module Ci
 
     def private_projects_minutes_cost_factor
       1.0
+    end
+
+    private
+
+    def exactly_one_namespace
+      return if runner_namespaces.size == 1
+
+      errors.add(:runner_namespaces, 'a group or project runner must be assigned to exactly one namespace')
     end
   end
 end

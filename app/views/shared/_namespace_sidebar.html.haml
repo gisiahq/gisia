@@ -26,5 +26,9 @@
             = link_to namespace_settings_members_path(@namespace.full_path), class: "flex items-center gap-3 px-3 py-2 text-sm font-medium #{current_page?(namespace_settings_members_path(@namespace.full_path)) ? 'text-blue-700 bg-blue-50' : 'text-gray-800'} rounded hover:bg-gray-50 hover:text-blue-700 group" do
               = icon 'users', class: "w-4 h-4 #{current_page?(namespace_settings_members_path(@namespace.full_path)) ? 'text-blue-600' : 'text-gray-600'} group-hover:text-blue-600"
               %span= _('Members')
+          %li
+            = link_to namespace_settings_runners_path(@namespace.full_path), class: "flex items-center gap-3 px-3 py-2 text-sm font-medium #{current_page?(namespace_settings_runners_path(@namespace.full_path)) ? 'text-blue-700 bg-blue-50' : 'text-gray-800'} rounded hover:bg-gray-50 hover:text-blue-700 group" do
+              = icon 'gear', class: "w-4 h-4 #{current_page?(namespace_settings_runners_path(@namespace.full_path)) ? 'text-blue-600' : 'text-gray-600'} group-hover:text-blue-600"
+              %span= _('Runners')
 
   = render 'shared/sidebar_footer'

@@ -1,0 +1,48 @@
+- content_for :title, _('Project Runners')
+- content_for :breadcrumb do
+  - nodes = [*project_breadcrumb_nodes(@project), { label: _('Settings'), path: edit_namespace_project_settings_ci_cd_path(@project.namespace.parent.full_path, @project.namespace.path) }, { label: _('Runners'), path: project_runners_path(@project) }]
+  = render 'shared/breadcrumb', nodes: nodes
+
+- can_admin = current_user&.can?(:admin_project_runners, @project)
+
+%div{class: 'w-full bg-white p-2 rounded-lg'}
+  %div{class: 'w-full max-w-6xl mx-auto'}
+    %div{class: 'py-6'}
+      %div{class: 'flex items-center justify-between mb-6'}
+        %div{class: 'flex items-center gap-4'}
+          %div{class: 'w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white text-xl font-bold'}
+            = icon 'gear', class: 'w-8 h-8'
+          %div
+            %h1{class: 'text-2xl font-bold text-gray-900'}= _('Runners')
+            %p{class: 'text-gray-600'}= _('Runners available to this project — instance, group, and its own')
+        - if can_admin
+          = link_to new_project_runner_path(@project), class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200' do
+            = icon 'plus', class: 'w-4 h-4'
+            = _('New project runner')
+
+      - if can_admin
+        - ancestor_disabled = @ancestor_shared_runners_disabled
+        %div{class: 'bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6'}
+          %h3{class: 'text-lg font-semibold text-gray-900 mb-4'}= _('Runner availability')
+          = form_with url: settings_namespace_project_settings_runners_path(@project.namespace.parent.full_path, @project.namespace.path), method: :patch, local: true do |f|
+            %div{class: 'flex items-start mb-4'}
+              - if ancestor_disabled
+                = check_box_tag 'shared_runners_enabled', '1', false, disabled: true, class: 'mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
+              - else
+                = hidden_field_tag 'shared_runners_enabled', '0'
+                = check_box_tag 'shared_runners_enabled', '1', @namespace_settings.nil? || @namespace_settings.shared_runners_enabled, class: 'mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
+              %div{class: 'ml-2'}
+                %label{class: 'block text-sm text-gray-900'}= _('Enable instance runners for this project')
+                - if ancestor_disabled
+                  %p{class: 'text-xs text-gray-500'}= _('Instance runners are disabled by a parent group and cannot be enabled here.')
+                - else
+                  %p{class: 'text-xs text-gray-500'}= _('Use instance runners provided by the administrator to run jobs.')
+            %div{class: 'flex items-start mb-4'}
+              = hidden_field_tag 'group_runners_enabled', '0'
+              = check_box_tag 'group_runners_enabled', '1', @ci_cd_settings.group_runners_enabled, class: 'mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
+              %div{class: 'ml-2'}
+                %label{class: 'block text-sm text-gray-900'}= _('Enable group runners for this project')
+                %p{class: 'text-xs text-gray-500'}= _('Use runners provided by an ancestor group to run jobs.')
+            = f.submit _('Save changes'), class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200'
+
+      = render 'list', can_admin: can_admin

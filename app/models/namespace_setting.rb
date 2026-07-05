@@ -23,4 +23,8 @@ class NamespaceSetting < ApplicationRecord
   def self.allowed_namespace_settings_params
     NAMESPACE_SETTINGS_PARAMS
   end
+
+  def self.shared_runners_disabled_for?(namespace_ids)
+    where(namespace_id: namespace_ids, shared_runners_enabled: false).exists?
+  end
 end

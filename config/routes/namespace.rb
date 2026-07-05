@@ -23,6 +23,16 @@ constraints(::Constraints::GroupUrlConstrainer.new) do
           post :edit_form
         end
       end
+
+      resources :runners, only: [:index, :new, :create, :edit, :update, :destroy] do
+        member do
+          get :register
+          post :pause
+          post :resume
+        end
+      end
+
+      resource :ci_cd, only: [:update], controller: 'ci_cd'
     end
   end
 

@@ -1,0 +1,39 @@
+- content_for :title, _('Register Group Runner')
+- content_for :breadcrumb do
+  - nodes = [{ label: @namespace.group.name, path: namespace_show_path(@namespace.full_path) }, { label: _('Runners'), path: namespace_settings_runners_path(@namespace.full_path) }, { label: "Runner ##{@runner.id}", path: '#' }, { label: _('Register'), path: '#' }]
+  = render 'shared/breadcrumb', nodes: nodes
+
+%div{class: 'w-full bg-white p-2 rounded-lg'}
+  %div{class: 'w-full max-w-6xl mx-auto'}
+
+    %div{class: 'py-6'}
+      %h1{class: 'text-2xl font-bold text-gray-900 mb-2'}= _('Register Your Runner')
+      %p{class: 'text-gray-600 mb-6'}= _('Connect a runner to Gisia and start executing CI/CD pipelines. Complete the setup by following these simple steps.')
+
+    %div{class: 'bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6'}
+      %h3{class: 'text-lg font-semibold text-gray-900 mb-4'}= _('Step 1: Start the Runner Container')
+      %p{class: 'text-gray-600 mb-4'}
+        = _('Launch a Docker container running GitLab Runner.')
+
+      %div{class: 'bg-gray-900 rounded-lg p-4 mb-4'}
+        %code{class: 'text-white text-sm font-mono block'}
+          docker run -d -v /var/run/docker.sock:/var/run/docker.sock --name gisia-docker-runner gitlab/gitlab-runner:#{Gisia::RUNNER_VERSION}
+
+    %div{class: 'bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6'}
+      %h3{class: 'text-lg font-semibold text-gray-900 mb-4'}= _('Step 2: Register with Gisia')
+      %p{class: 'text-gray-600 mb-4'}
+        = _('Execute the registration command inside the container to link it to your Gisia instance.')
+
+      %div{class: 'bg-gray-900 rounded-lg p-4 mb-4'}
+        %code{class: 'text-white text-sm font-mono block'}
+          docker exec -it gisia-docker-runner gitlab-runner register --url #{Gitlab.config.gitlab.url} --token #{@runner.token}
+
+      %div{class: 'bg-yellow-50 border border-yellow-200 rounded-lg p-4'}
+        %p{class: 'text-sm text-yellow-800'}
+          %strong= _('Important:')
+          = _('Keep the token')
+          %code{class: 'bg-yellow-100 px-1 rounded text-xs'} #{@runner.token}
+          = _('secure. This token will only be displayed once. Once the runner is registered, it cannot be retrieved again from the UI.')
+
+    %div{class: 'flex items-center gap-3'}
+      = link_to _('View runners'), namespace_settings_runners_path(@namespace.full_path), class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200'

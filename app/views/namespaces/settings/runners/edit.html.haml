@@ -1,0 +1,61 @@
+- content_for :title, _('Edit Group Runner')
+- content_for :breadcrumb do
+  - nodes = [{ label: @namespace.group.name, path: namespace_show_path(@namespace.full_path) }, { label: _('Runners'), path: namespace_settings_runners_path(@namespace.full_path) }, { label: "Runner ##{@runner.id}", path: '#' }, { label: _('Edit'), path: '#' }]
+  = render 'shared/breadcrumb', nodes: nodes
+
+%div{class: 'w-full bg-white p-2 rounded-lg'}
+  %div{class: 'w-full max-w-6xl mx-auto'}
+
+    %div{class: 'py-6'}
+      %div{class: 'flex items-center gap-4 mb-6'}
+        %div{class: 'flex-shrink-0'}
+          = icon 'gear', class: 'w-12 h-12 text-gray-400'
+        %div
+          %h1{class: 'text-2xl font-bold text-gray-900'}= "Edit Runner ##{@runner.id}"
+          %p{class: 'text-gray-600'}= _('Update runner configuration and settings')
+
+    = form_with model: @runner, url: namespace_settings_runner_path(@namespace.full_path, @runner), method: :patch, local: true do |f|
+      %div{class: 'bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6'}
+        %h3{class: 'text-lg font-semibold text-gray-900 mb-6'}= _('Basic Configuration')
+
+        %div{class: 'mb-6'}
+          = f.label :tags, _('Tags'), class: 'block text-sm font-medium text-gray-700 mb-2'
+          %p{class: 'text-sm text-gray-500 mb-2'}
+            = _('Add tags to specify jobs that the runner can run.')
+          = f.text_field :tags, value: @runner.tags.pluck(:name).join(", "), class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+          %p{class: 'text-xs text-gray-500 mt-1'}
+            = _('Separate multiple tags with a comma. For example,')
+            %code macos, shared
+
+        %div{class: 'flex items-center mb-4'}
+          = f.check_box :run_untagged, class: 'h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
+          = f.label :run_untagged, _('Run untagged jobs'), class: 'ml-2 block text-sm text-gray-900'
+          %p{class: 'ml-6 text-xs text-gray-500'}= _('Use the runner for jobs without tags in addition to tagged jobs.')
+
+        %div{class: 'mb-4'}
+          = f.label :description, _('Runner description'), class: 'block text-sm font-medium text-gray-700 mb-2'
+          = f.text_field :description, class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+
+      %div{class: 'bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6'}
+        %h3{class: 'text-lg font-semibold text-gray-900 mb-6'}= _('Advanced Configuration')
+
+        %div{class: 'flex items-center mb-4'}
+          = f.check_box :paused, checked: !@runner.active?, class: 'h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
+          = f.label :paused, _('Paused'), class: 'ml-2 block text-sm text-gray-900'
+          %p{class: 'ml-6 text-xs text-gray-500'}= _('Stop the runner from accepting new jobs.')
+
+        %div{class: 'mb-4'}
+          = f.label :maximum_timeout, _('Maximum job timeout'), class: 'block text-sm font-medium text-gray-700 mb-2'
+          %p{class: 'text-sm text-gray-500 mb-2'}
+            = _('Maximum amount of time the runner can run before it terminates.')
+          = f.number_field :maximum_timeout, class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+          %p{class: 'text-xs text-gray-500 mt-1'}= _('Enter the job timeout in seconds. Must be a minimum of 600 seconds.')
+
+      %div{class: 'flex items-center gap-3'}
+        = f.submit _('Update Runner'), class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200'
+        = link_to _('Cancel'), namespace_settings_runners_path(@namespace.full_path), class: 'inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition-all duration-200'
+
+    %div{class: 'flex justify-end mt-4 pt-4 border-t border-gray-200'}
+      = button_to namespace_settings_runner_path(@namespace.full_path, @runner), method: :delete, data: { turbo_confirm: _('Are you sure you want to delete this runner?') }, class: 'inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200 border-none cursor-pointer' do
+        = icon 'trash', class: 'w-4 h-4'
+        = _('Delete Runner')

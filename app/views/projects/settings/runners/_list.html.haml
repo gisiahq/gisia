@@ -1,0 +1,74 @@
+- if @runners&.any?
+  %div{class: 'space-y-0 bg-white border border-gray-200 rounded-lg overflow-hidden'}
+    %div{class: 'bg-gray-100 px-6 py-3 border-b border-gray-200'}
+      %div{class: 'flex items-center justify-between'}
+        %div{class: 'flex items-center gap-3 flex-1 min-w-0'}
+          %div{class: 'flex-1 min-w-0'}
+            %div{class: 'text-xs font-medium text-gray-500 uppercase tracking-wider'}= _('Runner')
+        %div{class: 'flex items-center gap-3 flex-shrink-0'}
+          %div{class: 'text-xs font-medium text-gray-500 uppercase tracking-wider w-32'}= _('Source')
+          %div{class: 'text-xs font-medium text-gray-500 uppercase tracking-wider w-24'}= _('Tags')
+          %div{class: 'text-xs font-medium text-gray-500 uppercase tracking-wider w-32'}= _('Last Contact')
+          %div{class: 'text-xs font-medium text-gray-500 uppercase tracking-wider w-24'}= _('Actions')
+    - @runners.each do |runner|
+      - manageable = can_admin && @manageable_runner_ids.include?(runner.id)
+      %div{class: 'px-6 py-4 border-b border-gray-100 hover:bg-slate-50/50 transition-all duration-200 last:border-b-0'}
+        %div{class: 'flex items-center justify-between'}
+          %div{class: 'flex items-center gap-3 flex-1 min-w-0'}
+            %div{class: 'flex-shrink-0 h-8 w-8'}
+              = icon 'gear', class: 'w-8 h-8 text-gray-400'
+            %div{class: 'flex-1 min-w-0'}
+              %div{class: 'flex items-center gap-2'}
+                %span{class: 'font-medium text-gray-900 truncate'}= "##{runner.id}"
+                - if runner.instance_type?
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium flex-shrink-0 bg-purple-100 text-purple-700'}= _('Instance')
+                - elsif runner.group_type?
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium flex-shrink-0 bg-blue-100 text-blue-700'}= _('Group')
+                - elsif runner.project_type?
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium flex-shrink-0 bg-green-100 text-green-700'}= _('Project')
+                - if runner.online?
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 flex-shrink-0'}= _('Online')
+                - elsif runner.stale?
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 flex-shrink-0'}= _('Stale')
+                - elsif runner.contacted_at.nil?
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 flex-shrink-0'}= _('Never contacted')
+                - else
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 flex-shrink-0'}= _('Offline')
+                - unless runner.active?
+                  %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700 flex-shrink-0'}= _('Paused')
+              %p{class: 'text-gray-500 text-xs truncate mt-0.5'}= runner.description.presence || _('No description')
+          %div{class: 'flex items-center gap-3 flex-shrink-0'}
+            %div{class: 'text-xs w-32 truncate'}
+              - source = @runner_source[runner]
+              - if source
+                = link_to source[:name], source[:path], class: 'text-blue-600 hover:underline', data: { turbo: false }
+              - else
+                %span{class: 'text-gray-600'}= _('Instance')
+            %div{class: 'w-24'}
+              - if runner.tags.any?
+                %div{class: 'flex flex-wrap gap-1'}
+                  - runner.tags.take(2).each do |tag|
+                    %span{class: 'inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700'}= tag.name
+                  - if runner.tags.size > 2
+                    %span{class: 'text-xs text-gray-500'}= "+#{runner.tags.size - 2}"
+              - else
+                %span{class: 'text-xs text-gray-500'}= _('None')
+            %div{class: 'text-xs text-gray-400 w-32'}
+              = format_datetime(runner.contacted_at, current_user) || _('Never')
+            %div{class: 'flex items-center gap-1 w-24'}
+              - if manageable
+                = link_to _('Edit'), edit_project_runner_path(@project, runner), class: 'p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg text-xs'
+                - if runner.active?
+                  = button_to _('Pause'), pause_project_runner_path(@project, runner), method: :post, class: 'p-2 text-orange-600 hover:text-orange-800 hover:bg-orange-50 rounded-lg text-xs border-none bg-transparent cursor-pointer'
+                - else
+                  = button_to _('Resume'), resume_project_runner_path(@project, runner), method: :post, class: 'p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg text-xs border-none bg-transparent cursor-pointer'
+              - else
+                %span{class: 'text-xs text-gray-400'}= _('Inherited')
+
+  = render 'shared/pagination', collection: @runners, url_params: {}
+- else
+  %div{class: 'bg-white border border-gray-200 rounded-lg p-16 text-center'}
+    %div{class: 'w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4'}
+      = icon 'gear', class: 'w-8 h-8 text-gray-500'
+    %h3{class: 'text-lg font-medium text-gray-900 mb-2'}= _('No runners available')
+    %p{class: 'text-gray-500 text-sm'}= _('Create a project runner to run jobs for this project only.')

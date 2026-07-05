@@ -28,8 +28,7 @@ module Projects
 
       def project_params
         params.require(:project).permit(
-          pipeline_settings_attributes: [:id, :auto_cancel_pending_pipelines, :ci_config_path, :build_allow_git_fetch, :build_timeout],
-          ci_cd_settings_attributes: [:id]
+          pipeline_settings_attributes: [:id, :auto_cancel_pending_pipelines, :ci_config_path, :build_allow_git_fetch, :build_timeout]
         )
       end
     end

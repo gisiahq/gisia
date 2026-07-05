@@ -572,11 +572,6 @@ class Project < ApplicationRecord
                       .limit(INSTANCE_RUNNER_RUNNING_JOBS_MAX_BUCKET + 1).count - 1
   end
 
-  def shared_runners_enabled?
-    # Todo, move to database
-    true
-  end
-
   def project_features_defaults
     PROJECT_FEATURES_DEFAULTS
   end
@@ -613,7 +608,7 @@ class Project < ApplicationRecord
   end
 
   def shared_runners_enabled?
-    true
+    !namespace.shared_runners_disabled?
   end
 
   def shared_runners_available?
@@ -628,13 +623,20 @@ class Project < ApplicationRecord
     @available_shared_runners ||= shared_runners_available? ? shared_runners : Ci::Runner.none
   end
 
+  def group_runners
+    @group_runners ||= group_runners_enabled? ? Ci::Runner.group_type.belonging_to_namespaces(namespace.traversal_ids) : Ci::Runner.none
+  end
+
+  def project_runners
+    @project_runners ||= Ci::Runner.project_type.belonging_to_namespaces([namespace.id])
+  end
 
   def all_runners
-    Ci::Runner.from_union([shared_runners])
+    Ci::Runner.from_union([shared_runners, group_runners, project_runners])
   end
 
   def all_available_runners
-    Ci::Runner.from_union([available_shared_runners])
+    Ci::Runner.from_union([available_shared_runners, group_runners, project_runners])
   end
 
   def any_online_runners?(&block)

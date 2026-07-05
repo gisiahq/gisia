@@ -30,4 +30,6 @@ class Namespaces::GroupNamespacePolicy < BasePolicy
   rule { admin | group_owner }.enable :remove_namespace
   rule { admin | group_maintainer }.enable :create_projects
   rule { admin | group_maintainer }.enable :create_subgroup
+  rule { admin | group_maintainer }.enable :read_group_runners
+  rule { admin | group_owner }.enable :admin_group_runners
 end

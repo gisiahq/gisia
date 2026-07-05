@@ -4,6 +4,9 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025-present Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 module Ci
@@ -55,10 +58,7 @@ module Ci
       end
 
       def builds_for_project_runner
-        relation = new_builds
-          .where(project: runner_projects_relation)
-
-        order(relation)
+        order(new_builds.where(namespace_id: runner.namespace_ids))
       end
 
       def builds_for_protected_runner(relation)
@@ -87,12 +87,6 @@ module Ci
         strong_memoize(:strategy) do
           Queue::PendingBuildsStrategy.new(runner)
         end
-      end
-
-      def runner_projects_relation
-        runner
-          .runner_projects
-          .select('"ci_runner_projects"."project_id"::bigint')
       end
     end
   end

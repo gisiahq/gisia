@@ -31,16 +31,10 @@ module Ci
       end
 
       def assign_builds(runner_params)
-        result = process_queue(runner_params)
-
-        result.build ? result : empty_result
+        process_queue(runner_params)
       end
 
       private
-
-      def empty_result
-        Result.new(nil, nil, nil, false)
-      end
 
       def process_queue(params)
         valid = true
@@ -71,27 +65,15 @@ module Ci
       end
 
       def each_build
-        # Todo, add project/group runners
-        pending_builds = strategy.builds_for_shared_runner
-        pending_builds = pending_builds.ref_protected if runner.ref_protected?
-        pending_builds = strategy.builds_matching_tag_ids(pending_builds, runner.tags.ids)
-        pending_builds = strategy.builds_with_any_tags(pending_builds) unless runner.run_untagged?
-
-        pending_builds.each do |build|
+        build_queue_service.build_candidates.each do |build|
           yield Ci::Build.find_by!(id: build.build_id)
         end
       end
 
-      def strategy
-        strong_memoize(:strategy) do
-          Queue::PendingBuildsStrategy.new(runner)
+      def build_queue_service
+        strong_memoize(:build_queue_service) do
+          Queue::BuildQueueService.new(runner)
         end
-      end
-
-      def runner_projects_relation
-        runner
-          .runner_projects
-          .select('"ci_runner_projects"."project_id"::bigint')
       end
 
       def remove_from_queue!(build)

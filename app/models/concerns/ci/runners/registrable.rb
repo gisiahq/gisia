@@ -26,7 +26,7 @@ module Ci
       end
 
       def register!
-        raise 'register failed' if !attrs_from_token || !registration_token_allowed?(attrs_from_token)
+        raise 'register failed' if !attrs_from_token || !registration_token_allowed?
 
         assign_attributes attrs_from_token
 
@@ -58,27 +58,27 @@ module Ci
         expiration_interval.seconds.from_now
       end
 
+      def compute_token_expiration_group
+        # Todo, aggregate effective_runner_token_expiration_interval across the runner's namespaces
+        nil
+      end
+
+      def compute_token_expiration_project
+        # Todo, aggregate effective_runner_token_expiration_interval across the runner's namespaces
+        nil
+      end
+
       def attrs_from_token
         if runner_registration_token_valid?(registration_token)
           # Create shared runner. Requires admin access
           { runner_type: :instance_type }
-        elsif runner_registrar_valid?('project') && project = ::Project.find_by_runners_token(registration_token)
-          # Create a project runner
-          { runner_type: :project_type, projects: [project], sharding_key_id: project.id }
         elsif registration_token.present? && !Gitlab::CurrentSettings.allow_runner_registration_token
           {} # Will result in a :runner_registration_disallowed response
         end
       end
 
-      def registration_token_allowed?(attrs)
-        case attrs[:runner_type]
-        when :group_type
-          token_scope.allow_runner_registration_token?
-        when :project_type
-          token_scope.namespace.allow_runner_registration_token?
-        else
-          Gitlab::CurrentSettings.allow_runner_registration_token
-        end
+      def registration_token_allowed?
+        Gitlab::CurrentSettings.allow_runner_registration_token
       end
 
       def runner_registration_token_valid?(registration_token)
@@ -86,19 +86,6 @@ module Ci
 
         ActiveSupport::SecurityUtils.secure_compare(registration_token,
                                                     Gitlab::CurrentSettings.runners_registration_token)
-      end
-
-      def runner_registrar_valid?(type)
-        Gitlab::CurrentSettings.valid_runner_registrars.include?(type)
-      end
-
-      def token_scope
-        case attrs_from_token[:runner_type]
-        when :project_type
-          attrs_from_token[:projects]&.first
-        when :group_type
-          attrs_from_token[:groups]&.first
-        end
       end
 
       def prefix_for_new_and_legacy_runner

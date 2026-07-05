@@ -71,6 +71,16 @@ constraints(::Constraints::ProjectUrlConstrainer.new) do
           resource :merge_requests, only: [:edit, :update], controller: 'merge_requests'
           resource :ci_cd, only: [:edit], controller: 'ci_cd'
           resource :pipelines, only: [:update], controller: 'pipelines'
+          resources :runners, only: [:index, :new, :create, :edit, :update, :destroy] do
+            collection do
+              patch :settings
+            end
+            member do
+              get :register
+              post :pause
+              post :resume
+            end
+          end
           resources :variables, only: [:create, :update, :destroy], controller: 'variables'
           resources :protected_branches, only: [:index, :show, :edit, :create, :update, :destroy]
           resources :protected_tags, only: [:index, :show, :create, :update, :destroy]
