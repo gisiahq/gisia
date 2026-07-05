@@ -24,8 +24,12 @@
 
       %div{class: 'flex items-center justify-between mb-4'}
         %h2{class: 'text-lg font-semibold text-gray-900'} Projects
-        = link_to new_dashboard_project_path(namespace_id: @namespace.id), class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200', data: { turbo_frame: "project_form", turbo_action: "advance" } do
-          = icon 'plus', class: 'w-4 h-4'
-          New Project
+        %div{class: 'flex items-center gap-3'}
+          = link_to new_dashboard_group_path(parent_id: @namespace.id), class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200', data: { turbo_frame: "group_form", turbo_action: "advance" } do
+            = icon 'plus', class: 'w-4 h-4'
+            New Subgroup
+          = link_to new_dashboard_project_path(namespace_id: @namespace.id), class: 'inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200', data: { turbo_frame: "project_form", turbo_action: "advance" } do
+            = icon 'plus', class: 'w-4 h-4'
+            New Project
 
       = render 'dashboard/projects/project_list', projects: @projects, namespace_prefix: group.full_name

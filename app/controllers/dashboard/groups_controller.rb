@@ -16,6 +16,7 @@ class Dashboard::GroupsController < Dashboard::ApplicationController
 
   def new
     @group = Group.new
+    @group.namespace_parent_id = new_params[:parent_id]
   end
 
   def create
@@ -56,6 +57,10 @@ class Dashboard::GroupsController < Dashboard::ApplicationController
   def group_params
     @group_params ||= params.require(:group).permit(:name, :path, :namespace_parent_id, :description,
       namespace_attributes: %i[id visibility_level])
+  end
+
+  def new_params
+    @new_params ||= params.permit(:parent_id)
   end
 
   def set_available_namespaces
