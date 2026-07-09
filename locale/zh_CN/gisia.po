@@ -1563,7 +1563,7 @@ msgid "For Merge Request"
 msgstr "合并请求"
 
 msgid "For %{ref}"
-msgstr "针对 %{ref}"
+msgstr "在 %{ref}"
 
 msgid "Upstream"
 msgstr "上游"
