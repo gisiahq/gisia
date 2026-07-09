@@ -66,6 +66,10 @@ msgstr ""
 msgid "You are not authorized to perform this action."
 msgstr ""
 
+#, fuzzy
+msgid "CI/CD settings were successfully updated."
+msgstr "CI/CD"
+
 msgid "Member was successfully added."
 msgstr ""
 
@@ -80,6 +84,30 @@ msgstr ""
 
 msgid "Cannot demote the last owner of the group."
 msgstr ""
+
+#, fuzzy
+msgid "Runner created. Please register it."
+msgstr "运行器"
+
+#, fuzzy
+msgid "Runner was successfully updated."
+msgstr "作业"
+
+#, fuzzy
+msgid "Runner was successfully deleted."
+msgstr "作业"
+
+#, fuzzy
+msgid "Runner paused."
+msgstr "运行器"
+
+#, fuzzy
+msgid "Runner resumed."
+msgstr "运行器"
+
+#, fuzzy
+msgid "Runner not found"
+msgstr "运行器"
 
 msgid "Item not found."
 msgstr ""
@@ -114,6 +142,10 @@ msgstr "在"
 
 msgid "Cannot remove the last owner of the project."
 msgstr ""
+
+#, fuzzy
+msgid "Runner settings were successfully updated."
+msgstr "运行器"
 
 msgid "Only an owner of the project can move it to another namespace."
 msgstr ""
@@ -241,6 +273,10 @@ msgstr "所提供变量的值超过了 %{count} 个字符的限制"
 
 msgid "Invalid file format with specified file type"
 msgstr "指定文件类型的文件格式无效"
+
+#, fuzzy
+msgid "is not a group or project runner"
+msgstr " 或 "
 
 msgid "must be before %{expiry_date}"
 msgstr "必须在 %{expiry_date} 之前"
@@ -1238,6 +1274,67 @@ msgstr "设置"
 msgid "Manage group members and their roles"
 msgstr "管理项目成员及其角色"
 
+msgid "Instance"
+msgstr ""
+
+msgid "Inherited"
+msgstr ""
+
+#, fuzzy
+msgid "No runners available"
+msgstr "无运行器"
+
+#, fuzzy
+msgid "Create a group runner to run jobs for all projects in this group."
+msgstr "创建"
+
+#, fuzzy
+msgid "Edit Group Runner"
+msgstr "编辑群组"
+
+#, fuzzy
+msgid "Runners Settings"
+msgstr "设置"
+
+#, fuzzy
+msgid "Runners available to this group — instance, inherited, and its own"
+msgstr "运行器"
+
+#, fuzzy
+msgid "New group runner"
+msgstr "新建"
+
+#, fuzzy
+msgid "Shared runners"
+msgstr "查看运行器"
+
+#, fuzzy
+msgid "Enable instance runners for all projects in this group"
+msgstr "在"
+
+msgid "Instance runners are disabled by a parent group and cannot be enabled here."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"When disabled, projects in this group and its subgroups cannot use instance ru"
+"nners."
+msgstr "在"
+
+#, fuzzy
+msgid "New Group Runner"
+msgstr "新建群组"
+
+#, fuzzy
+msgid ""
+"Create a group runner to run jobs for all projects in this group and its subgr"
+"oups."
+msgstr "创建"
+
+#, fuzzy
+msgid "Register Group Runner"
+msgstr "注册您的运行器"
+
 msgid "Branch:"
 msgstr "分支："
 
@@ -1553,6 +1650,10 @@ msgid ""
 "s."
 msgstr "通过选择源项目和目标项目及分支来创建新的合并请求。"
 
+#, fuzzy
+msgid "Run pipeline"
+msgstr "在"
+
 msgid "Jobs (%{count})"
 msgstr "作业 (%{count})"
 
@@ -1576,10 +1677,6 @@ msgstr "下游"
 
 msgid "Pipelines for Project:"
 msgstr "流水线"
-
-#, fuzzy
-msgid "Run pipeline"
-msgstr "在"
 
 msgid "Search by SHA"
 msgstr "按 SHA 搜索"
@@ -1836,6 +1933,58 @@ msgstr "仓库设置"
 
 msgid "Configure repository defaults and settings"
 msgstr "配置仓库默认值和设置"
+
+#, fuzzy
+msgid "Create a project runner to run jobs for this project only."
+msgstr "创建"
+
+#, fuzzy
+msgid "Edit Project Runner"
+msgstr "编辑项目"
+
+#, fuzzy
+msgid "Project Runners"
+msgstr "运行器"
+
+#, fuzzy
+msgid "Runners available to this project — instance, group, and its own"
+msgstr "运行器"
+
+#, fuzzy
+msgid "New project runner"
+msgstr "新建"
+
+#, fuzzy
+msgid "Runner availability"
+msgstr "运行器"
+
+#, fuzzy
+msgid "Enable instance runners for this project"
+msgstr "在"
+
+#, fuzzy
+msgid "Use instance runners provided by the administrator to run jobs."
+msgstr "在"
+
+msgid "Enable group runners for this project"
+msgstr ""
+
+msgid "Use runners provided by an ancestor group to run jobs."
+msgstr ""
+
+#, fuzzy
+msgid "New Project Runner"
+msgstr "新建项目"
+
+#, fuzzy
+msgid ""
+"Create a runner dedicated to this project. It only picks up jobs from this pro"
+"ject."
+msgstr "创建"
+
+#, fuzzy
+msgid "Register Project Runner"
+msgstr "注册您的运行器"
 
 msgid "Add Variable"
 msgstr "添加变量"
@@ -2394,40 +2543,3 @@ msgstr "可见性"
 #, fuzzy
 msgid "VisibilityLevel|Unknown"
 msgstr "可见性"
-
-#~ msgid "Show issues in global search results"
-#~ msgstr "在全局搜索结果中显示议题"
-#~ msgid "For %{link_to_pipeline_ref}"
-#~ msgstr "针对 %{link_to_pipeline_ref}"
-#~ msgid "not authorized to create member"
-#~ msgstr "无权创建成员"
-#~ msgid "not authorized to update member"
-#~ msgstr "无权更新成员"
-#~ msgid "the member access level can't be higher than the current user's one"
-#~ msgstr "成员访问级别不能高于当前用户的访问级别"
-#~ msgid "Are you sure you want to delete this user?"
-#~ msgstr "确定要删除此用户吗？"
-#~ msgid "Delete User"
-#~ msgstr "删除用户"
-#~ msgid "Back to files"
-#~ msgstr "返回文件列表"
-#~ msgid "Type to search"
-#~ msgstr "输入以搜索"
-#~ msgid "Unable to create merge request"
-#~ msgstr "无法创建合并请求"
-#~ msgid "Assignees"
-#~ msgstr "受理人"
-#~ msgid "Reviewers"
-#~ msgstr "审阅者"
-#~ msgid "Mobile"
-#~ msgstr "手机号"
-#~ msgid "Not provided"
-#~ msgstr "未提供"
-#~ msgid ""
-#~ "The Planner role is suitable for team members who need to manage projects and "
-#~ "track work items but do not need to contribute code."
-#~ msgstr "规划者角色适合需要管理项目和跟踪工作项但无需贡献代码的团队成员。"
-#~ msgid "Default role"
-#~ msgstr "默认角色"
-#~ msgid "INFO: Your SSH key is expiring soon. Please generate a new key."
-#~ msgstr "提示：您的 SSH 密钥即将过期。请生成新密钥。"

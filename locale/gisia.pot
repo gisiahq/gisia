@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gisia 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-03 14:43+0800\n"
-"PO-Revision-Date: 2026-07-03 14:43+0800\n"
+"POT-Creation-Date: 2026-07-09 19:25+0800\n"
+"PO-Revision-Date: 2026-07-09 19:25+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -60,6 +60,9 @@ msgstr ""
 msgid "You are not authorized to perform this action."
 msgstr ""
 
+msgid "CI/CD settings were successfully updated."
+msgstr ""
+
 msgid "Member was successfully added."
 msgstr ""
 
@@ -73,6 +76,24 @@ msgid "Cannot remove the last owner of the group."
 msgstr ""
 
 msgid "Cannot demote the last owner of the group."
+msgstr ""
+
+msgid "Runner created. Please register it."
+msgstr ""
+
+msgid "Runner was successfully updated."
+msgstr ""
+
+msgid "Runner was successfully deleted."
+msgstr ""
+
+msgid "Runner paused."
+msgstr ""
+
+msgid "Runner resumed."
+msgstr ""
+
+msgid "Runner not found"
 msgstr ""
 
 msgid "Item not found."
@@ -100,6 +121,9 @@ msgid "ref must include a valid prefix"
 msgstr ""
 
 msgid "Cannot remove the last owner of the project."
+msgstr ""
+
+msgid "Runner settings were successfully updated."
 msgstr ""
 
 msgid "Only an owner of the project can move it to another namespace."
@@ -223,6 +247,9 @@ msgid "The value of the provided variable exceeds the %{count} character limit"
 msgstr ""
 
 msgid "Invalid file format with specified file type"
+msgstr ""
+
+msgid "is not a group or project runner"
 msgstr ""
 
 msgid "must be before %{expiry_date}"
@@ -1196,6 +1223,55 @@ msgstr ""
 msgid "Manage group members and their roles"
 msgstr ""
 
+msgid "Instance"
+msgstr ""
+
+msgid "Inherited"
+msgstr ""
+
+msgid "No runners available"
+msgstr ""
+
+msgid "Create a group runner to run jobs for all projects in this group."
+msgstr ""
+
+msgid "Edit Group Runner"
+msgstr ""
+
+msgid "Runners Settings"
+msgstr ""
+
+msgid "Runners available to this group — instance, inherited, and its own"
+msgstr ""
+
+msgid "New group runner"
+msgstr ""
+
+msgid "Shared runners"
+msgstr ""
+
+msgid "Enable instance runners for all projects in this group"
+msgstr ""
+
+msgid "Instance runners are disabled by a parent group and cannot be enabled here."
+msgstr ""
+
+msgid ""
+"When disabled, projects in this group and its subgroups cannot use instance ru"
+"nners."
+msgstr ""
+
+msgid "New Group Runner"
+msgstr ""
+
+msgid ""
+"Create a group runner to run jobs for all projects in this group and its subgr"
+"oups."
+msgstr ""
+
+msgid "Register Group Runner"
+msgstr ""
+
 msgid "Branch:"
 msgstr ""
 
@@ -1499,6 +1575,9 @@ msgid ""
 "s."
 msgstr ""
 
+msgid "Run pipeline"
+msgstr ""
+
 msgid "Jobs (%{count})"
 msgstr ""
 
@@ -1521,9 +1600,6 @@ msgid "Downstream"
 msgstr ""
 
 msgid "Pipelines for Project:"
-msgstr ""
-
-msgid "Run pipeline"
 msgstr ""
 
 msgid "Search by SHA"
@@ -1770,6 +1846,47 @@ msgid "Repository Settings"
 msgstr ""
 
 msgid "Configure repository defaults and settings"
+msgstr ""
+
+msgid "Create a project runner to run jobs for this project only."
+msgstr ""
+
+msgid "Edit Project Runner"
+msgstr ""
+
+msgid "Project Runners"
+msgstr ""
+
+msgid "Runners available to this project — instance, group, and its own"
+msgstr ""
+
+msgid "New project runner"
+msgstr ""
+
+msgid "Runner availability"
+msgstr ""
+
+msgid "Enable instance runners for this project"
+msgstr ""
+
+msgid "Use instance runners provided by the administrator to run jobs."
+msgstr ""
+
+msgid "Enable group runners for this project"
+msgstr ""
+
+msgid "Use runners provided by an ancestor group to run jobs."
+msgstr ""
+
+msgid "New Project Runner"
+msgstr ""
+
+msgid ""
+"Create a runner dedicated to this project. It only picks up jobs from this pro"
+"ject."
+msgstr ""
+
+msgid "Register Project Runner"
 msgstr ""
 
 msgid "Add Variable"
