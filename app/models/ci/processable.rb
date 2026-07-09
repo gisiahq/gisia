@@ -150,7 +150,12 @@ module Ci
         public_send(attribute)
       end
       new_attributes[:user] = current_user
-      self.class.new(new_attributes)
+
+      self.class.new(new_attributes).tap do |new_job|
+        if job_definition
+          new_job.build_job_definition_instance(job_definition: job_definition, project: project)
+        end
+      end
     end
 
     private
