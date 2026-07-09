@@ -28,7 +28,7 @@ module Ci
 
         if success
           new_alive_jobs.group_by(&:user).each do |user, jobs|
-            # reset_skipped_jobs
+            reset_skipped_jobs(user, jobs)
           end
 
           ProcessPipelineJob.perform_later(id) if needs_processing?

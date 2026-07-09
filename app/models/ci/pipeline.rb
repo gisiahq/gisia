@@ -23,6 +23,7 @@ module Ci
     include UpdatedAtFilterable
     include FromUnion
     include Ci::Pipelines::Processable
+    include Ci::Pipelines::SkippedJobsResettable
     include Ci::Pipelines::HasPersistentRef
     include Ci::Pipelines::HasVariables
     include Ci::Pipelines::HasRepositoryPaths

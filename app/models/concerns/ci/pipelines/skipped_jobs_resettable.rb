@@ -14,15 +14,20 @@ module Ci
     module SkippedJobsResettable
       extend ActiveSupport::Concern
 
-      def reset_skipped_jobs
+      def reset_skipped_jobs(current_user, processables)
+        @current_user = current_user
+        @processables = Array.wrap(processables)
+
         process_subsequent_jobs
       end
 
       private
 
+      attr_reader :current_user
+
       def process_subsequent_jobs
         dependent_jobs.each do |job|
-          process(job)
+          reset_job(job)
         end
       end
 
@@ -36,7 +41,7 @@ module Ci
         )
       end
 
-      def process(job)
+      def reset_job(job)
         Gitlab::OptimisticLocking.retry_lock(job, name: 'ci_requeue_job') do |job|
           job.process(current_user)
         end

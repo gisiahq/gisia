@@ -22,6 +22,7 @@ module Ci
       new_job = clone(current_user: current_user)
       new_job.save!
       new_job.update_older_statuses_retried!
+      pipeline.reset_skipped_jobs(current_user, self)
 
       ProcessPipelineJob.perform_later(pipeline_id)
 

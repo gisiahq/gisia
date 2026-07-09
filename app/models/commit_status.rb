@@ -102,6 +102,7 @@ class CommitStatus < Ci::ApplicationRecord
   scope :latest, -> { where(retried: [false, nil]) }
   scope :retried, -> { where(retried: true) }
   scope :ordered_by_stage, -> { order(stage_idx: :asc) }
+  scope :after_stage, ->(index) { where('stage_idx > ?', index) }
   scope :scoped_pipeline, -> do
     where(arel_table[:commit_id].eq(Ci::Pipeline.arel_table[:id]))
   end
