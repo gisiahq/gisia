@@ -13,13 +13,14 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   include Projects::MergeRequestNotifiable
   include Projects::MergeRequestAuthorizable
   include Projects::ItemLinkFindable
-  before_action :authenticate_user!, only: %i[new create edit update merge]
+  before_action :authenticate_user!, only: %i[new create edit update merge run_pipeline]
   before_action :require_project_member!, only: %i[new create edit update merge]
   before_action :define_new_vars, only: %i[new edit]
-  before_action :set_mr, only: %i[show commits diffs pipelines edit update merge search_links search_labels link_labels unlink_label]
+  before_action :set_mr, only: %i[show commits diffs pipelines run_pipeline edit update merge search_links search_labels link_labels unlink_label]
   before_action :set_counts, only: [:index]
   before_action :authorize_create_merge_request!, only: %i[new create]
-  before_action :authorize_read_merge_request!, only: %i[show commits diffs pipelines search_links search_labels]
+  before_action :authorize_read_merge_request!, only: %i[show commits diffs pipelines run_pipeline search_links search_labels]
+  before_action :authorize_create_pipeline!, only: [:run_pipeline]
   before_action :authorize_update_merge_request!, only: %i[edit update merge link_labels unlink_label]
   before_action :set_notification_author, only: [:update]
   before_action :check_mr_open, only: [:edit]
@@ -142,6 +143,20 @@ class Projects::MergeRequestsController < Projects::ApplicationController
     @pipelines = @merge_request.pipelines
   end
 
+  def run_pipeline
+    new_pipeline = Ci::Pipeline.build_from(
+      project, current_user,
+      { ref: @merge_request.source_branch },
+      :web, { save_on_errors: false }
+    )
+
+    if new_pipeline.persisted?
+      redirect_to mr_pipelines_path, notice: _('Pipeline created successfully.')
+    else
+      redirect_to mr_pipelines_path, alert: new_pipeline.errors.full_messages.join(', ')
+    end
+  end
+
   def search_users
     @users = project.users.active.limit(10)
 
@@ -191,6 +206,16 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   end
 
   private
+
+  def authorize_create_pipeline!
+    forbidden! unless can?(current_user, :create_pipeline, project)
+  end
+
+  def mr_pipelines_path
+    pipelines_namespace_project_merge_request_path(
+      project.namespace.parent.full_path, project.path, @merge_request.iid
+    )
+  end
 
   def filter_params
     params.permit(:status, :search, :author, :assignee, :reviewer, :sort, label: [])

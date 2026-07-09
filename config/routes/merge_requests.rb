@@ -18,6 +18,7 @@ resources :merge_requests, except: [:destroy], param: :iid, constraints: { iid: 
     get :commits
     get :diffs
     get :pipelines
+    post :run_pipeline
     post :merge
     post :search_links
     patch :link_labels
