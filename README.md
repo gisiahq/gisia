@@ -6,35 +6,29 @@
 </p>
 
 
-> **Self-hosted personal DevOps platform — built by engineers, for engineers.**
+> **The lightweight self-hosted DevOps platform your AI agent already knows how to use.**
 
-Gisia is an open-source, DevOps platform designed for individuals and small teams who want full control over their development workflow. It provides essential Git hosting, CI/CD automation, issue tracking.
+Gisia is an open-source DevOps platform designed for individuals and small teams who want full control over their development workflow. It provides essential Git hosting, CI/CD automation, and issue tracking — and every project exposes machine-readable skill files so AI agents can operate it through the API.
 
 ## 🤔 Why Choose Gisia?
 
 - **Private** — your code stays on your server.
 - **Lightweight** — lean code, fast responses.
+- **AI-ready** — agents learn your project API from a single `skill.md` URL.
 - **Full control** — no vendor lock-in, no usage limits, no surprise pricing.
 - **Open source** — full transparency, every line of code is yours to read and trust.
 
-<div align="center">
-<table><tr>
-<td>
+## 🤖 Built for AI Agents
 
-Screenshots
+Every Gisia project serves plain-Markdown skill files at predictable URLs (`/-/skill.md`, `/-/issues/skill.md`, …). Paste one instruction into any agent that can fetch a URL — OpenClaw, Claude Code, or your own bot — and it learns how to clone, push, and manage issues, epics, and labels through the REST API. No plugin, no integration to install.
+
+<video src="https://github.com/user-attachments/assets/d8270349-f084-4cea-a9f2-7c0c09030c44"></video>
+
+See the [AI Bot Skills guide](https://gisia.dev/docs/ai-bot-skills.html) for a full walkthrough.
+
+## 📸 Screenshots
 
 <img src="docs/images/readme-banner.jpg" title="usage screenshots">
-
-</td>
-<td>
-
-AI bot skills demo
-
-<video src="https://github.com/user-attachments/assets/70181798-058b-462f-a769-cf09537dcab9"></video>
-
-</td>
-</tr></table>
-</div>
 
 
 > [!WARNING]
@@ -69,15 +63,15 @@ check the `docs/releases` to see how to upgrade to a specified version
 
 | Feature | Status | Notes |
 |----------|---------|-------|
-| **User Authentication** | ✅ Done | Local accounts |
+| **AI Bot Skills** | ✅ Done | Machine-readable skill files, so AI bots can clone, push, and manage issues and epics via the API |
 | **Git Repository Hosting** | ✅ Done | Lightweight Git server with SSH and HTTP(S) access |
 | **CI/CD Pipelines** | ✅ Done | Basic runner support and pipeline definitions in YAML |
 | **Issue Tracking** | ✅ Done| Simple issue board for personal or small team usage |
 | **Merge Requests** | ✅ Done | Inline diffs and comment threads |
 | **Webhooks** | ✅ Done | Webhooks to call URL of 3rd party services|
-| **AI Bot Skills** | ✅ Done | Machine-readable skill files, so AI bots can clone, push, and manage issues and epics via the API |
 | **Code Review** | ✅ Done | Comment notifications |
 | **Namespace Runners** | ✅ Done | Project/Group level runners|
+| **User Authentication** | ✅ Done | Local accounts |
 
 ## 💡 Dev Philosophy
 

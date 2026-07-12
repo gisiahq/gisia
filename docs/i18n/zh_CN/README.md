@@ -5,35 +5,29 @@
 <a href="README.md">简体中文</a>
 </p>
 
-> **自托管个人 DevOps 平台 — 由工程师打造，为工程师而生。**
+> **轻量级自托管 DevOps 平台 — 你的 AI 智能体天生就会使用。**
 
-Gisia 是一个开源 DevOps 平台，为那些希望完全掌控开发工作流程的个人和小团队而设计。它提供基本的 Git 托管、CI/CD 自动化、问题跟踪等功能。
+Gisia 是一个开源 DevOps 平台，为那些希望完全掌控开发工作流程的个人和小团队而设计。它提供基本的 Git 托管、CI/CD 自动化、问题跟踪等功能 — 并且每个项目都暴露机器可读的技能文件，让 AI 智能体可以通过 API 操作项目。
 
 ## 🤔 为什么选择 Gisia？
 
 - **私有** — 你的代码存储在你自己的服务器上。
 - **轻量级** — 精简代码，响应速度快。
+- **AI 就绪** — 智能体只需一个 `skill.md` URL 即可学会你的项目 API。
 - **完全掌控** — 无供应商锁定，无使用限制，无意外收费。
 - **开源** — 完全透明，每一行代码都由你自己审阅和信任。
 
-<div align="center">
-<table><tr>
-<td>
+## 🤖 为 AI 智能体而生
 
-截图
+每个 Gisia 项目都在可预测的 URL（`/-/skill.md`、`/-/issues/skill.md` 等）提供纯 Markdown 技能文件。只需将一条指令粘贴给任何能抓取 URL 的智能体 — OpenClaw、Claude Code 或你自己的机器人 — 它就能学会通过 REST API 克隆、推送并管理问题、史诗和标签。无需插件，无需安装集成。
+
+<video src="https://github.com/user-attachments/assets/d8270349-f084-4cea-a9f2-7c0c09030c44"></video>
+
+完整教程请参阅 [AI Bot 技能指南](https://gisia.dev/docs/ai-bot-skills.html)。
+
+## 📸 截图
 
 <img src="../../images/readme-banner.jpg" title="usage screenshots">
-
-</td>
-<td>
-
-AI bot 技能演示
-
-<video src="https://github.com/user-attachments/assets/70181798-058b-462f-a769-cf09537dcab9"></video>
-
-</td>
-</tr></table>
-</div>
 
 
 > [!WARNING]
@@ -68,15 +62,15 @@ docker exec -it gisia-web cat /rails/initial_root_password
 
 | 功能 | 状态 | 备注 |
 |----------|---------|-------|
-| **用户身份验证** | ✅ 已完成 | 本地账户 |
+| **AI Bot 技能** | ✅ 已完成 | 机器可读的技能文件，让 AI 机器人可以通过 API 克隆、推送并管理问题和史诗 |
 | **Git 仓库托管** | ✅ 已完成 | 轻量级 Git 服务器，支持 SSH 和 HTTP(S) 访问 |
 | **CI/CD 流水线** | ✅ 已完成 | 基础 runner 支持和 YAML 格式的流水线定义 |
 | **问题跟踪** | ✅ 已完成 | 简单的问题板，适合个人或小团队使用 |
 | **合并请求** | ✅ 已完成 | 内联对比和评论线程 |
 | **Webhooks** | ✅ 已完成 | Webhooks 调用第三方服务的 URL |
-| **AI Bot 技能** | ✅ 已完成 | 机器可读的技能文件，让 AI 机器人可以通过 API 克隆、推送并管理问题和史诗 |
 | **代码审查** | ✅ 已完成 | 评论通知 |
 | **命名空间 Runner** | ✅ 已完成 | 项目/群组级别的 runner |
+| **用户身份验证** | ✅ 已完成 | 本地账户 |
 
 ## 💡 开发哲学
 
