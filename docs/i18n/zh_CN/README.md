@@ -19,7 +19,7 @@ Gisia 是一个开源 DevOps 平台，为那些希望完全掌控开发工作流
 
 ## 🤖 为 AI 智能体而生
 
-每个 Gisia 项目都在可预测的 URL（`/-/skill.md`、`/-/issues/skill.md` 等）提供纯 Markdown 技能文件。只需将一条指令粘贴给任何能抓取 URL 的智能体 — OpenClaw、Claude Code 或你自己的机器人 — 它就能学会通过 REST API 克隆、推送并管理问题、史诗和标签。无需插件，无需安装集成。
+每个 Gisia 项目都有 Skill 相关的文字介绍。只需将一条指令粘贴给任何能抓取 URL 的智能体 — OpenClaw、Claude Code 或你自己的机器人 — 它就能学会通过 REST API 克隆、推送并管理问题、史诗和标签。无需插件，无需安装集成。
 
 <video src="https://github.com/user-attachments/assets/d8270349-f084-4cea-a9f2-7c0c09030c44"></video>
 

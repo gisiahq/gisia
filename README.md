@@ -20,7 +20,7 @@ Gisia is an open-source DevOps platform designed for individuals and small teams
 
 ## 🤖 Built for AI Agents
 
-Every Gisia project serves plain-Markdown skill files at predictable URLs (`/-/skill.md`, `/-/issues/skill.md`, …). Paste one instruction into any agent that can fetch a URL — OpenClaw, Claude Code, or your own bot — and it learns how to clone, push, and manage issues, epics, and labels through the REST API. No plugin, no integration to install.
+Every Gisia project includes a skill introduction. Paste the instruction into any agent that can fetch a URL — OpenClaw, Claude Code, or your own bot — and it learns how to clone, push, and manage issues, epics, and labels through the REST API. No plugin, no integration to install.
 
 <video src="https://github.com/user-attachments/assets/d8270349-f084-4cea-a9f2-7c0c09030c44"></video>
 
