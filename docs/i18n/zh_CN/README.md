@@ -25,9 +25,6 @@ Gisia 是一个开源 DevOps 平台，为那些希望完全掌控开发工作流
 
 完整教程请参阅 [AI Bot 技能指南](https://gisia.dev/docs/ai-bot-skills.html)。
 
-## 📸 截图
-
-<img src="../../images/readme-banner.jpg" title="usage screenshots">
 
 
 > [!WARNING]

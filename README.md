@@ -26,9 +26,6 @@ Every Gisia project serves plain-Markdown skill files at predictable URLs (`/-/s
 
 See the [AI Bot Skills guide](https://gisia.dev/docs/ai-bot-skills.html) for a full walkthrough.
 
-## 📸 Screenshots
-
-<img src="docs/images/readme-banner.jpg" title="usage screenshots">
 
 
 > [!WARNING]
