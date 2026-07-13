@@ -131,6 +131,11 @@ class Projects::MergeRequestsController < Projects::ApplicationController
 
     @grouped_diff_discussions = @merge_request.notes.grouped_diff_discussions(@diffs.diff_refs)
 
+    @draft_notes = current_user ? @merge_request.draft_notes.authored_by(current_user).order(:id).to_a : []
+    @grouped_draft_notes = @draft_notes.select(&:on_diff?).group_by { |draft| draft.line_code_in_diffs(@diffs.diff_refs) }
+    @grouped_draft_notes.delete(nil)
+    @grouped_draft_replies = @draft_notes.select { |draft| draft.discussion_id.present? }.group_by(&:discussion_id)
+
     file_sha = params[:diff_anchor]&.split('_')&.first
     @selected_file_index = if file_sha.present?
       @diffs.diff_files.find_index { |f| Digest::SHA1.hexdigest(f.file_path) == file_sha } || 0

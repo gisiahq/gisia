@@ -77,7 +77,7 @@ module DiffsHelper
       head_sha: diff_refs&.head_sha || merge_request.diff_head_sha,
       old_path: diff_file.old_path,
       new_path: diff_file.new_path,
-      api_endpoint: namespace_project_merge_request_diff_notes_path(
+      api_endpoint: namespace_project_merge_request_draft_notes_path(
         merge_request.target_project.namespace.parent.full_path,
         merge_request.target_project.path,
         merge_request

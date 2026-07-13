@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "draft_note_#{@draft_note.id}" do %>
+  <%= render 'shared/notes/draft_note', draft_note: @draft_note %>
+<% end %>

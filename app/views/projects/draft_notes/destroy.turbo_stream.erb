@@ -1,0 +1,4 @@
+<%= turbo_stream.remove "draft_note_#{@draft_note.id}" %>
+<%= turbo_stream.replace "review-bar" do %>
+  <%= render 'projects/merge_requests/review_bar', merge_request: @merge_request, draft_count: @merge_request.draft_notes.authored_by(current_user).count %>
+<% end %>

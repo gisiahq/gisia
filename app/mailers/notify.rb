@@ -15,6 +15,7 @@ class Notify < ApplicationMailer
   include Emails::WorkItems
   include Emails::MergeRequests
   include Emails::Notes
+  include Emails::Reviews
   include Emails::Members
 
   helper EmailsHelper

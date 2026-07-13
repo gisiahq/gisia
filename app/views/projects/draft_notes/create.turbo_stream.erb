@@ -1,0 +1,19 @@
+<% if @draft_note.discussion_id.present? %>
+  <%= turbo_stream.remove "no-replies-#{@draft_note.discussion_id}" %>
+  <%= turbo_stream.before "note-#{@draft_note.discussion_id}-reply-form" do %>
+    <div class="ml-8 mb-4">
+      <%= render 'shared/notes/draft_note', draft_note: @draft_note %>
+    </div>
+  <% end %>
+<% else %>
+  <%= turbo_stream.after "#{@draft_note.line_code}" do %>
+    <ul class="notes-list space-y-4 mt-4" id="drafts-list-<%= @draft_note.line_code %>">
+      <%= render 'shared/notes/draft_note', draft_note: @draft_note %>
+    </ul>
+  <% end %>
+  <%= turbo_stream.remove "comment-form-#{@draft_note.line_code}" %>
+  <%= turbo_stream.update "comment-button-#{@draft_note.line_code}", "" %>
+<% end %>
+<%= turbo_stream.replace "review-bar" do %>
+  <%= render 'projects/merge_requests/review_bar', merge_request: @merge_request, draft_count: @merge_request.draft_notes.authored_by(current_user).count %>
+<% end %>

@@ -25,6 +25,7 @@ import BoardDragController from "./projects/board_drag_controller"
 import DashboardController from "./dashboard_controller"
 import ToggleController from "./toggle_controller"
 import ReplyFormController from "./reply_form_controller"
+import ReviewBarController from "./review_bar_controller"
 import MrBranchSelectController from "./mr_branch_select_controller"
 import RefSelectorController from "./ref_selector_controller"
 import LinkItemFormController from "./link_item_form_controller"
@@ -58,6 +59,7 @@ application.register("board-drag", BoardDragController)
 application.register("dashboard", DashboardController)
 application.register("toggle", ToggleController)
 application.register("reply-form", ReplyFormController)
+application.register("review-bar", ReviewBarController)
 application.register("mr-branch-select", MrBranchSelectController)
 application.register("ref-selector", RefSelectorController)
 application.register("link-item-form", LinkItemFormController)

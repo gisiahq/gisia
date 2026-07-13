@@ -95,6 +95,12 @@ msgstr "运行器已恢复。"
 msgid "Runner not found"
 msgstr "未找到运行器"
 
+msgid "Review submitted."
+msgstr "评审已提交。"
+
+msgid "Pending comments discarded."
+msgstr "待处理评论已丢弃。"
+
 msgid "Item not found."
 msgstr ""
 
@@ -353,6 +359,15 @@ msgstr[1] "合并请求"
 
 msgid "Pipeline|In %{pipeline_ref}"
 msgstr "于 %{pipeline_ref}"
+
+msgid "Thread to reply to cannot be found"
+msgstr "找不到要回复的话题"
+
+msgid "Replies to system notes are not allowed"
+msgstr "不允许回复系统备注"
+
+msgid "There are no pending comments to publish"
+msgstr "没有待发布的评论"
 
 msgid "You have no permissions"
 msgstr ""
@@ -1545,6 +1560,22 @@ msgstr "创建合并请求"
 msgid "Update Merge Request"
 msgstr "更新合并请求"
 
+msgid "Summary comment (optional)"
+msgstr "总结评论（可选）"
+
+msgid "%{count} pending comment"
+msgid_plural "%{count} pending comments"
+msgstr[0] "%{count} 条待处理评论"
+
+msgid "Discard"
+msgstr "丢弃"
+
+msgid "Are you sure you want to discard all pending comments?"
+msgstr "确定要丢弃所有待处理评论吗？"
+
+msgid "Submit review"
+msgstr "提交评审"
+
 msgid "Edit Merge Request"
 msgstr "编辑合并请求"
 
@@ -2030,11 +2061,23 @@ msgstr "个人访问令牌"
 msgid "SSH Keys"
 msgstr "SSH 密钥"
 
+msgid "submitted a review"
+msgstr "提交了评审"
+
+msgid "Outdated"
+msgstr "已过期"
+
+msgid "Are you sure you want to delete this pending comment?"
+msgstr "确定要删除此待处理评论吗？"
+
 msgid "Write a comment..."
 msgstr "写下评论..."
 
 msgid "Comment"
 msgstr "评论"
+
+msgid "Add to review"
+msgstr "添加到评审"
 
 msgid "Please correct the following errors:"
 msgstr "请更正以下错误："

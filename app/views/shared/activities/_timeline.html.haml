@@ -4,6 +4,8 @@
     - activities.each do |activity|
       - if activity.note_added? && activity.note
         = render 'shared/notes/note', note: activity.note, show_diff_link: true
+      - elsif activity.review_added?
+        = render 'shared/activities/review', activity: activity, noteable: noteable
       - else
         %div{ class: 'flex items-center gap-2 py-1 text-base text-slate-600' }
           %div{ class: 'w-1 h-1 rounded-full bg-slate-500 flex-shrink-0' }

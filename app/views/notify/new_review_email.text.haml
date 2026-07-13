@@ -1,0 +1,13 @@
+= "#{@author.name} submitted a review on merge request !#{@merge_request.iid}"
+
+- if @summary_note
+  = @summary_note.note
+  \
+
+- @notes.each do |note|
+  - if note.diff_note? && note.position
+    = "#{note.position.new_path}:#{note.position.new_line}"
+  = note.note
+  \
+
+View Review: #{@target_url}

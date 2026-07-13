@@ -108,6 +108,14 @@ class NotificationService
     end
   end
 
+  def new_review(review)
+    recipients = NotificationRecipients::BuildService.build_new_review_recipients(review)
+
+    recipients.each do |recipient|
+      mailer.new_review_email(recipient.user.id, review.id, recipient.reason).deliver_later
+    end
+  end
+
   def new_member(member)
     return unless member.user
 

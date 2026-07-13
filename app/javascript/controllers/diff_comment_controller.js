@@ -61,7 +61,7 @@ export default class extends Controller {
               Cancel
             </button>
             <button type="button" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 submit-comment" data-line-code="${lineCode}">
-              Comment
+              Add to review
             </button>
           </div>
         </div>
@@ -135,7 +135,7 @@ export default class extends Controller {
           'Accept': 'text/vnd.turbo-stream.html, application/json'
         },
         body: JSON.stringify({
-          diff_note: {
+          draft_note: {
             note: content,
             line_code: lineCode,
             position: JSON.stringify(position)

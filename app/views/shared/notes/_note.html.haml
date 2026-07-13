@@ -70,15 +70,27 @@
             .ml-8.mt-4.space-y-4
               - note.replies.each do |reply|
                 = render 'shared/notes/note', note: reply
+          - draft_replies = local_assigns.fetch(:draft_replies, nil)
+          - if draft_replies.present?
+            .ml-8.mt-4.space-y-4
+              - draft_replies.each do |draft|
+                = render 'shared/notes/draft_note', draft_note: draft
           .mt-4{ id: "note-#{note.id}-reply-form" }
             %div{ class: "border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-400 cursor-text bg-white#{' hidden' unless note.diff_note?}", data: { "reply-form-target": "placeholder", action: "click->reply-form#expand" } }
               Write a reply...
             %div{ class: "hidden", data: { "reply-form-target": "editor" } }
-              = form_with url: namespace_project_notes_path(note.noteable.project.namespace.parent.full_path, note.noteable.project.path, target_id: note.noteable.id), scope: :note, local: false, class: "space-y-3" do |f|
-                = hidden_field_tag "note[noteable_type]", note.noteable.class.name
-                = hidden_field_tag "note[noteable_id]", note.noteable.id
-                = hidden_field_tag "note[discussion_id]", note.id
-                = hidden_field_tag :target_id, note.noteable.id
-                = render 'shared/markdown_editor', f: f, field: :note, placeholder: 'Write a reply...', min_height: 'min-h-40', initial_content: '', textarea_id: "editor-reply-note-#{note.id}", upload_url: namespace_project_uploads_path(note.noteable.project.namespace.parent.full_path, note.noteable.project.path), upload_prefix: "/-/project/#{note.noteable.project.id}"
-                .flex.justify-end
-                  = f.submit 'Reply', class: 'px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700'
+              - if local_assigns.fetch(:draft_reply, false) && note.diff_note?
+                = form_with url: draft_notes_path(note.noteable), scope: :draft_note, local: false, class: "space-y-3" do |f|
+                  = hidden_field_tag "draft_note[discussion_id]", note.id
+                  = render 'shared/markdown_editor', f: f, field: :note, placeholder: 'Write a reply...', min_height: 'min-h-40', initial_content: '', textarea_id: "editor-reply-note-#{note.id}", upload_url: namespace_project_uploads_path(note.noteable.project.namespace.parent.full_path, note.noteable.project.path), upload_prefix: "/-/project/#{note.noteable.project.id}"
+                  .flex.justify-end
+                    = f.submit _('Add to review'), class: 'px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700'
+              - else
+                = form_with url: namespace_project_notes_path(note.noteable.project.namespace.parent.full_path, note.noteable.project.path, target_id: note.noteable.id), scope: :note, local: false, class: "space-y-3" do |f|
+                  = hidden_field_tag "note[noteable_type]", note.noteable.class.name
+                  = hidden_field_tag "note[noteable_id]", note.noteable.id
+                  = hidden_field_tag "note[discussion_id]", note.id
+                  = hidden_field_tag :target_id, note.noteable.id
+                  = render 'shared/markdown_editor', f: f, field: :note, placeholder: 'Write a reply...', min_height: 'min-h-40', initial_content: '', textarea_id: "editor-reply-note-#{note.id}", upload_url: namespace_project_uploads_path(note.noteable.project.namespace.parent.full_path, note.noteable.project.path), upload_prefix: "/-/project/#{note.noteable.project.id}"
+                  .flex.justify-end
+                    = f.submit 'Reply', class: 'px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700'

@@ -4,7 +4,7 @@
       Commenting on line
       %span{ class: "font-mono font-medium" }= line_number
 
-  = form_with(model: [project, merge_request, DiffNote.new], local: false, html: { data: { controller: "diff-comment-form" } }) do |form|
+  = form_with(url: draft_notes_path(merge_request), scope: :draft_note, local: false, html: { data: { controller: "diff-comment-form" } }) do |form|
     %div{ class: "mb-4" }
       = form.text_area :note, placeholder: "Add a comment...",
         class: "w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
@@ -20,5 +20,5 @@
       %div{ class: "flex gap-2" }
         %button{ type: "button", class: "px-3 py-1 text-sm text-gray-600 hover:text-gray-800", data: { action: "click->diff-comment-form#cancel" } }
           Cancel
-        = form.submit "Comment", class: "px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700",
+        = form.submit "Add to review", class: "px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700",
           data: { action: "click->diff-comment-form#submit" }

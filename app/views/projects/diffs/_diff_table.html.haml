@@ -33,4 +33,11 @@
           - if line_notes.present?
             %ul.notes-list{ class: "space-y-4 mt-4" }
               - line_notes.each do |note|
-                = render partial: 'shared/notes/note', locals: { note: note }
+                = render partial: 'shared/notes/note', locals: { note: note, draft_reply: true, draft_replies: @grouped_draft_replies && @grouped_draft_replies[note.id] }
+
+        - if @merge_request && @grouped_draft_notes
+          - line_drafts = @grouped_draft_notes[line[:line_code]]
+          - if line_drafts.present?
+            %ul.notes-list{ class: "space-y-4 mt-4", id: "drafts-list-#{line[:line_code]}" }
+              - line_drafts.each do |draft|
+                = render partial: 'shared/notes/draft_note', locals: { draft_note: draft }

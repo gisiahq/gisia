@@ -1,0 +1,17 @@
+- review = Review.find_by(id: activity.details&.dig('review_id'))
+%div{ class: 'py-1' }
+  %div{ class: 'flex items-center gap-2 text-base text-slate-600' }
+    %div{ class: 'w-1 h-1 rounded-full bg-slate-500 flex-shrink-0' }
+    %div{ class: 'min-w-0 text-sm' }
+      - if activity.author
+        %span{ class: 'font-medium text-slate-800' }= "#{activity.author.name} "
+      = _('submitted a review')
+      %span{ class: 'text-slate-400 text-sm ml-1' }= "· #{time_ago_in_words(activity.created_at)} ago"
+
+  - if review
+    - review.notes.root_notes.each do |note|
+      %div{ class: 'mt-2' }
+        = render 'shared/notes/note', note: note, show_diff_link: true
+  - elsif activity.note
+    %div{ class: 'mt-2' }
+      = render 'shared/notes/note', note: activity.note

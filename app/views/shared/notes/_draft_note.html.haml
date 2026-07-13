@@ -1,0 +1,25 @@
+%div{ id: "draft_note_#{draft_note.id}" }
+  %div{ class: "flex gap-3 p-4 border border-amber-200 bg-amber-50 rounded-lg" }
+    = render 'shared/user_avatar', user: draft_note.author, size: 32, css_class: 'w-8 h-8 rounded-full flex-shrink-0'
+
+    %div{ class: "flex-1 min-w-0", data: { controller: "toggle" } }
+      %div{ class: "flex items-center justify-between mb-1" }
+        %div{ class: "flex items-center gap-2" }
+          %span{ class: "font-medium text-sm" }= draft_note.author.name
+          %span{ class: "px-1.5 py-0.5 bg-amber-100 text-amber-800 text-xs rounded font-medium" }= _('Pending')
+          - if draft_note.outdated?
+            %span{ class: "px-1.5 py-0.5 bg-slate-100 text-slate-600 text-xs rounded font-medium" }= _('Outdated')
+          %span{ class: "text-xs text-slate-500" }= "#{time_ago_in_words(draft_note.created_at)} ago"
+
+        %div{ class: "flex items-center gap-1 text-xs text-slate-500" }
+          %button{ class: "hover:text-slate-700 bg-transparent border-0 px-1 py-0.5 text-xs cursor-pointer", type: "button", data: { action: "click->toggle#toggle" } }= _('Edit')
+          = button_to _('Delete'), draft_note_path(draft_note), method: :delete, class: 'text-red-600 hover:text-red-700 bg-transparent border-0 px-1 py-0.5 text-xs cursor-pointer', form_class: 'inline', form: { data: { turbo_confirm: _('Are you sure you want to delete this pending comment?') } }
+
+      %div{ class: "prose prose-sm max-w-none markdown break-words" }= Banzai::Renderer.render(draft_note.note).html_safe
+
+      %div{ class: "hidden mt-2", data: { "toggle-target": "content" } }
+        = form_with url: draft_note_path(draft_note), method: :patch, scope: :draft_note, local: false do |f|
+          = f.text_area :note, value: draft_note.note, rows: 4, class: "w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          %div{ class: "flex justify-end gap-2 mt-2" }
+            %button{ class: "px-3 py-1 text-sm text-gray-600 hover:text-gray-800", type: "button", data: { action: "click->toggle#toggle" } }= _('Cancel')
+            = f.submit _('Save'), class: 'px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700'

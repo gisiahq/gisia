@@ -5,3 +5,6 @@
 - content_for :mr_content do
   = render 'projects/files/diff'
 = render 'detail'
+
+- if current_user&.can?(:create_note, @merge_request)
+  = render 'projects/merge_requests/review_bar', merge_request: @merge_request, draft_count: @draft_notes.size
