@@ -1,14 +1,52 @@
 resources :projects, only: [:index, :show, :create, :update, :destroy] do
   resources :issues, only: [:index, :show, :create, :update, :destroy], param: :issue_iid, controller: 'projects/issues'
+  nested do
+    scope 'issues/:issue_iid', as: :issue do
+      resources :notes, only: [:index, :show, :create, :update, :destroy], controller: 'projects/notes' do
+        member do
+          put :resolve
+          put :unresolve
+        end
+      end
+    end
+  end
   resources :labels, only: [:index, :show, :create, :update, :destroy], controller: 'projects/labels'
   resources :epics, only: [:index, :show, :create, :update, :destroy], param: :epic_iid, controller: 'projects/epics' do
     member do
       get :issues, controller: 'projects/epic_issues', action: :index
     end
   end
+  nested do
+    scope 'epics/:epic_iid', as: :epic do
+      resources :notes, only: [:index, :show, :create, :update, :destroy], controller: 'projects/notes' do
+        member do
+          put :resolve
+          put :unresolve
+        end
+      end
+    end
+  end
   resources :members, only: [:index, :show, :create, :update, :destroy], param: :user_id, controller: 'projects/members'
   resources :merge_requests, only: [:index, :show, :create, :update, :destroy],
     param: :merge_request_iid, controller: 'projects/merge_requests'
+  nested do
+    scope 'merge_requests/:merge_request_iid', as: :merge_request do
+      resources :notes, only: [:index, :show, :create, :update, :destroy], controller: 'projects/notes' do
+        member do
+          put :resolve
+          put :unresolve
+        end
+      end
+      resources :draft_notes, only: [:index, :show, :create, :update, :destroy], controller: 'projects/draft_notes' do
+        member do
+          put :publish
+        end
+        collection do
+          post :bulk_publish
+        end
+      end
+    end
+  end
   resources :pipelines, only: [:index, :show, :create, :destroy], controller: 'projects/pipelines' do
     member do
       post :retry

@@ -32,6 +32,7 @@ constraints(::Constraints::ProjectUrlConstrainer.new) do
         get 'pipelines/skill.md', to: 'skills#pipelines', format: false, as: :pipelines_skill_md
         get 'jobs/skill.md', to: 'skills#jobs', format: false, as: :jobs_skill_md
         get 'members/skill.md', to: 'skills#members', format: false, as: :members_skill_md
+        get 'comments/skill.md', to: 'skills#comments', format: false, as: :comments_skill_md
 
         get 'ci/lint', to: 'ci_lint#show', as: :ci_lint
         post 'ci/lint/content', to: 'ci_lint#content', as: :content_ci_lint
