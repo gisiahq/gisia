@@ -28,4 +28,11 @@ resources :merge_requests, except: [:destroy], param: :iid, constraints: { iid: 
   resources :links, only: [:create, :destroy], controller: 'merge_requests/links'
 
   resources :diff_notes, only: [:create]
+
+  resources :draft_notes, only: [:create, :update, :destroy] do
+    collection do
+      post :publish
+      delete :discard
+    end
+  end
 end
