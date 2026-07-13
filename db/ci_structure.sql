@@ -1414,6 +1414,49 @@ ALTER SEQUENCE public.ci_variables_id_seq OWNED BY public.ci_variables.id;
 
 
 --
+-- Name: draft_notes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.draft_notes (
+    id bigint NOT NULL,
+    merge_request_id bigint NOT NULL,
+    author_id bigint NOT NULL,
+    namespace_id bigint NOT NULL,
+    note text NOT NULL,
+    note_type character varying,
+    "position" text,
+    original_position text,
+    change_position text,
+    line_code character varying,
+    commit_id character varying,
+    discussion_id bigint,
+    resolve_discussion boolean DEFAULT false NOT NULL,
+    internal boolean DEFAULT false NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: draft_notes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.draft_notes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: draft_notes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.draft_notes_id_seq OWNED BY public.draft_notes.id;
+
+
+--
 -- Name: epic_activities; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1456,7 +1499,9 @@ CREATE TABLE public.notes (
     "position" text,
     original_position text,
     change_position text,
-    line_code character varying
+    line_code character varying,
+    commit_id character varying,
+    review_id bigint
 )
 PARTITION BY LIST (noteable_type);
 
@@ -1506,7 +1551,9 @@ CREATE TABLE public.epic_notes (
     "position" text,
     original_position text,
     change_position text,
-    line_code character varying
+    line_code character varying,
+    commit_id character varying,
+    review_id bigint
 );
 
 
@@ -1622,7 +1669,9 @@ CREATE TABLE public.issue_notes (
     "position" text,
     original_position text,
     change_position text,
-    line_code character varying
+    line_code character varying,
+    commit_id character varying,
+    review_id bigint
 );
 
 
@@ -2151,7 +2200,9 @@ CREATE TABLE public.merge_request_notes (
     "position" text,
     original_position text,
     change_position text,
-    line_code character varying
+    line_code character varying,
+    commit_id character varying,
+    review_id bigint
 );
 
 
@@ -3064,7 +3115,8 @@ CREATE TABLE public.reviews (
     author_id bigint NOT NULL,
     merge_request_id bigint NOT NULL,
     project_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL
+    created_at timestamp(6) without time zone NOT NULL,
+    commit_id character varying
 );
 
 
@@ -3644,6 +3696,13 @@ ALTER TABLE ONLY public.ci_triggers ALTER COLUMN id SET DEFAULT nextval('public.
 --
 
 ALTER TABLE ONLY public.ci_variables ALTER COLUMN id SET DEFAULT nextval('public.ci_variables_id_seq'::regclass);
+
+
+--
+-- Name: draft_notes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.draft_notes ALTER COLUMN id SET DEFAULT nextval('public.draft_notes_id_seq'::regclass);
 
 
 --
@@ -4268,6 +4327,14 @@ ALTER TABLE ONLY public.ci_variables
 
 
 --
+-- Name: draft_notes draft_notes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.draft_notes
+    ADD CONSTRAINT draft_notes_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: epic_activities epic_activities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4857,6 +4924,20 @@ CREATE INDEX index_notes_on_resolved_by_id ON ONLY public.notes USING btree (res
 --
 
 CREATE INDEX epic_notes_resolved_by_id_idx ON public.epic_notes USING btree (resolved_by_id);
+
+
+--
+-- Name: index_notes_on_review_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_notes_on_review_id ON ONLY public.notes USING btree (review_id);
+
+
+--
+-- Name: epic_notes_review_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX epic_notes_review_id_idx ON public.epic_notes USING btree (review_id);
 
 
 --
@@ -5781,6 +5862,13 @@ CREATE INDEX index_ci_triggers_on_project_id_and_id ON public.ci_triggers USING 
 --
 
 CREATE INDEX index_ci_variables_on_key ON public.ci_variables USING btree (key);
+
+
+--
+-- Name: index_draft_notes_on_merge_request_id_and_author_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_draft_notes_on_merge_request_id_and_author_id ON public.draft_notes USING btree (merge_request_id, author_id);
 
 
 --
@@ -6890,6 +6978,13 @@ CREATE INDEX issue_notes_resolved_by_id_idx ON public.issue_notes USING btree (r
 
 
 --
+-- Name: issue_notes_review_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX issue_notes_review_id_idx ON public.issue_notes USING btree (review_id);
+
+
+--
 -- Name: issue_notes_system_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6992,6 +7087,13 @@ CREATE INDEX merge_request_notes_resolved_at_idx ON public.merge_request_notes U
 --
 
 CREATE INDEX merge_request_notes_resolved_by_id_idx ON public.merge_request_notes USING btree (resolved_by_id);
+
+
+--
+-- Name: merge_request_notes_review_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX merge_request_notes_review_id_idx ON public.merge_request_notes USING btree (review_id);
 
 
 --
@@ -7114,6 +7216,13 @@ ALTER INDEX public.index_notes_on_resolved_by_id ATTACH PARTITION public.epic_no
 
 
 --
+-- Name: epic_notes_review_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_notes_on_review_id ATTACH PARTITION public.epic_notes_review_id_idx;
+
+
+--
 -- Name: epic_notes_system_idx; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -7230,6 +7339,13 @@ ALTER INDEX public.index_notes_on_resolved_at ATTACH PARTITION public.issue_note
 --
 
 ALTER INDEX public.index_notes_on_resolved_by_id ATTACH PARTITION public.issue_notes_resolved_by_id_idx;
+
+
+--
+-- Name: issue_notes_review_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_notes_on_review_id ATTACH PARTITION public.issue_notes_review_id_idx;
 
 
 --
@@ -7352,6 +7468,13 @@ ALTER INDEX public.index_notes_on_resolved_by_id ATTACH PARTITION public.merge_r
 
 
 --
+-- Name: merge_request_notes_review_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_notes_on_review_id ATTACH PARTITION public.merge_request_notes_review_id_idx;
+
+
+--
 -- Name: merge_request_notes_system_idx; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -7427,6 +7550,10 @@ ALTER TABLE ONLY public.label_links
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260713000004'),
+('20260713000003'),
+('20260713000002'),
+('20260713000001'),
 ('20260703072431'),
 ('20260703071649'),
 ('20260617033653'),
