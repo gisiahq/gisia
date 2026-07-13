@@ -47,6 +47,7 @@ class MergeRequest < ApplicationRecord
   has_many :reviewers, class_name: 'User', through: :merge_request_reviewers, source: :reviewer
 
   has_many :reviews, inverse_of: :merge_request, dependent: :destroy
+  has_many :draft_notes, inverse_of: :merge_request, dependent: :delete_all
   has_many :reviewed_by_users, -> { distinct }, through: :reviews, source: :author
 
   has_one :metrics, class_name: 'MergeRequest::Metrics', inverse_of: :merge_request, autosave: true

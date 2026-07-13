@@ -24,6 +24,7 @@ class Note < ApplicationRecord
 
   belongs_to :namespace
   belongs_to :noteable, polymorphic: true
+  belongs_to :review, optional: true
 
   has_one :activity, foreign_key: :note_id, dependent: :destroy
   belongs_to :author, class_name: 'User'
@@ -175,6 +176,7 @@ class Note < ApplicationRecord
   end
 
   def create_note_activity
+    return if skip_notification?
     return unless root_note?
     return unless %w[Issue MergeRequest Epic].include?(noteable_type)
 
@@ -189,6 +191,12 @@ class Note < ApplicationRecord
   end
 
   def notify_on_create
+    return if skip_notification?
+
     NotificationService.new.new_note(self)
+  end
+
+  def skip_notification?
+    review_id.present?
   end
 end

@@ -209,6 +209,8 @@ module Diffable
     return unless has_complete_diff_refs?
     return if new_diff_refs == old_diff_refs
 
+    update_draft_note_positions(old_diff_refs, new_diff_refs)
+
     active_diff_discussions = self.notes.new_diff_notes.discussions.select do |discussion|
       discussion.active?(old_diff_refs)
     end
@@ -230,6 +232,37 @@ module Diffable
       active_diff_discussions.each do |discussion|
         service.execute(discussion)
         discussion.clear_memoized_values
+      end
+    end
+  end
+
+  # Pending drafts of all authors are re-traced on push so they stay
+  # correctly placed on the new diff until they are published.
+  def update_draft_note_positions(old_diff_refs, new_diff_refs)
+    active_drafts = draft_notes.select do |draft|
+      draft.on_diff? && draft.position.diff_refs == old_diff_refs
+    end
+    return if active_drafts.empty?
+
+    Gitlab::GitalyClient.allow_n_plus_1_calls do
+      active_drafts.each do |draft|
+        tracer = Gitlab::Diff::PositionTracer.new(
+          project: project,
+          old_diff_refs: old_diff_refs,
+          new_diff_refs: new_diff_refs,
+          paths: draft.position.paths
+        )
+
+        result = tracer.trace(draft.position)
+        next unless result
+
+        if result[:outdated]
+          draft.change_position = result[:position]
+        else
+          draft.position = result[:position]
+        end
+
+        draft.save!(touch: false)
       end
     end
   end

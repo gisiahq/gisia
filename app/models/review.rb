@@ -4,11 +4,13 @@
 # Contains code from GitLab FOSS (MIT Licensed)
 # Copyright (c) GitLab Inc.
 # See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025-present Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
 # ======================================================
 
 class Review < ApplicationRecord
   include Participable
-  include Mentionable
 
   belongs_to :author, class_name: 'User', foreign_key: :author_id, inverse_of: :reviews
   belongs_to :merge_request, inverse_of: :reviews
@@ -24,18 +26,12 @@ class Review < ApplicationRecord
     notes.select(:discussion_id)
   end
 
-  def all_references(current_user = nil, extractor: nil)
-    ext = super
+  # Mentions are aggregated across all notes in the review so that a user
+  # mentioned in any batched comment receives the (single) review email.
+  def mentioned_users(current_user = nil)
+    user_ids = notes.flat_map { |note| note.mentioned_users(current_user).map(&:id) }.uniq
 
-    notes.each do |note|
-      note.all_references(current_user, extractor: ext)
-    end
-
-    ext
-  end
-
-  def user_mentions
-    merge_request.user_mentions.where.not(note_id: nil)
+    User.where(id: user_ids)
   end
 end
 
