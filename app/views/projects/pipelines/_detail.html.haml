@@ -16,7 +16,12 @@
             = @pipeline.user.username
           = link_to @pipeline.short_sha, namespace_project_commit_path(@project.namespace.parent.full_path, @project.path, @pipeline.sha), class: 'font-mono text-xs bg-gray-100 px-1 rounded hover:bg-gray-200 transition-colors', target: '_blank'
           %span
-            = time_ago_in_words(@pipeline.created_at) + ' ago'
+            = _('%{time} ago') % { time: time_ago_in_words(@pipeline.created_at) }
+          - if @pipeline.complete? && @pipeline.duration.present?
+            %span •
+            %span{ class: 'flex items-center gap-1' }
+              = icon 'clock', class: 'w-3.5 h-3.5'
+              = time_interval_in_words(@pipeline.duration)
           %span •
           - if @pipeline.merge_request?
             %span

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gisia 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-13 17:07+0800\n"
-"PO-Revision-Date: 2026-07-13 17:07+0800\n"
+"POT-Creation-Date: 2026-07-14 15:36+0800\n"
+"PO-Revision-Date: 2026-07-14 15:36+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -245,6 +245,41 @@ msgid ""
 "Enable VS Code Extension Marketplace and configure the extensions registry for"
 " Web IDE."
 msgstr ""
+
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d week"
+msgid_plural "%d weeks"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d month"
+msgid_plural "%d months"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d year"
+msgid_plural "%d years"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "must be a boolean value"
 msgstr ""
@@ -1502,6 +1537,9 @@ msgstr ""
 msgid "Retry"
 msgstr ""
 
+msgid "Started %{time} ago by"
+msgstr ""
+
 msgid "Job output"
 msgstr ""
 
@@ -1620,6 +1658,9 @@ msgid "Jobs (%{count})"
 msgstr ""
 
 msgid "Status %{status}"
+msgstr ""
+
+msgid "%{time} ago"
 msgstr ""
 
 msgid "For Merge Request"

@@ -32,7 +32,7 @@
             %div{ class: 'flex items-center gap-1.5 text-slate-500' }
               = icon 'clock', class: 'w-3.5 h-3.5'
               %span{ class: 'text-xs' }
-                = time_ago_in_words(job.created_at) + ' ago'
+                = _('%{time} ago') % { time: time_ago_in_words(job.created_at) }
 
         %div{ class: 'flex-shrink-0 w-20' }
           %span{ class: "inline-flex items-center justify-center w-full px-2 py-1 text-xs font-semibold rounded-lg #{badge_colors.fetch(job.status, 'bg-slate-500/10 text-slate-700 ring-1 ring-slate-500/20')}" }

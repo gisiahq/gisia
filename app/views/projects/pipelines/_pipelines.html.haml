@@ -34,7 +34,7 @@
             %div{ class: 'flex items-center gap-1.5 text-slate-500' }
               = icon 'clock', class: 'w-3.5 h-3.5'
               %span{class: 'text-xs'}
-                = time_ago_in_words(pipeline.created_at) + ' ago'
+                = _('%{time} ago') % { time: time_ago_in_words(pipeline.created_at) }
 
             - if pipeline.merge_request?
               %div{ class: 'flex items-center gap-1.5' }
