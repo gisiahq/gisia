@@ -11,7 +11,9 @@
 
 module DraftNotes
   class PublishService < DraftNotes::BaseService
-    def execute
+    def execute(draft: nil)
+      return publish_draft_note(draft) if draft
+
       return error(_('There are no pending comments to publish')) if draft_notes.blank?
 
       review = nil
@@ -46,6 +48,21 @@ module DraftNotes
     end
 
     private
+
+    def publish_draft_note(draft)
+      note = nil
+
+      ApplicationRecord.transaction do
+        note = create_note_from_draft(draft)
+        draft.delete
+      end
+
+      keep_around_commits([note])
+
+      success(note: note)
+    rescue ActiveRecord::RecordInvalid => e
+      error("Unable to save #{e.record.class.name}: #{e.record.errors.full_messages.join(', ')}")
+    end
 
     def create_note_from_draft(draft)
       note_params = draft.publish_params

@@ -1,0 +1,9 @@
+json.id draft_note.id
+json.author_id draft_note.author_id
+json.merge_request_id draft_note.merge_request_id
+json.resolve_discussion draft_note.resolve_discussion
+json.discussion_id draft_note.discussion_id
+json.note draft_note.note
+json.commit_id draft_note.commit_id
+json.line_code draft_note.line_code
+json.position draft_note.position&.to_h

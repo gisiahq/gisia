@@ -1,0 +1,196 @@
+---
+name: gisia-<%= @project.full_path.gsub('/', '-') %>-comments-skills
+description: Manage comments (notes) and merge request review drafts for the project <%= @project.full_path %> via the Gisia API. You are connected to Gisia, an AI-native DevOps platform. Covers listing, creating, replying to, resolving, and deleting comments on issues, epics, and merge requests, plus draft notes and submitting reviews.
+---
+
+## Comments — `<%= @project.full_path %>`
+
+Manage comments (notes) for this project via the Gisia API. Comments can be attached to issues, epics, and merge requests. Merge requests additionally support draft notes (pending review comments) that are published together as a review.
+
+**Base URL:** <%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>
+
+**Authentication:**
+
+```bash
+curl <%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/issues/:issue_iid/notes \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+The same five endpoints exist for each noteable type — substitute the parent segment:
+
+| Noteable | Path prefix |
+|----------|-------------|
+| Issue | `/issues/:issue_iid/notes` |
+| Epic | `/epics/:epic_iid/notes` |
+| Merge request | `/merge_requests/:merge_request_iid/notes` |
+
+---
+
+### List Comments
+
+```bash
+curl "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/issues/:issue_iid/notes" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+**Query parameters:**
+
+- `order_by` (optional) — `created_at` (default) or `updated_at`
+- `sort` (optional) — `asc` or `desc` (default: `desc`)
+- `activity_filter` (optional) — `all_notes` (default) or `comments` to exclude system notes
+- `page` (optional) — Page number (default: `1`)
+- `per_page` (optional) — Items per page, max `100` (default: `20`)
+
+---
+
+### Get a Single Comment
+
+```bash
+curl "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/issues/:issue_iid/notes/:note_id" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+- `:note_id` — Comment ID (the `id` field, not an iid)
+
+---
+
+### Create a Comment
+
+```bash
+curl -X POST "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/issues/:issue_iid/notes" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"body": "Your comment"}'
+```
+
+**Fields:**
+
+- `body` (required) — Comment text (Markdown)
+- `internal` (optional) — Boolean, marks the comment as internal
+- `discussion_id` (optional) — ID of an existing comment to reply to. Replies to system notes are rejected
+
+**Merge request diff comments:** on merge requests you may pass a `position` object to attach the comment to a line in the diff. When `position` is present a `DiffNote` is created.
+
+```bash
+curl -X POST "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/merge_requests/:merge_request_iid/notes" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "body": "This line needs a guard clause",
+    "position": {
+      "base_sha": "...",
+      "start_sha": "...",
+      "head_sha": "...",
+      "position_type": "text",
+      "old_path": "app/models/user.rb",
+      "new_path": "app/models/user.rb",
+      "new_line": 13
+    }
+  }'
+```
+
+**Position fields:** `base_sha`, `start_sha`, `head_sha` (required — the merge request diff refs), `position_type` (`text`), `old_path`/`new_path`, `old_line`/`new_line`, optional `line_range` for multi-line comments.
+
+---
+
+### Update a Comment
+
+```bash
+curl -X PUT "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/issues/:issue_iid/notes/:note_id" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"body": "Edited comment"}'
+```
+
+Only the comment author can update a comment.
+
+---
+
+### Delete a Comment
+
+```bash
+curl -X DELETE "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/issues/:issue_iid/notes/:note_id" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+Returns `204 No Content` on success. Only the comment author can delete a comment.
+
+---
+
+### Resolve / Unresolve a Comment
+
+```bash
+curl -X PUT "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/merge_requests/:merge_request_iid/notes/:note_id/resolve" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+
+curl -X PUT "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/merge_requests/:merge_request_iid/notes/:note_id/unresolve" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+System notes cannot be resolved (returns `404`).
+
+---
+
+## Draft Notes (Merge Request Reviews)
+
+Draft notes are pending review comments on a merge request. They are private to their author until published. Publishing all drafts at once creates a review and notifies participants. All draft note endpoints require authentication.
+
+**Path prefix:** `/merge_requests/:merge_request_iid/draft_notes`
+
+### List Your Draft Notes
+
+```bash
+curl "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/merge_requests/:merge_request_iid/draft_notes" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+Only returns drafts authored by the authenticated user.
+
+### Create a Draft Note
+
+```bash
+curl -X POST "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/merge_requests/:merge_request_iid/draft_notes" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"note": "A pending review comment"}'
+```
+
+**Fields:**
+
+- `note` (required) — Comment text (Markdown)
+- `position` (optional) — Same position object as diff comments above, attaches the draft to a diff line
+- `discussion_id` (optional) — ID of an existing comment to reply to
+- `resolve_discussion` (optional) — Boolean, resolves the parent discussion when the draft is published
+- `commit_id` (optional) — SHA of a commit to associate the draft with
+
+### Update / Delete a Draft Note
+
+```bash
+curl -X PUT "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/merge_requests/:merge_request_iid/draft_notes/:draft_note_id" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"note": "Edited draft"}'
+
+curl -X DELETE "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/merge_requests/:merge_request_iid/draft_notes/:draft_note_id" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+### Publish a Single Draft Note
+
+```bash
+curl -X PUT "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/merge_requests/:merge_request_iid/draft_notes/:draft_note_id/publish" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN"
+```
+
+Publishes one draft as a regular comment without creating a review. Returns `204 No Content`.
+
+### Submit a Review (Bulk Publish)
+
+```bash
+curl -X POST "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/merge_requests/:merge_request_iid/draft_notes/bulk_publish" \
+  -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"note": "Optional review summary"}'
+```
+
+Publishes all your pending drafts as a review, optionally led by a summary comment (`note`), and notifies merge request participants. Returns `204 No Content`, or `422` when there are no pending drafts.

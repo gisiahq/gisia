@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gisia 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-13 12:47+0800\n"
-"PO-Revision-Date: 2026-07-13 12:47+0800\n"
+"POT-Creation-Date: 2026-07-13 17:07+0800\n"
+"PO-Revision-Date: 2026-07-13 17:07+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -19,6 +19,15 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 msgid "Settings saved."
+msgstr ""
+
+msgid "Note can't be blank"
+msgstr ""
+
+msgid "Replies to system notes are not allowed"
+msgstr ""
+
+msgid "Position is only allowed on merge request notes"
 msgstr ""
 
 msgid "Your account has been banned. Please contact an administrator."
@@ -360,9 +369,6 @@ msgid "Pipeline|In %{pipeline_ref}"
 msgstr ""
 
 msgid "Thread to reply to cannot be found"
-msgstr ""
-
-msgid "Replies to system notes are not allowed"
 msgstr ""
 
 msgid "There are no pending comments to publish"
