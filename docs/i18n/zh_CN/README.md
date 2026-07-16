@@ -61,7 +61,7 @@ docker exec -it gisia-web cat /rails/initial_root_password
 |----------|---------|-------|
 | **AI Bot 技能** | ✅ 已完成 | 机器可读的技能文件，让 AI 机器人可以通过 API 克隆、推送并管理问题和史诗 |
 | **Git 仓库托管** | ✅ 已完成 | 轻量级 Git 服务器，支持 SSH 和 HTTP(S) 访问 |
-| **CI/CD 流水线** | ✅ 已完成 | 基础 runner 支持和 YAML 格式的流水线定义 |
+| **CI/CD 流水线** | ✅ 已完成 | `.gitlab-ci.yml` 格式的流水线定义，兼容自托管 GitLab Runner |
 | **问题跟踪** | ✅ 已完成 | 简单的问题板，适合个人或小团队使用 |
 | **合并请求** | ✅ 已完成 | 内联对比和评论线程 |
 | **Webhooks** | ✅ 已完成 | Webhooks 调用第三方服务的 URL |
@@ -99,8 +99,10 @@ Gisia 的构建遵循以下原则：
 
 ### ⚠️ 第三方引用免责声明
 
-你可能会在服务器响应、日志或内部消息中看到对 **"GitLab"** 的引用。
-这些来自重用的 **GitLab FOSS（MIT 许可）组件**或代码段。
+你可能会在服务器响应、HTTP 请求头、日志或内部消息中看到对 **"GitLab"** 的引用。
+这有两个原因：Gisia 重用了 **GitLab FOSS（MIT 许可）** 组件；以及 Gisia 实现了 GitLab 的 API
+和配置格式（例如 `.gitlab-ci.yml` 和 runner 作业 API），以便自托管的 GitLab Runner 能够与
+Gisia 互操作。此类引用仅用于标识上述格式和产品。
 
 **Gisia 与 GitLab Inc. 无任何关联，亦未获得其认可或支持。**
 所有商标和品牌名称均属于其各自所有者。

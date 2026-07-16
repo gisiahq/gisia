@@ -62,7 +62,7 @@ check the `docs/releases` to see how to upgrade to a specified version
 |----------|---------|-------|
 | **AI Bot Skills** | ✅ Done | Machine-readable skill files, so AI bots can clone, push, and manage issues and epics via the API |
 | **Git Repository Hosting** | ✅ Done | Lightweight Git server with SSH and HTTP(S) access |
-| **CI/CD Pipelines** | ✅ Done | Basic runner support and pipeline definitions in YAML |
+| **CI/CD Pipelines** | ✅ Done | Pipeline definitions in `.gitlab-ci.yml`, compatible with self-hosted GitLab Runner |
 | **Issue Tracking** | ✅ Done| Simple issue board for personal or small team usage |
 | **Merge Requests** | ✅ Done | Inline diffs and comment threads |
 | **Webhooks** | ✅ Done | Webhooks to call URL of 3rd party services|
@@ -99,8 +99,11 @@ Please refer to the `NOTICE` and `.licenses` folders for detailed information on
 
 ### ⚠️ Third-Party References Disclaimer
 
-You may notice references to **"GitLab"** in server responses, logs, or internal messages.
-These come from reused **GitLab FOSS (MIT-licensed) components** or code segments.
+You may notice references to **"GitLab"** in server responses, HTTP headers, logs, or internal messages.
+These occur for two reasons: Gisia reuses **GitLab FOSS (MIT-licensed)** components, and Gisia
+implements GitLab's API and configuration formats (such as `.gitlab-ci.yml` and the runner job API)
+so that self-hosted GitLab Runner can interoperate with Gisia. Such references are used solely to
+identify those formats and products.
 
 **Gisia is not affiliated with, endorsed by, or associated with GitLab Inc.**
 All trademarks and brand names belong to their respective owners.
