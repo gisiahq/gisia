@@ -1,6 +1,7 @@
 class Projects::EpicsController < Projects::ApplicationController
   include Projects::IssueAuthorizable
   include Projects::SetsUpdatedBy
+  include Projects::LabelLinkable
 
   before_action :authorize_read_issues!, only: [:index, :search_users, :search_epics]
   before_action :authorize_create_issue!, only: [:new, :create]
@@ -174,12 +175,6 @@ class Projects::EpicsController < Projects::ApplicationController
 
   def label_params
     params.dig(:epic, :label_ids)&.map(&:to_i) || []
-  end
-
-  def available_label_ids
-    return [] if label_params.empty?
-
-    @project.available_labels.where(id: label_params).pluck(:id)
   end
 
   def unlink_label_params

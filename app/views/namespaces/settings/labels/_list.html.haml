@@ -1,22 +1,7 @@
 - if @labels.any?
   %div{class: 'space-y-3'}
     - @labels.each do |label|
-      %div{id: "label-#{label.id}", class: 'flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50'}
-        %div{class: 'flex items-center gap-3 flex-1'}
-          %div{class: 'w-4 h-4 rounded', style: "background-color: #{label.color}"}
-          %div{class: 'flex-1'}
-            %p{class: 'font-medium text-gray-900'}
-              = label.title
-            - if label.description.present?
-              %p{class: 'text-sm text-gray-600 mt-1'}
-                = truncate(label.description, length: 100)
-          %span{class: 'inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium'}
-            = "Order: #{label.rank}"
-        %div{class: 'flex items-center gap-2'}
-          = button_to edit_form_namespace_settings_label_path(@namespace.full_path, label), method: :post, id: "edit-label-#{label.id}", class: 'px-3 py-2 text-gray-600 hover:text-blue-600 text-sm font-medium border-none bg-none cursor-pointer', data: { turbo_frame: 'labels-content' } do
-            = icon 'pencil', class: 'w-4 h-4'
-          = button_to namespace_settings_label_path(@namespace.full_path, label), method: :delete, id: "delete-label-#{label.id}", class: 'px-3 py-2 text-gray-600 hover:text-red-600 text-sm font-medium border-none bg-none cursor-pointer', data: { turbo_confirm: 'Are you sure?' } do
-            = icon 'trash', class: 'w-4 h-4'
+      = render 'label', label: label
 - else
   %div{class: 'text-center py-12 border border-gray-200 rounded-lg bg-gray-50'}
     = icon 'tag', class: 'w-12 h-12 text-gray-400 mx-auto mb-4'

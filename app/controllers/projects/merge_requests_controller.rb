@@ -13,6 +13,7 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   include Projects::MergeRequestNotifiable
   include Projects::MergeRequestAuthorizable
   include Projects::ItemLinkFindable
+  include Projects::LabelLinkable
   before_action :authenticate_user!, only: %i[new create edit update merge run_pipeline]
   before_action :require_project_member!, only: %i[new create edit update merge]
   before_action :define_new_vars, only: %i[new edit]
@@ -228,12 +229,6 @@ class Projects::MergeRequestsController < Projects::ApplicationController
 
   def label_params
     params.dig(:merge_request, :label_ids)&.map(&:to_i) || []
-  end
-
-  def available_label_ids
-    return [] if label_params.empty?
-
-    project.available_labels.where(id: label_params).pluck(:id)
   end
 
   def unlink_label_params

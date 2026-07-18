@@ -4,9 +4,8 @@ module Namespaces
   module Settings
     class LabelsController < Namespaces::Settings::ApplicationController
       skip_before_action :authorize_settings_access!
-      before_action :authorize_read_labels!, only: [:index, :new_form]
       before_action :set_label, only: [:edit_form, :update, :destroy]
-      before_action :authorize_read_labels!, only: [:edit_form]
+      before_action :authorize_read_labels!, only: [:index, :new_form, :edit_form]
       before_action :authorize_admin_labels!, only: [:create, :update, :destroy]
 
       def index
@@ -22,14 +21,12 @@ module Namespaces
         @label = @namespace.labels.build
 
         respond_to do |format|
-          format.html
           format.turbo_stream { render :new_form }
         end
       end
 
       def edit_form
         respond_to do |format|
-          format.html
           format.turbo_stream { render :edit_form }
         end
       end
