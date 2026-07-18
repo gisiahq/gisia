@@ -31,7 +31,7 @@ class Projects::MergeRequestsController < Projects::ApplicationController
                                          .page(params[:page])
                                          .per(20)
 
-    @label_options = project.namespace.labels.order(:title)
+    @label_options = project.available_labels.order(:title)
     @sort_scopes = @label_options.map(&:title).grep(/::/).map { |t| t.split('::').first }.uniq
     @user_options = project.users.active.order(:username)
 
@@ -181,7 +181,7 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   end
 
   def search_labels
-    @labels = project.namespace.labels.limit(10)
+    @labels = project.available_labels.limit(10)
     @labels = @labels.ransack(title_cont: params[:q]).result if params[:q]
     @selected_ids = @merge_request.label_ids
 
@@ -191,7 +191,7 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   end
 
   def link_labels
-    @merge_request.relink_label_ids(label_params)
+    @merge_request.relink_label_ids(available_label_ids)
     @merge_request.save
 
     respond_to do |format|
@@ -228,6 +228,12 @@ class Projects::MergeRequestsController < Projects::ApplicationController
 
   def label_params
     params.dig(:merge_request, :label_ids)&.map(&:to_i) || []
+  end
+
+  def available_label_ids
+    return [] if label_params.empty?
+
+    project.available_labels.where(id: label_params).pluck(:id)
   end
 
   def unlink_label_params

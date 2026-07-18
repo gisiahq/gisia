@@ -141,6 +141,10 @@ class Project < ApplicationRecord
     end
   end
 
+  def available_labels
+    Label.where(namespace_id: namespace.lineage_ids)
+  end
+
   def emails_disabled?
     false
   end

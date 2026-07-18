@@ -49,7 +49,7 @@ module Filterable
     label_titles = Array(params[:label]).reject(&:blank?)
     return items if label_titles.empty?
 
-    label_ids = project.namespace.labels.where(title: label_titles).pluck(:id)
+    label_ids = project.available_labels.where(title: label_titles).pluck(:id)
     items.with_label_ids(label_ids)
   end
 

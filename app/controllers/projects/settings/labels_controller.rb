@@ -45,11 +45,8 @@ module Projects
             format.html { redirect_to labels_path(@project), notice: 'Label was successfully created.' }
           end
         else
-          render :new, status: :unprocessable_entity
+          render :new_form, status: :unprocessable_entity
         end
-      end
-
-      def edit
       end
 
       def update
@@ -57,7 +54,7 @@ module Projects
           redirect_to labels_path(@project),
             notice: 'Label was successfully updated.'
         else
-          render :edit, status: :unprocessable_entity
+          render :edit_form, status: :unprocessable_entity
         end
       end
 

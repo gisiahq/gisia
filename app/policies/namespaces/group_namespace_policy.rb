@@ -10,6 +10,10 @@
 # ======================================================
 
 class Namespaces::GroupNamespacePolicy < BasePolicy
+  condition(:group_member) do
+    @subject.member?(@user)
+  end
+
   condition(:group_maintainer) do
     @user.present? && GroupMember.non_request
       .with_user(@user)
@@ -32,4 +36,6 @@ class Namespaces::GroupNamespacePolicy < BasePolicy
   rule { admin | group_maintainer }.enable :create_subgroup
   rule { admin | group_maintainer }.enable :read_group_runners
   rule { admin | group_owner }.enable :admin_group_runners
+  rule { admin | group_member }.enable :read_label
+  rule { admin | group_maintainer }.enable :admin_label
 end

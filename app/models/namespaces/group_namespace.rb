@@ -26,5 +26,26 @@ module Namespaces
     def pin_class
       Namespaces::GroupNamespacePin
     end
+
+    def member?(user, min_access_level = Gitlab::Access::GUEST)
+      return false unless user
+
+      max_member_access_for_user(user) >= min_access_level
+    end
+
+    def max_member_access_for_user(user)
+      user.max_member_access_for_namespace(self)
+    end
+
+    def member_of_self_or_descendant?(user)
+      return false unless user
+
+      members_with_descendants.exists?(user_id: user)
+    end
+
+    def members_with_descendants
+      GroupMember.non_request
+        .where(namespace_id: self_and_descendant_ids(skope: Namespaces::GroupNamespace))
+    end
   end
 end

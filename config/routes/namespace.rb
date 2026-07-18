@@ -26,6 +26,15 @@ constraints(::Constraints::GroupUrlConstrainer.new) do
         end
       end
 
+      resources :labels, only: [:index, :create, :update, :destroy] do
+        collection do
+          post :new_form
+        end
+        member do
+          post :edit_form
+        end
+      end
+
       resources :runners, only: [:index, :new, :create, :edit, :update, :destroy] do
         member do
           get :register

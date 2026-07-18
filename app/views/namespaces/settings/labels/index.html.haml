@@ -1,0 +1,23 @@
+- content_for :title, _('Labels Settings')
+- content_for :breadcrumb do
+  - nodes = [{ label: @namespace.group.name, path: namespace_show_path(@namespace.full_path) }, { label: _('Labels'), path: namespace_settings_labels_path(@namespace.full_path) }]
+  = render 'shared/breadcrumb', nodes: nodes
+
+%div{class: 'w-full bg-white p-2 rounded-lg'}
+  %div{class: 'w-full max-w-6xl mx-auto'}
+    %div{class: 'py-6'}
+      %div{class: 'flex items-center justify-between mb-6'}
+        %div{class: 'flex items-center gap-4'}
+          %div{class: 'w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white text-xl font-bold'}
+            = icon 'tag', class: 'w-8 h-8'
+          %div
+            %h1{class: 'text-2xl font-bold text-gray-900'}
+              = _('Labels')
+            %p{class: 'text-gray-600'}
+              = _('Create and manage group labels, available to all projects in this group')
+        = button_to new_form_namespace_settings_labels_path(@namespace.full_path), method: :post, class: 'px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm border-none cursor-pointer' do
+          = icon 'plus', class: 'w-4 h-4 inline-block mr-2'
+          = _('New Label')
+
+    = turbo_frame_tag 'labels-content' do
+      = render 'list'

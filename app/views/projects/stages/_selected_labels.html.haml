@@ -2,7 +2,7 @@
   %div{ class: 'flex flex-col gap-1 mt-1' }
     %div{ class: 'flex flex-wrap gap-1' }
       - selected_label_ids.each do |label_id|
-        - label = @project.namespace.labels.find_by(id: label_id)
+        - label = @project.available_labels.find_by(id: label_id)
         - if label
           %div{ class: 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-medium', id: "selected-label-#{stage.id}-#{label.id}", style: "background-color: #{label.color}20; color: #{label.color}" }
             = label.title

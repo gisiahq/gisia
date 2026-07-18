@@ -18,6 +18,7 @@ class Label < ApplicationRecord
   validates :title, presence: true
   validates :color, presence: true
   validates :namespace_id, presence: true
+  validate :title_must_not_exist_at_group_level, if: -> { title_changed? && namespace&.project_namespace? }
 
   scope :search_by_title, ->(keyword) { keyword.present? ? where('LOWER(title) LIKE ?', "%#{keyword.downcase}%") : none }
   scope :with_scopes, ->(prefixes) do
@@ -39,5 +40,15 @@ class Label < ApplicationRecord
 
   def preloaded_parent_container
     namespace.project
+  end
+
+  private
+
+  def title_must_not_exist_at_group_level
+    ancestor_ids = namespace.lineage_ids - [namespace.id]
+    return if ancestor_ids.empty?
+    return unless Label.where(namespace_id: ancestor_ids, title: title).exists?
+
+    errors.add(:title, 'already exists at the group level')
   end
 end

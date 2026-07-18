@@ -206,6 +206,15 @@ class Namespace < ApplicationRecord
     route&.path || path
   end
 
+  # traversal_ids is synced to the database in an after_create callback but the
+  # in-memory attribute stays empty until after_commit, so fall back to a fresh
+  # read for records inside their creating transaction.
+  def lineage_ids
+    return traversal_ids if traversal_ids.present?
+
+    self.class.where(id: id).pick(:traversal_ids) || [id]
+  end
+
   def kind
     return 'group' if group_namespace?
     return 'project' if project_namespace?

@@ -1,6 +1,6 @@
 = turbo_stream.replace 'labels-content' do
   = turbo_frame_tag 'labels-content' do
-    = render 'form', label: @label, project: @project
+    = render 'shared/labels/form', label: @label, url: label_form_url(@project, @label), cancel_path: labels_path(@project)
 
 = turbo_stream.replace 'flash' do
   %div#flash{ class: 'fixed top-0 left-64 right-0 z-21' }

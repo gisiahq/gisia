@@ -1,40 +1,37 @@
-- url = label.new_record? ? labels_path(project) : namespace_project_settings_label_path(project.namespace.parent.full_path, project.namespace.path, label)
 = form_with(model: label, url: url, local: false, class: 'space-y-6') do |form|
   - if label.errors.any?
     %div{class: 'bg-red-50 border border-red-200 rounded-lg p-4 mb-6'}
       %h2{class: 'text-red-800 font-semibold mb-2'}
-        = pluralize(label.errors.count, "error")
-        prohibited this label from being saved:
+        = n_('%{count} error prohibited this label from being saved:', '%{count} errors prohibited this label from being saved:', label.errors.count) % { count: label.errors.count }
       %ul{class: 'list-disc list-inside text-red-700 text-sm space-y-1'}
         - label.errors.full_messages.each do |message|
           %li= message
 
   %div
-    = form.label :title, class: 'block text-sm font-medium text-gray-900 mb-2'
-    = form.text_field :title, class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: 'Label title'
+    = form.label :title, _('Title'), class: 'block text-sm font-medium text-gray-900 mb-2'
+    = form.text_field :title, class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: _('Label title')
 
   %div
-    = form.label :description, 'Description (optional)', class: 'block text-sm font-medium text-gray-900 mb-2'
-    = form.text_area :description, rows: 4, class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: 'Label description'
+    = form.label :description, _('Description (optional)'), class: 'block text-sm font-medium text-gray-900 mb-2'
+    = form.text_area :description, rows: 4, class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: _('Label description')
 
   %div{'data-controller': 'color-picker'}
-    = form.label :color, 'Color', class: 'block text-sm font-medium text-gray-900 mb-2'
+    = form.label :color, _('Color'), class: 'block text-sm font-medium text-gray-900 mb-2'
     %div{class: 'flex gap-3'}
       %div{class: 'flex-1'}
         = form.text_field :color, class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono', placeholder: '#6366F1', value: label.color.presence || '#6366F1', data: { action: 'input->color-picker#updatePreview' }
       %div{class: 'w-12 h-10 rounded-lg border border-gray-300', data: { 'color-picker-target': 'preview', style: form.object.color.present? ? "background-color: #{form.object.color}" : 'background-color: #6366F1' }}
 
     %div{class: 'mt-4 flex flex-wrap gap-2'}
-      - predefined_colors = ['#EF4444', '#F97316', '#F59E0B', '#EAB308', '#22C55E', '#10B981', '#06B6D4', '#0EA5E9', '#3B82F6', '#6366F1', '#8B5CF6', '#D946EF', '#EC4899', '#F43F5E', '#64748B', '#6B7280']
-      - predefined_colors.each do |color|
+      - suggested_colors.each do |color|
         %button{type: 'button', class: 'w-6 h-6 rounded border hover:border-gray-400 transition-all cursor-pointer', style: "background-color: #{color}; border-color: #{color}99;", data: { action: 'click->color-picker#selectColor', color_value: color }}
 
   %div
-    = form.label :rank, 'Order (optional)', class: 'block text-sm font-medium text-gray-900 mb-2'
+    = form.label :rank, _('Order (optional)'), class: 'block text-sm font-medium text-gray-900 mb-2'
     = form.number_field :rank, class: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: '0'
     %p{class: 'text-xs text-gray-500 mt-1'}
-      Lower values appear first in label lists
+      = _('Lower values appear first in label lists')
 
   %div{class: 'flex gap-3 pt-4'}
     = form.submit class: 'px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium'
-    = link_to 'Cancel', labels_path(project), class: 'px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50'
+    = link_to _('Cancel'), cancel_path, class: 'px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50'

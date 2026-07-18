@@ -26,8 +26,6 @@ class Projects::StagesController < Projects::ApplicationController
   end
 
   def edit_stage
-    @labels = @project.namespace.labels
-
     respond_to do |format|
       format.turbo_stream
     end
@@ -55,7 +53,7 @@ class Projects::StagesController < Projects::ApplicationController
   end
 
   def search_stage_labels
-    @labels = @project.namespace.labels.search_by_title(search_params[:q]).limit(10)
+    @labels = @project.available_labels.search_by_title(search_params[:q]).limit(10)
     @selected_ids = @stage.label_ids.map(&:to_s)
 
     respond_to do |format|

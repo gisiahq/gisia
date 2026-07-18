@@ -26,13 +26,13 @@ module Projects
     end
 
     def initial_workflow_labels
-      namespace.labels.find_or_create_by(title: 'workflow::todo') do |label|
-        label.color = '#66b5d5'
-      end
+      find_or_create_workflow_label('workflow::todo', '#66b5d5')
+      find_or_create_workflow_label('workflow::working_on', '#ff7700')
+    end
 
-      namespace.labels.find_or_create_by(title: 'workflow::working_on') do |label|
-        label.color = '#ff7700'
-      end
+    def find_or_create_workflow_label(title, color)
+      available_labels.find_by(title: title) ||
+        namespace.labels.create(title: title, color: color)
     end
 
     def initial_board
@@ -47,8 +47,8 @@ module Projects
     end
 
     def initial_stages(board)
-      todo_label = namespace.labels.find_by(title: 'workflow::todo')
-      working_on_label = namespace.labels.find_by(title: 'workflow::working_on')
+      todo_label = available_labels.find_by(title: 'workflow::todo')
+      working_on_label = available_labels.find_by(title: 'workflow::working_on')
 
       board.stages.find_or_create_by(title: 'Todo') do |stage|
         stage.label_ids = [todo_label.id]
@@ -71,7 +71,7 @@ module Projects
       template = load_default_issue_template
       return unless template
 
-      todo_label = namespace.labels.find_by(title: 'workflow::todo')
+      todo_label = available_labels.find_by(title: 'workflow::todo')
       return unless todo_label
 
       namespace.issues.find_or_create_by(title: template['title']) do |issue|

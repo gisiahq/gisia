@@ -15,4 +15,4 @@
           %p{class: 'text-gray-600'}
             Create a new project label
 
-      = render 'form', label: @label, project: @project
+      = render 'shared/labels/form', label: @label, url: label_form_url(@project, @label), cancel_path: labels_path(@project)

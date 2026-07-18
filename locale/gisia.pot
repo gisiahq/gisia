@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gisia 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-14 15:36+0800\n"
-"PO-Revision-Date: 2026-07-14 15:36+0800\n"
+"POT-Creation-Date: 2026-07-18 21:30+0800\n"
+"PO-Revision-Date: 2026-07-18 21:30+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -18,82 +18,1738 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-msgid "Settings saved."
+msgid " or "
 msgstr ""
 
-msgid "Note can't be blank"
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d month"
+msgid_plural "%d months"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d week"
+msgid_plural "%d weeks"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d year"
+msgid_plural "%d years"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%{component} is not an allowed sub claim component"
 msgstr ""
 
-msgid "Replies to system notes are not allowed"
+msgid "%{count} error prohibited this label from being saved:"
+msgid_plural "%{count} errors prohibited this label from being saved:"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%{count} jobs"
 msgstr ""
 
-msgid "Position is only allowed on merge request notes"
+msgid "%{count} pending comment"
+msgid_plural "%{count} pending comments"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%{count} related %{pluralized_subject}: %{links}"
 msgstr ""
 
-msgid "Your account has been banned. Please contact an administrator."
+msgid "%{seconds} seconds"
 msgstr ""
 
-msgid "Your account is not active. Please contact an administrator."
+msgid "%{time} ago"
 msgstr ""
 
-msgid "Git LFS is not enabled on this GitLab server, contact your admin."
+msgid "%{value} is not included in the list"
+msgstr ""
+
+msgid "%{viewer} could not be displayed: %{reason}. Options to address this: %{options}."
+msgstr ""
+
+msgid "'%{lock_path}' is locked by @%{lock_user_name}"
+msgstr ""
+
+msgid "'%{lock_path}' is locked in Git LFS by @%{lock_user_name}"
+msgstr ""
+
+msgid "(%{value}) has already been taken"
+msgstr ""
+
+msgid "(optional)"
+msgstr ""
+
+msgid ", or "
+msgstr ""
+
+msgid "A brief description helps others understand your project."
+msgstr ""
+
+msgid "AI Skills"
 msgstr ""
 
 msgid "Access forbidden. Check your access level."
 msgstr ""
 
-msgid "Not found."
+msgid "Account Details"
 msgstr ""
 
-msgid "This item is already linked."
+msgid "Actions"
 msgstr ""
 
-msgid "Invalid file."
+msgid "Active"
 msgstr ""
 
-msgid "Error uploading file"
+msgid "Active Groups"
 msgstr ""
 
-msgid "Group was successfully created."
+msgid "Active Users"
 msgstr ""
 
-msgid "Group was successfully updated."
+msgid "Activity"
 msgstr ""
 
-msgid "Group was successfully destroyed."
+msgid "Add Access Token"
 msgstr ""
 
-msgid "You are not authorized to use this namespace."
+msgid "Add Key"
 msgstr ""
 
-msgid "You are not authorized to perform this action."
+msgid "Add Member"
+msgstr ""
+
+msgid "Add Protection Rule"
+msgstr ""
+
+msgid "Add SSH Key"
+msgstr ""
+
+msgid "Add Token"
+msgstr ""
+
+msgid "Add Variable"
+msgstr ""
+
+msgid "Add Your First Key"
+msgstr ""
+
+msgid "Add Your First Token"
+msgstr ""
+
+msgid "Add a new SSH key for secure access"
+msgstr ""
+
+msgid "Add notes such as the runner owner or what it should be used for."
+msgstr ""
+
+msgid "Add protection rules above to control tag creation"
+msgstr ""
+
+msgid "Add protection rules above to secure important branches"
+msgstr ""
+
+msgid "Add tags to specify jobs that the runner can run."
+msgstr ""
+
+msgid "Add to review"
+msgstr ""
+
+msgid "Add variable"
+msgstr ""
+
+msgid "Add your first SSH key to get started with secure access"
+msgstr ""
+
+msgid "Add your first personal access token to get started"
+msgstr ""
+
+msgid "Add your first variable"
+msgstr ""
+
+msgid "Additional permissions"
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+msgid "Admin Dashboard"
+msgstr ""
+
+msgid "AdminSettings|If selected, only administrators are able to create internal groups, projects, and snippets."
+msgstr ""
+
+msgid "AdminSettings|If selected, only administrators are able to create private groups, projects, and snippets."
+msgstr ""
+
+msgid "AdminSettings|If selected, only administrators are able to create public groups, projects, and snippets. Also, profiles are only visible to authenticated users."
+msgstr ""
+
+msgid "Administrator"
+msgstr ""
+
+msgid "Admins"
+msgstr ""
+
+msgid "Advanced Configuration"
+msgstr ""
+
+msgid "Advanced Configuration (optional)"
+msgstr ""
+
+msgid "All Jobs"
+msgstr ""
+
+msgid "All projects"
+msgstr ""
+
+msgid "All statuses"
+msgstr ""
+
+msgid "All visibility levels"
+msgstr ""
+
+msgid "Allow merge"
+msgstr ""
+
+msgid "Allow push"
+msgstr ""
+
+msgid "Allow rewriting history"
+msgstr ""
+
+msgid "Allow unauthenticated users to use search"
+msgstr ""
+
+msgid "Allowed to create"
+msgstr ""
+
+msgid "And %{count} more members..."
+msgstr ""
+
+msgid "And %{count} more projects..."
+msgstr ""
+
+msgid "Are you sure you want to block this user?"
+msgstr ""
+
+msgid "Are you sure you want to cancel all running and pending jobs?"
+msgstr ""
+
+msgid "Are you sure you want to cancel this job?"
+msgstr ""
+
+msgid "Are you sure you want to close this merge request?"
+msgstr ""
+
+msgid "Are you sure you want to delete the variable '%{key}'?"
+msgstr ""
+
+msgid "Are you sure you want to delete this SSH key?"
+msgstr ""
+
+msgid "Are you sure you want to delete this group?"
+msgstr ""
+
+msgid "Are you sure you want to delete this group? This action cannot be undone."
+msgstr ""
+
+msgid "Are you sure you want to delete this pending comment?"
+msgstr ""
+
+msgid "Are you sure you want to delete this project?"
+msgstr ""
+
+msgid "Are you sure you want to delete this project? This action cannot be undone."
+msgstr ""
+
+msgid "Are you sure you want to delete this runner?"
+msgstr ""
+
+msgid "Are you sure you want to discard all pending comments?"
+msgstr ""
+
+msgid "Are you sure you want to merge this merge request?"
+msgstr ""
+
+msgid "Are you sure you want to remove this member?"
+msgstr ""
+
+msgid "Are you sure you want to revoke \"%{name}\"?"
+msgstr ""
+
+msgid "Are you sure?"
+msgstr ""
+
+msgid "At least 8 characters required"
+msgstr ""
+
+msgid "Auto-cancel pending pipelines"
+msgstr ""
+
+msgid "Avatar"
+msgstr ""
+
+msgid "Back to Keys"
+msgstr ""
+
+msgid "Banned"
+msgstr ""
+
+msgid "Basic Configuration"
+msgstr ""
+
+msgid "Basic Information"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Block User"
+msgstr ""
+
+msgid "Blocked"
+msgstr ""
+
+msgid "Board"
+msgstr ""
+
+msgid "Branch"
+msgstr ""
+
+msgid "Branch Defaults"
+msgstr ""
+
+msgid "Branch or tag"
+msgstr ""
+
+msgid "Branch pattern"
+msgstr ""
+
+msgid "Branch:"
+msgstr ""
+
+msgid "Branches"
+msgstr ""
+
+msgid "Branches for Project:"
+msgstr ""
+
+msgid "Browse"
+msgstr ""
+
+msgid "CI Lint"
+msgstr ""
+
+msgid "CI configuration is invalid."
+msgstr ""
+
+msgid "CI configuration is valid."
+msgstr ""
+
+msgid "CI/CD"
+msgstr ""
+
+msgid "CI/CD Settings"
+msgstr ""
+
+msgid "CI/CD configuration file"
 msgstr ""
 
 msgid "CI/CD settings were successfully updated."
 msgstr ""
 
-msgid "Member was successfully added."
+msgid "Can merge pull requests"
 msgstr ""
 
-msgid "Member was successfully updated."
+msgid "Cancel"
 msgstr ""
 
-msgid "Member was successfully removed."
+msgid "Cancel All"
 msgstr ""
 
-msgid "Cannot remove the last owner of the group."
+msgid "Canceled"
 msgstr ""
 
 msgid "Cannot demote the last owner of the group."
 msgstr ""
 
+msgid "Cannot link an item to itself."
+msgstr ""
+
+msgid "Cannot remove the last owner of the group."
+msgstr ""
+
+msgid "Cannot remove the last owner of the project."
+msgstr ""
+
+msgid "Change Password"
+msgstr ""
+
+msgid "Changed files"
+msgstr ""
+
+msgid "Changing the path will update all URLs for this group and its projects."
+msgstr ""
+
+msgid "Changing the path will update all URLs for this project."
+msgstr ""
+
+msgid "Changing your email address will require confirmation before taking effect."
+msgstr ""
+
+msgid "Check if a newer version of Gisia is available."
+msgstr ""
+
+msgid "Check out our guides and documentation to make the most of your experience."
+msgstr ""
+
+msgid "Choose who can see and access this project."
+msgstr ""
+
+msgid "Choose who can see this group"
+msgstr ""
+
+msgid "Choose who can see this project"
+msgstr ""
+
+msgid "Clone the repository from scratch for every job."
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Closed"
+msgstr ""
+
+msgid "Closed by"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+msgid "Command line instructions"
+msgstr ""
+
+msgid "Comment"
+msgstr ""
+
+msgid "Commit"
+msgstr ""
+
+msgid "Commits"
+msgstr ""
+
+msgid "Commits (%{count})"
+msgstr ""
+
+msgid "Confidential"
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Configure general pipeline settings and behavior."
+msgstr ""
+
+msgid "Configure merge request behavior for this project"
+msgstr ""
+
+msgid "Configure pipeline settings and CI/CD options"
+msgstr ""
+
+msgid "Configure repository defaults and settings"
+msgstr ""
+
+msgid "Configure the default branch name for new repositories."
+msgstr ""
+
+msgid "Configure usage statistics and telemetry settings"
+msgstr ""
+
+msgid "Confirm Password"
+msgstr ""
+
+msgid "Confirm new password"
+msgstr ""
+
+msgid "Confirmed"
+msgstr ""
+
+msgid "Connect a runner to Gisia and start executing CI/CD pipelines. Complete the setup by following these simple steps."
+msgstr ""
+
+msgid "Control merge behavior for merge requests in this project."
+msgstr ""
+
+msgid "Copy"
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Create Group"
+msgstr ""
+
+msgid "Create Merge Request"
+msgstr ""
+
+msgid "Create Project"
+msgstr ""
+
+msgid "Create Runner"
+msgstr ""
+
+msgid "Create SSH Key"
+msgstr ""
+
+msgid "Create User"
+msgstr ""
+
+msgid "Create a Group"
+msgstr ""
+
+msgid "Create a Project"
+msgstr ""
+
+msgid "Create a group runner to run jobs for all projects in this group and its subgroups."
+msgstr ""
+
+msgid "Create a group runner to run jobs for all projects in this group."
+msgstr ""
+
+msgid "Create a new merge request by selecting source and target projects and branches."
+msgstr ""
+
+msgid "Create a new personal access token"
+msgstr ""
+
+msgid "Create a new repository"
+msgstr ""
+
+msgid "Create a new user account"
+msgstr ""
+
+msgid "Create a project runner to run jobs for this project only."
+msgstr ""
+
+msgid "Create a runner dedicated to this project. It only picks up jobs from this project."
+msgstr ""
+
+msgid "Create an instance runner to generate a command that registers the runner with all its configurations."
+msgstr ""
+
+msgid "Create and manage group labels, available to all projects in this group"
+msgstr ""
+
+msgid "Create and manage project labels"
+msgstr ""
+
+msgid "Create personal access token"
+msgstr ""
+
+msgid "Create your first merge request to start collaborating and reviewing code changes."
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Created %{date}"
+msgstr ""
+
+msgid "Created on:"
+msgstr ""
+
+msgid "Current Password"
+msgstr ""
+
+msgid "Custom pattern..."
+msgstr ""
+
+msgid "DSA keys are considered deprecated."
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Default Branch"
+msgstr ""
+
+msgid "Default branch name"
+msgstr ""
+
+msgid "DefaultBranchProtection|Both developers and maintainers can push new commits, but cannot force push."
+msgstr ""
+
+msgid "DefaultBranchProtection|Both developers and maintainers can push new commits, force push, or delete the branch."
+msgstr ""
+
+msgid "DefaultBranchProtection|Developers can push the initial commit to a repository, but none afterward. Maintainers can always push. No one can force push."
+msgstr ""
+
+msgid "DefaultBranchProtection|Developers cannot push new commits, but are allowed to accept merge requests to the branch. Maintainers can push to the branch."
+msgstr ""
+
+msgid "DefaultBranchProtection|Developers cannot push new commits, but maintainers can. No one can force push."
+msgstr ""
+
+msgid "DefaultBranchProtection|Fully protected"
+msgstr ""
+
+msgid "DefaultBranchProtection|Fully protected after initial push"
+msgstr ""
+
+msgid "DefaultBranchProtection|Not protected"
+msgstr ""
+
+msgid "DefaultBranchProtection|Once a repository is created this branch will be protected."
+msgstr ""
+
+msgid "DefaultBranchProtection|Partially protected"
+msgstr ""
+
+msgid "DefaultBranchProtection|Protected"
+msgstr ""
+
+msgid "DefaultBranchProtection|Protected against pushes"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Delete Group"
+msgstr ""
+
+msgid "Delete Runner"
+msgstr ""
+
+msgid "Delete source branch after merge"
+msgstr ""
+
+msgid "Delete variable"
+msgstr ""
+
+msgid "Describe the changes in this merge request"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Description (optional)"
+msgstr ""
+
+msgid "Developer"
+msgstr ""
+
+msgid "Diffs (%{count})"
+msgstr ""
+
+msgid "Direct member"
+msgstr ""
+
+msgid "Discard"
+msgstr ""
+
+msgid "Documentation"
+msgstr ""
+
+msgid "Download"
+msgstr ""
+
+msgid "Downstream"
+msgstr ""
+
+msgid "Due date"
+msgstr ""
+
+msgid "Duration"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Edit %{username}"
+msgstr ""
+
+msgid "Edit Group"
+msgstr ""
+
+msgid "Edit Group Runner"
+msgstr ""
+
+msgid "Edit Merge Request"
+msgstr ""
+
+msgid "Edit Profile"
+msgstr ""
+
+msgid "Edit Project"
+msgstr ""
+
+msgid "Edit Project Runner"
+msgstr ""
+
+msgid "Edit SSH Key"
+msgstr ""
+
+msgid "Edit issue"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Enable VS Code Extension Marketplace and configure the extensions registry for Web IDE."
+msgstr ""
+
+msgid "Enable group runners for this project"
+msgstr ""
+
+msgid "Enable instance runners for all projects in this group"
+msgstr ""
+
+msgid "Enable instance runners for this project"
+msgstr ""
+
+msgid "Enable squash merge"
+msgstr ""
+
+msgid "Enable version check"
+msgstr ""
+
+msgid "Enter a description for your project..."
+msgstr ""
+
+msgid "Enter merge request title"
+msgstr ""
+
+msgid "Enter the job timeout in seconds. Must be a minimum of 600 seconds."
+msgstr ""
+
+msgid "Epics"
+msgstr ""
+
+msgid "Error uploading file"
+msgstr ""
+
+msgid "Execute the registration command inside the container to link it to your Gisia instance."
+msgstr ""
+
+msgid "Expiration"
+msgstr ""
+
+msgid "Expiration date"
+msgstr ""
+
+msgid "Expiration date (optional)"
+msgstr ""
+
+msgid "Expired"
+msgstr ""
+
+msgid "Expires %{date}"
+msgstr ""
+
+msgid "Expires At"
+msgstr ""
+
+msgid "Export variable to pipelines running on protected branches and tags only"
+msgstr ""
+
+msgid "ExternalAuthorization|Access to projects is validated on an external service using their classification label."
+msgstr ""
+
+msgid "ExternalAuthorization|Certificate used to authenticate with the external authorization service. If blank, the server certificate is validated when accessing over HTTPS."
+msgstr ""
+
+msgid "ExternalAuthorization|Classification label to use when requesting authorization if no specific label is defined on the project."
+msgstr ""
+
+msgid "ExternalAuthorization|Does not apply if service URL is specified."
+msgstr ""
+
+msgid "ExternalAuthorization|Passphrase required to decrypt the private key. Encrypted when stored."
+msgstr ""
+
+msgid "ExternalAuthorization|Period GitLab waits for a response from the external service. If there is no response, access is denied. Default: 0.5 seconds."
+msgstr ""
+
+msgid "ExternalAuthorization|Private key of client authentication certificate. Encrypted when stored."
+msgstr ""
+
+msgid "ExternalAuthorization|URL to which the projects make authorization requests. If the URL is blank, cross-project features are available and can still specify classification labels for projects."
+msgstr ""
+
+msgid "Failed"
+msgstr ""
+
+msgid "Fingerprint"
+msgstr ""
+
+msgid "Flags"
+msgstr ""
+
+msgid "For %{ref}"
+msgstr ""
+
+msgid "For Merge Request"
+msgstr ""
+
+msgid "Force Push"
+msgstr ""
+
+msgid "Force push"
+msgstr ""
+
+msgid "Form saved failed"
+msgstr ""
+
+msgid "Full Name"
+msgstr ""
+
+msgid "Full access to the API, including read and write."
+msgstr ""
+
+msgid "General"
+msgstr ""
+
+msgid "General pipelines"
+msgstr ""
+
+msgid "Get Help"
+msgstr ""
+
+msgid "Get started by creating your first project in this group"
+msgstr ""
+
+msgid "Git LFS is not enabled on this GitLab server, contact your admin."
+msgstr ""
+
+msgid "Git clone"
+msgstr ""
+
+msgid "Git fetch"
+msgstr ""
+
+msgid "Git global setup"
+msgstr ""
+
+msgid "Git strategy"
+msgstr ""
+
+msgid "Given inputs must be a hash"
+msgstr ""
+
+msgid "Given inputs not defined in the `spec` section of the included configuration file"
+msgstr ""
+
+msgid "Grants full access to the admin area"
+msgstr ""
+
+msgid "Group"
+msgstr ""
+
+msgid "Group ID"
+msgstr ""
+
+msgid "Group Information"
+msgstr ""
+
+msgid "Group Members"
+msgstr ""
+
+msgid "Group Name"
+msgstr ""
+
+msgid "Group name"
+msgstr ""
+
+msgid "Group path"
+msgstr ""
+
+msgid "Group was successfully created."
+msgstr ""
+
+msgid "Group was successfully destroyed."
+msgstr ""
+
+msgid "Group was successfully updated."
+msgstr ""
+
+msgid "Groups"
+msgstr ""
+
+msgid "Groups will appear here when they are created."
+msgstr ""
+
+msgid "HTTP Clone URL"
+msgstr ""
+
+msgid "Hashed storage can't be disabled anymore for new projects"
+msgstr ""
+
+msgid "History"
+msgstr ""
+
+msgid "How the job limiter handles jobs exceeding the thresholds specified below. The 'track' mode only logs the jobs. The 'compress' mode compresses the jobs and raises an exception if the compressed size exceeds the limit."
+msgstr ""
+
+msgid "INFO: Your SSH key expires soon. Please generate a new key."
+msgstr ""
+
+msgid "INFO: Your SSH key has expired. Please generate a new key."
+msgstr ""
+
+msgid "If a project has a shorter job timeout period, the job timeout period of the instance runner is used instead."
+msgstr ""
+
+msgid "Important:"
+msgstr ""
+
+msgid "Incompatible options set!"
+msgstr ""
+
+msgid "Inherited"
+msgstr ""
+
+msgid "Instance"
+msgstr ""
+
+msgid "Instance runners are disabled by a parent group and cannot be enabled here."
+msgstr ""
+
+msgid "Internal"
+msgstr ""
+
+msgid "Internal - Authenticated users can access"
+msgstr ""
+
+msgid "Invalid feature"
+msgstr ""
+
+msgid "Invalid file format with specified file type"
+msgstr ""
+
+msgid "Invalid file."
+msgstr ""
+
+msgid "Invalid repository path"
+msgstr ""
+
+msgid "InviteUserToOrganization|already belongs to another organization"
+msgstr ""
+
+msgid "InviteUserToOrganization|not authorized to create member"
+msgstr ""
+
+msgid "InviteUserToOrganization|not authorized to update member"
+msgstr ""
+
+msgid "InviteUserToOrganization|the member access level can't be higher than the current user's one"
+msgstr ""
+
+msgid "Issues"
+msgstr ""
+
+msgid "It's you"
+msgstr ""
+
+msgid "Item not found."
+msgstr ""
+
+msgid "Job"
+msgstr ""
+
+msgid "Job cannot be canceled."
+msgstr ""
+
+msgid "Job output"
+msgstr ""
+
+msgid "Job was successfully canceled."
+msgstr ""
+
+msgid "Jobs"
+msgstr ""
+
+msgid "Jobs (%{count})"
+msgstr ""
+
+msgid "Jobs for Project:"
+msgstr ""
+
+msgid "Jobs run"
+msgstr ""
+
+msgid "Jobs will appear here when CI/CD pipelines are executed."
+msgstr ""
+
+msgid "Keep the token"
+msgstr ""
+
+msgid "Key"
+msgstr ""
+
+msgid "Key Information"
+msgstr ""
+
+msgid "Key length should be at least 2048 bits."
+msgstr ""
+
+msgid "Label description"
+msgstr ""
+
+msgid "Label title"
+msgstr ""
+
+msgid "Labels"
+msgstr ""
+
+msgid "Labels Settings"
+msgstr ""
+
+msgid "Labels will be automatically removed from closed issues"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Last Contact"
+msgstr ""
+
+msgid "Last Updated"
+msgstr ""
+
+msgid "Last Used"
+msgstr ""
+
+msgid "Last activity"
+msgstr ""
+
+msgid "Last contact"
+msgstr ""
+
+msgid "Last used %{time} ago"
+msgstr ""
+
+msgid "Launch a Docker container running GitLab Runner."
+msgstr ""
+
+msgid "Learn more"
+msgstr ""
+
+msgid "Leave blank to keep current password"
+msgstr ""
+
+msgid "Leave password fields blank to keep the current password"
+msgstr ""
+
+msgid "Loading..."
+msgstr ""
+
+msgid "Lock not found"
+msgstr ""
+
+msgid "Lower values appear first in label lists"
+msgstr ""
+
+msgid "Maintainer"
+msgstr ""
+
+msgid "Maintenance note"
+msgstr ""
+
+msgid "Manage all projects across the instance"
+msgstr ""
+
+msgid "Manage and collaborate on your projects"
+msgstr ""
+
+msgid "Manage and monitor CI/CD jobs across all projects"
+msgstr ""
+
+msgid "Manage environment variables for CI/CD pipelines"
+msgstr ""
+
+msgid "Manage group members and their roles"
+msgstr ""
+
+msgid "Manage group namespaces and memberships"
+msgstr ""
+
+msgid "Manage instance, group, and project runners"
+msgstr ""
+
+msgid "Manage project members and their roles"
+msgstr ""
+
+msgid "Manage tokens for API and Git HTTP access"
+msgstr ""
+
+msgid "Manage your SSH keys for secure access"
+msgstr ""
+
+msgid "Masked"
+msgstr ""
+
+msgid "Maximum amount of time the runner can run before it terminates."
+msgstr ""
+
+msgid "Maximum job timeout"
+msgstr ""
+
+msgid "Maximum number of %{name} (%{count}) exceeded"
+msgstr ""
+
+msgid "Maximum timeout"
+msgstr ""
+
+msgid "Member since %{date}"
+msgstr ""
+
+msgid "Member was successfully added."
+msgstr ""
+
+msgid "Member was successfully removed."
+msgstr ""
+
+msgid "Member was successfully updated."
+msgstr ""
+
+msgid "MemberRole|Default role: %{role}"
+msgstr ""
+
+msgid "MemberRole|The Developer role gives users access to contribute code while restricting sensitive administrative actions."
+msgstr ""
+
+msgid "MemberRole|The Guest role is for users who need visibility into a project or group but should not have the ability to make changes, such as external stakeholders."
+msgstr ""
+
+msgid "MemberRole|The Maintainer role is primarily used for managing code reviews, approvals, and administrative settings for projects. This role can also manage project memberships."
+msgstr ""
+
+msgid "MemberRole|The None role is assigned to the invited group users of a shared project when project sharing is disabled in group setting."
+msgstr ""
+
+msgid "MemberRole|The Owner role is typically assigned to the individual or team responsible for managing and maintaining the group or creating the project. This role has the highest level of administrative control, and can manage all aspects of the group or project, including managing other Owners."
+msgstr ""
+
+msgid "MemberRole|The Planner role is suitable for team members who need to manage projects and track work items but do not need to contribute code."
+msgstr ""
+
+msgid "MemberRole|The Reporter role is suitable for team members who need to stay informed about a project or group but do not actively contribute code."
+msgstr ""
+
+msgid "MemberRole|The Security Manager role is for security team members who need to view and manage security features for the group or project."
+msgstr ""
+
+msgid "Members"
+msgstr ""
+
+msgid "Members Settings"
+msgstr ""
+
+msgid "Merge"
+msgstr ""
+
+msgid "Merge Options"
+msgstr ""
+
+msgid "Merge Request Settings"
+msgstr ""
+
+msgid "Merge Requests"
+msgstr ""
+
+msgid "Merged"
+msgstr ""
+
+msgid "Metrics"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Namespace"
+msgstr ""
+
+msgid "Need help getting started?"
+msgstr ""
+
+msgid "Never"
+msgstr ""
+
+msgid "Never contacted"
+msgstr ""
+
+msgid "Never used"
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "New Access Token"
+msgstr ""
+
+msgid "New Group"
+msgstr ""
+
+msgid "New Group Runner"
+msgstr ""
+
+msgid "New Instance Runner"
+msgstr ""
+
+msgid "New Issue"
+msgstr ""
+
+msgid "New Label"
+msgstr ""
+
+msgid "New Merge Request"
+msgstr ""
+
+msgid "New Password"
+msgstr ""
+
+msgid "New Project"
+msgstr ""
+
+msgid "New Project Runner"
+msgstr ""
+
+msgid "New SSH Key"
+msgstr ""
+
+msgid "New User"
+msgstr ""
+
+msgid "New Webhook"
+msgstr ""
+
+msgid "New group runner"
+msgstr ""
+
+msgid "New instance runner"
+msgstr ""
+
+msgid "New issue"
+msgstr ""
+
+msgid "New merge request"
+msgstr ""
+
+msgid "New project runner"
+msgstr ""
+
+msgid "New user"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "No SSH keys found"
+msgstr ""
+
+msgid "No assignees"
+msgstr ""
+
+msgid "No branches found"
+msgstr ""
+
+msgid "No branches match your search for \"%{search}\". Try a different search term."
+msgstr ""
+
+msgid "No commits found"
+msgstr ""
+
+msgid "No commits found for this file path."
+msgstr ""
+
+msgid "No description"
+msgstr ""
+
+msgid "No description provided."
+msgstr ""
+
+msgid "No expiration"
+msgstr ""
+
+msgid "No files found"
+msgstr ""
+
+msgid "No groups found"
+msgstr ""
+
+msgid "No jobs found"
+msgstr ""
+
+msgid "No members found."
+msgstr ""
+
+msgid "No members in this group"
+msgstr ""
+
+msgid "No members in this project"
+msgstr ""
+
+msgid "No merge requests yet"
+msgstr ""
+
+msgid "No output available for this job yet"
+msgstr ""
+
+msgid "No projects found"
+msgstr ""
+
+msgid "No projects found."
+msgstr ""
+
+msgid "No projects in this group"
+msgstr ""
+
+msgid "No projects yet"
+msgstr ""
+
+msgid "No protected branches configured"
+msgstr ""
+
+msgid "No protected tags configured"
+msgstr ""
+
+msgid "No runner"
+msgstr ""
+
+msgid "No runners available"
+msgstr ""
+
+msgid "No runners found"
+msgstr ""
+
+msgid "No tags"
+msgstr ""
+
+msgid "No tags found"
+msgstr ""
+
+msgid "No tags match your search for \"%{search}\". Try a different search term."
+msgstr ""
+
+msgid "No tokens found"
+msgstr ""
+
+msgid "No users found"
+msgstr ""
+
+msgid "No variables defined"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Not found."
+msgstr ""
+
+msgid "Not set"
+msgstr ""
+
+msgid "Note can't be blank"
+msgstr ""
+
+msgid "Object does not exist on the server or you don't have permissions to access it"
+msgstr ""
+
+msgid "Offline"
+msgstr ""
+
+msgid "Online"
+msgstr ""
+
+msgid "Only administrators can view this."
+msgstr ""
+
+msgid "Only an owner of the project can move it to another namespace."
+msgstr ""
+
+msgid "Only issues and merge requests can be linked."
+msgstr ""
+
+msgid "Only issues can be linked to a merge request."
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "Order (optional)"
+msgstr ""
+
+msgid "Organize and collaborate"
+msgstr ""
+
+msgid "Organize projects and collaborate with your team"
+msgstr ""
+
+msgid "Organize your projects by creating a group for your team, department, or organization."
+msgstr ""
+
+msgid "Organize your workflow and track progress effectively."
+msgstr ""
+
+msgid "Outdated"
+msgstr ""
+
+msgid "Overview"
+msgstr ""
+
+msgid "Owner"
+msgstr ""
+
+msgid "PNG, JPG, GIF up to 200KB. Ideal size: 192x192 pixels."
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Password confirmation"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Path to the CI/CD configuration file. Leave empty to use the default '.gitlab-ci.yml'."
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Paused"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Pending Approval"
+msgstr ""
+
+msgid "Pending comments discarded."
+msgstr ""
+
+msgid "Per-job timeout in seconds. Must be at least 60 seconds."
+msgstr ""
+
+msgid "Permissions & Status"
+msgstr ""
+
+msgid "Personal Access Tokens"
+msgstr ""
+
+msgid "Pin"
+msgstr ""
+
+msgid "Pipeline Configuration"
+msgstr ""
+
+msgid "Pipeline created successfully."
+msgstr ""
+
+msgid "Pipelines"
+msgstr ""
+
+msgid "Pipelines (%{count})"
+msgstr ""
+
+msgid "Pipelines for Project:"
+msgstr ""
+
+msgid "Pipelines|Invalid input specification: expected a hash-like object, got %{class_name}"
+msgstr ""
+
+msgid "Pipeline|In %{pipeline_ref}"
+msgstr ""
+
+msgid "Pipeline|Merge request pipeline"
+msgstr ""
+
+msgid "Pipeline|Merge train pipeline"
+msgstr ""
+
+msgid "Pipeline|Merged results pipeline"
+msgstr ""
+
+msgid "Pipeline|Pipeline"
+msgstr ""
+
+msgid "Plan"
+msgstr ""
+
+msgid "Please correct the following errors:"
+msgstr ""
+
+msgid "Please fix the following errors:"
+msgstr ""
+
+msgid "Position is only allowed on merge request notes"
+msgstr ""
+
+msgid "Potentially unwanted character detected: Unicode BiDi Control"
+msgstr ""
+
+msgid "Private"
+msgstr ""
+
+msgid "Private - Only project members can access"
+msgstr ""
+
+msgid "Profile"
+msgstr ""
+
+msgid "Profile Information"
+msgstr ""
+
+msgid "Project"
+msgstr ""
+
+msgid "Project ID"
+msgstr ""
+
+msgid "Project ID:"
+msgstr ""
+
+msgid "Project ID: %{id} • Created %{date}"
+msgstr ""
+
+msgid "Project Info"
+msgstr ""
+
+msgid "Project Information"
+msgstr ""
+
+msgid "Project Members"
+msgstr ""
+
+msgid "Project Name"
+msgstr ""
+
+msgid "Project Path"
+msgstr ""
+
+msgid "Project Runners"
+msgstr ""
+
+msgid "Project Templates"
+msgstr ""
+
+msgid "Project Variables"
+msgstr ""
+
+msgid "Project name"
+msgstr ""
+
+msgid "Project path"
+msgstr ""
+
+msgid "ProjectCreationLevel|Administrators"
+msgstr ""
+
+msgid "ProjectCreationLevel|Developers"
+msgstr ""
+
+msgid "ProjectCreationLevel|Maintainers"
+msgstr ""
+
+msgid "ProjectCreationLevel|No one"
+msgstr ""
+
+msgid "ProjectCreationLevel|Owners"
+msgstr ""
+
+msgid "Projects"
+msgstr ""
+
+msgid "Projects will appear here when they are created."
+msgstr ""
+
+msgid "Protect Branch"
+msgstr ""
+
+msgid "Protect Tag"
+msgstr ""
+
+msgid "Protect important branches by restricting who can push to them and how"
+msgstr ""
+
+msgid "Protect variable"
+msgstr ""
+
+msgid "Protected"
+msgstr ""
+
+msgid "Protected Branches"
+msgstr ""
+
+msgid "Protected Branches (%{count})"
+msgstr ""
+
+msgid "Protected Tags"
+msgstr ""
+
+msgid "Protected Tags (%{count})"
+msgstr ""
+
+msgid "Public"
+msgstr ""
+
+msgid "Public - Anyone can access without authentication"
+msgstr ""
+
+msgid "Push"
+msgstr ""
+
+msgid "Push an existing Git repository"
+msgstr ""
+
+msgid "Push an existing folder"
+msgstr ""
+
+msgid "Quick Actions"
+msgstr ""
+
+msgid "Re-use the project workspace and fetch changes."
+msgstr ""
+
+msgid "Read-only access to the API."
+msgstr ""
+
+msgid "Ready to get started with your projects and collaboration?"
+msgstr ""
+
+msgid "Recent Jobs"
+msgstr ""
+
+msgid "Recent Projects"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid "Register Group Runner"
+msgstr ""
+
+msgid "Register Project Runner"
+msgstr ""
+
+msgid "Register Your Runner"
+msgstr ""
+
+msgid "Related merge request %{link_to_merge_request} to merge %{link_to_merge_request_source_branch}"
+msgstr ""
+
+msgid "Related merge request %{link_to_merge_request} to merge %{link_to_merge_request_source_branch} into %{link_to_merge_request_target_branch}"
+msgstr ""
+
+msgid "Remote object has no absolute path."
+msgstr ""
+
+msgid "Remove protection from %{name}?"
+msgstr ""
+
+msgid "Reopen"
+msgstr ""
+
+msgid "Replies to system notes are not allowed"
+msgstr ""
+
+msgid "Repository"
+msgstr ""
+
+msgid "Repository Info"
+msgstr ""
+
+msgid "Repository Settings"
+msgstr ""
+
+msgid "Repository Size"
+msgstr ""
+
+msgid "Repository has no branches yet. Enter a branch name or leave empty for instance default."
+msgstr ""
+
+msgid "Required access level"
+msgstr ""
+
+msgid "Restrict global search to authenticated users only"
+msgstr ""
+
+msgid "Restrict pushes and merges to important branches."
+msgstr ""
+
+msgid "Restrict who can create tags in this repository."
+msgstr ""
+
+msgid "Restrict who can create tags matching these patterns"
+msgstr ""
+
+msgid "Resume"
+msgstr ""
+
+msgid "Retry"
+msgstr ""
+
+msgid "Review submitted."
+msgstr ""
+
+msgid "Revoke"
+msgstr ""
+
+msgid "Revoked"
+msgstr ""
+
+msgid "Role"
+msgstr ""
+
+msgid "Run pipeline"
+msgstr ""
+
+msgid "Run untagged jobs"
+msgstr ""
+
+msgid "Runner"
+msgstr ""
+
+msgid "Runner Information"
+msgstr ""
+
+msgid "Runner Type"
+msgstr ""
+
+msgid "Runner availability"
+msgstr ""
+
 msgid "Runner created. Please register it."
 msgstr ""
 
-msgid "Runner was successfully updated."
+msgid "Runner description"
 msgstr ""
 
-msgid "Runner was successfully deleted."
+msgid "Runner not found"
 msgstr ""
 
 msgid "Runner paused."
@@ -102,66 +1758,124 @@ msgstr ""
 msgid "Runner resumed."
 msgstr ""
 
-msgid "Runner not found"
-msgstr ""
-
-msgid "Review submitted."
-msgstr ""
-
-msgid "Pending comments discarded."
-msgstr ""
-
-msgid "Item not found."
-msgstr ""
-
-msgid "Cannot link an item to itself."
-msgstr ""
-
-msgid "Only issues and merge requests can be linked."
-msgstr ""
-
-msgid "Job was successfully canceled."
-msgstr ""
-
-msgid "Job cannot be canceled."
-msgstr ""
-
-msgid "Only issues can be linked to a merge request."
-msgstr ""
-
-msgid "Pipeline created successfully."
-msgstr ""
-
-msgid "ref must include a valid prefix"
-msgstr ""
-
-msgid "Cannot remove the last owner of the project."
-msgstr ""
-
 msgid "Runner settings were successfully updated."
 msgstr ""
 
-msgid "Only an owner of the project can move it to another namespace."
+msgid "Runner was successfully deleted."
 msgstr ""
 
-msgid ""
-"Server supports batch API only, please update your Git LFS client to version 1"
-".0.1 and up."
+msgid "Runner was successfully updated."
 msgstr ""
 
-msgid "Object does not exist on the server or you don't have permissions to access it"
+msgid "Runners"
 msgstr ""
 
-msgid "You cannot write to this read-only GitLab instance."
+msgid "Runners Settings"
 msgstr ""
 
-msgid "Allow unauthenticated users to use search"
+msgid "Runners available to this group — instance, inherited, and its own"
 msgstr ""
 
-msgid "Restrict global search to authenticated users only"
+msgid "Runners available to this project — instance, group, and its own"
 msgstr ""
 
-msgid "Show work items in global search results"
+msgid "Runners will appear here when they are registered."
+msgstr ""
+
+msgid "Running"
+msgstr ""
+
+msgid "SHA256 Fingerprint"
+msgstr ""
+
+msgid "SSH Clone URL"
+msgstr ""
+
+msgid "SSH Key"
+msgstr ""
+
+msgid "SSH Key Details"
+msgstr ""
+
+msgid "SSH Keys"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Save Changes"
+msgstr ""
+
+msgid "Save changes"
+msgstr ""
+
+msgid "Scopes"
+msgstr ""
+
+msgid "Search branches"
+msgstr ""
+
+msgid "Search branches and tags…"
+msgstr ""
+
+msgid "Search by SHA"
+msgstr ""
+
+msgid "Search by name, email, or username"
+msgstr ""
+
+msgid "Search groups"
+msgstr ""
+
+msgid "Search or filter issues..."
+msgstr ""
+
+msgid "Search projects"
+msgstr ""
+
+msgid "Search projects..."
+msgstr ""
+
+msgid "Search tags"
+msgstr ""
+
+msgid "Select a Namespace"
+msgstr ""
+
+msgid "Select a user"
+msgstr ""
+
+msgid "Select branch..."
+msgstr ""
+
+msgid "Select tag..."
+msgstr ""
+
+msgid "Select the default branch from existing branches or leave empty for instance default."
+msgstr ""
+
+msgid "Select usage type"
+msgstr ""
+
+msgid "Send notifications to external applications in response to events"
+msgstr ""
+
+msgid "Send this to your bot to enable project operations"
+msgstr ""
+
+msgid "Separate multiple tags with a comma. For example,"
+msgstr ""
+
+msgid "Server supports batch API only, please update your Git LFS client to version 1.0.1 and up."
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Settings saved."
+msgstr ""
+
+msgid "Shared runners"
 msgstr ""
 
 msgid "Show merge requests in global search results"
@@ -173,1805 +1887,280 @@ msgstr ""
 msgid "Show users in global search results"
 msgstr ""
 
-msgid "System default (automatic)"
+msgid "Show work items in global search results"
 msgstr ""
 
-msgid ""
-"AdminSettings|If selected, only administrators are able to create public group"
-"s, projects, and snippets. Also, profiles are only visible to authenticated us"
-"ers."
-msgstr ""
-
-msgid ""
-"AdminSettings|If selected, only administrators are able to create internal gro"
-"ups, projects, and snippets."
-msgstr ""
-
-msgid ""
-"AdminSettings|If selected, only administrators are able to create private grou"
-"ps, projects, and snippets."
-msgstr ""
-
-msgid ""
-"ExternalAuthorization|Access to projects is validated on an external service u"
-"sing their classification label."
-msgstr ""
-
-msgid "ExternalAuthorization|Does not apply if service URL is specified."
-msgstr ""
-
-msgid ""
-"ExternalAuthorization|Period GitLab waits for a response from the external ser"
-"vice. If there is no response, access is denied. Default: 0.5 seconds."
-msgstr ""
-
-msgid ""
-"ExternalAuthorization|URL to which the projects make authorization requests. I"
-"f the URL is blank, cross-project features are available and can still specify"
-" classification labels for projects."
-msgstr ""
-
-msgid ""
-"ExternalAuthorization|Certificate used to authenticate with the external autho"
-"rization service. If blank, the server certificate is validated when accessing"
-" over HTTPS."
-msgstr ""
-
-msgid ""
-"ExternalAuthorization|Private key of client authentication certificate. Encryp"
-"ted when stored."
-msgstr ""
-
-msgid ""
-"ExternalAuthorization|Passphrase required to decrypt the private key. Encrypte"
-"d when stored."
-msgstr ""
-
-msgid ""
-"ExternalAuthorization|Classification label to use when requesting authorizatio"
-"n if no specific label is defined on the project."
-msgstr ""
-
-msgid ""
-"How the job limiter handles jobs exceeding the thresholds specified below. The"
-" 'track' mode only logs the jobs. The 'compress' mode compresses the jobs and "
-"raises an exception if the compressed size exceeds the limit."
-msgstr ""
-
-msgid "VS Code Extension Marketplace"
-msgstr ""
-
-msgid ""
-"Enable VS Code Extension Marketplace and configure the extensions registry for"
-" Web IDE."
-msgstr ""
-
-msgid "%d second"
-msgid_plural "%d seconds"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "%d minute"
-msgid_plural "%d minutes"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "%d hour"
-msgid_plural "%d hours"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "%d day"
-msgid_plural "%d days"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "%d week"
-msgid_plural "%d weeks"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "%d month"
-msgid_plural "%d months"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "%d year"
-msgid_plural "%d years"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "must be a boolean value"
-msgstr ""
-
-msgid "Hashed storage can't be disabled anymore for new projects"
-msgstr ""
-
-msgid "%{value} is not included in the list"
-msgstr ""
-
-msgid "(%{value}) has already been taken"
-msgstr ""
-
-msgid "The value of the provided variable exceeds the %{count} character limit"
-msgstr ""
-
-msgid "Invalid file format with specified file type"
-msgstr ""
-
-msgid "is not a group or project runner"
-msgstr ""
-
-msgid "must be before %{expiry_date}"
-msgstr ""
-
-msgid "Invalid repository path"
-msgstr ""
-
-msgid "Maximum number of %{name} (%{count}) exceeded"
-msgstr ""
-
-msgid ""
-"%{viewer} could not be displayed: %{reason}. Options to address this: %{option"
-"s}."
-msgstr ""
-
-msgid "view the blob"
-msgstr ""
-
-msgid "it is too large"
-msgstr ""
-
-msgid "image diff"
-msgstr ""
-
-msgid "rendered diff"
-msgstr ""
-
-msgid "it is stored in LFS"
-msgstr ""
-
-msgid "it is stored externally"
-msgstr ""
-
-msgid "source diff"
-msgstr ""
-
-msgid "must be a group namespace"
-msgstr ""
-
-msgid "must be a project namespace"
-msgstr ""
-
-msgid "cannot be lower than inherited membership (%{level})"
-msgstr ""
-
-msgid "cannot be the namespace itself or one of its descendants"
-msgstr ""
-
-msgid "cannot be more permissive than the parent group"
-msgstr ""
-
-msgid "Invalid feature"
-msgstr ""
-
-msgid "must be between 1 day and %{limit}"
-msgstr ""
-
-msgid "project_path must be the first element of the sub claim"
-msgstr ""
-
-msgid "%{component} is not an allowed sub claim component"
-msgstr ""
-
-msgid "Remote object has no absolute path."
-msgstr ""
-
-msgid "The number of times an upload record could not find its file"
-msgstr ""
-
-msgid "Pipeline|Merge train pipeline"
-msgstr ""
-
-msgid "Pipeline|Merged results pipeline"
-msgstr ""
-
-msgid "Pipeline|Merge request pipeline"
-msgstr ""
-
-msgid "Pipeline|Pipeline"
-msgstr ""
-
-msgid ""
-"Related merge request %{link_to_merge_request} to merge %{link_to_merge_reques"
-"t_source_branch}"
-msgstr ""
-
-msgid ""
-"Related merge request %{link_to_merge_request} to merge %{link_to_merge_reques"
-"t_source_branch} into %{link_to_merge_request_target_branch}"
-msgstr ""
-
-msgid "%{count} related %{pluralized_subject}: %{links}"
-msgstr ""
-
-msgid "merge request"
-msgid_plural "merge requests"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Pipeline|In %{pipeline_ref}"
-msgstr ""
-
-msgid "Thread to reply to cannot be found"
-msgstr ""
-
-msgid "There are no pending comments to publish"
-msgstr ""
-
-msgid "You have no permissions"
-msgstr ""
-
-msgid "Lock not found"
-msgstr ""
-
-msgid "You must have maintainer access to force delete a lock"
-msgstr ""
-
-msgid "'%{lock_path}' is locked by @%{lock_user_name}"
-msgstr ""
-
-msgid "InviteUserToOrganization|not authorized to create member"
-msgstr ""
-
-msgid "InviteUserToOrganization|not authorized to update member"
-msgstr ""
-
-msgid ""
-"InviteUserToOrganization|the member access level can't be higher than the curr"
-"ent user's one"
-msgstr ""
-
-msgid "InviteUserToOrganization|already belongs to another organization"
-msgstr ""
-
-msgid "is too large. Maximum size allowed is %{size}"
-msgstr ""
-
-msgid "value at %{data_pointer} should use only one of: %{requirements}"
-msgstr ""
-
-msgid "should use only one of: %{requirements}"
-msgstr ""
-
-msgid "must be a valid json schema"
-msgstr ""
-
-msgid "Admin"
-msgstr ""
-
-msgid "Dashboard"
-msgstr ""
-
-msgid "Admin Dashboard"
-msgstr ""
-
-msgid "System overview and administration"
-msgstr ""
-
-msgid "System Statistics"
-msgstr ""
-
-msgid "Users"
-msgstr ""
-
-msgid "Groups"
-msgstr ""
-
-msgid "Projects"
-msgstr ""
-
-msgid "Runners"
-msgstr ""
-
-msgid "Pipelines"
-msgstr ""
-
-msgid "Jobs"
-msgstr ""
-
-msgid "Group"
-msgstr ""
-
-msgid "Members"
-msgstr ""
-
-msgid "Created"
-msgstr ""
-
-msgid "Actions"
-msgstr ""
-
-msgid "Private"
-msgstr ""
-
-msgid "Internal"
-msgstr ""
-
-msgid "Public"
-msgstr ""
-
-msgid "View"
-msgstr ""
-
-msgid "Edit"
-msgstr ""
-
-msgid "Are you sure you want to delete this group? This action cannot be undone."
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "No groups found"
-msgstr ""
-
-msgid "Groups will appear here when they are created."
-msgstr ""
-
-msgid "Edit Group"
-msgstr ""
-
-msgid "Update group settings and information"
-msgstr ""
-
-msgid "Basic Information"
-msgstr ""
-
-msgid "Group name"
-msgstr ""
-
-msgid "Group path"
-msgstr ""
-
-msgid "The group path is used in URLs."
-msgstr ""
-
-msgid "Changing the path will update all URLs for this group and its projects."
-msgstr ""
-
-msgid "Description"
-msgstr ""
-
-msgid "Update Group"
-msgstr ""
-
-msgid "Cancel"
-msgstr ""
-
-msgid "Are you sure you want to delete this group?"
-msgstr ""
-
-msgid "Delete Group"
-msgstr ""
-
-msgid "Manage group namespaces and memberships"
-msgstr ""
-
-msgid "Total Groups"
-msgstr ""
-
-msgid "Active Groups"
-msgstr ""
-
-msgid "Group Members"
-msgstr ""
-
-msgid "Search groups"
-msgstr ""
-
-msgid "All visibility levels"
-msgstr ""
-
-msgid "Loading..."
-msgstr ""
-
-msgid "Visibility"
-msgstr ""
-
-msgid "Group Information"
-msgstr ""
-
-msgid "Group Name"
-msgstr ""
-
-msgid "Path"
-msgstr ""
-
-msgid "Group ID"
-msgstr ""
-
-msgid "Last Updated"
-msgstr ""
-
-msgid "And %{count} more projects..."
-msgstr ""
-
-msgid "No projects in this group"
-msgstr ""
-
-msgid "And %{count} more members..."
-msgstr ""
-
-msgid "No members in this group"
-msgstr ""
-
-msgid "Job"
-msgstr ""
-
-msgid "Project"
-msgstr ""
-
-msgid "Commit"
-msgstr ""
-
-msgid "Runner"
-msgstr ""
-
-msgid "Duration"
-msgstr ""
-
-msgid "Pending"
-msgstr ""
-
-msgid "Running"
-msgstr ""
-
-msgid "Success"
-msgstr ""
-
-msgid "Failed"
-msgstr ""
-
-msgid "Canceled"
-msgstr ""
-
-msgid "No runner"
-msgstr ""
-
-msgid "Are you sure you want to cancel this job?"
-msgstr ""
-
-msgid "No jobs found"
-msgstr ""
-
-msgid "Jobs will appear here when CI/CD pipelines are executed."
-msgstr ""
-
-msgid "Manage and monitor CI/CD jobs across all projects"
-msgstr ""
-
-msgid "Are you sure you want to cancel all running and pending jobs?"
-msgstr ""
-
-msgid "Cancel All"
-msgstr ""
-
-msgid "All Jobs"
-msgstr ""
-
-msgid "All statuses"
-msgstr ""
-
-msgid "All projects"
-msgstr ""
-
-msgid "Search projects..."
-msgstr ""
-
-msgid "Namespace"
-msgstr ""
-
-msgid "Are you sure you want to delete this project? This action cannot be undone."
-msgstr ""
-
-msgid "No projects found"
-msgstr ""
-
-msgid "Projects will appear here when they are created."
-msgstr ""
-
-msgid "Edit Project"
-msgstr ""
-
-msgid "Update settings for %{name}"
-msgstr ""
-
-msgid "Project ID: %{id} • Created %{date}"
-msgstr ""
-
-msgid "Project name"
-msgstr ""
-
-msgid "Project path"
-msgstr ""
-
-msgid "The project path is used in URLs and repository cloning."
-msgstr ""
-
-msgid "Changing the path will update all URLs for this project."
-msgstr ""
-
-msgid "A brief description helps others understand your project."
-msgstr ""
-
-msgid "Enter a description for your project..."
-msgstr ""
-
-msgid "Visibility Level"
-msgstr ""
-
-msgid "Choose who can see and access this project."
-msgstr ""
-
-msgid "Private - Only project members can access"
-msgstr ""
-
-msgid "Internal - Authenticated users can access"
-msgstr ""
-
-msgid "Public - Anyone can access without authentication"
-msgstr ""
-
-msgid "Update Project"
-msgstr ""
-
-msgid "Manage all projects across the instance"
-msgstr ""
-
-msgid "Total Projects"
-msgstr ""
-
-msgid "Search projects"
-msgstr ""
-
-msgid "Issues"
-msgstr ""
-
-msgid "Merge Requests"
-msgstr ""
-
-msgid "Project Information"
-msgstr ""
-
-msgid "Project Name"
-msgstr ""
-
-msgid "Project ID"
-msgstr ""
-
-msgid "Repository Info"
-msgstr ""
-
-msgid "Default Branch"
-msgstr ""
-
-msgid "Repository Size"
-msgstr ""
-
-msgid "HTTP Clone URL"
-msgstr ""
-
-msgid "SSH Clone URL"
-msgstr ""
-
-msgid "Project Members"
-msgstr ""
-
-msgid "No members in this project"
-msgstr ""
-
-msgid "Tags"
-msgstr ""
-
-msgid "Last Contact"
-msgstr ""
-
-msgid "Online"
-msgstr ""
-
-msgid "Stale"
-msgstr ""
-
-msgid "Never contacted"
-msgstr ""
-
-msgid "Offline"
-msgstr ""
-
-msgid "Paused"
-msgstr ""
-
-msgid "No description"
-msgstr ""
-
-msgid "%{count} jobs"
-msgstr ""
-
-msgid "None"
-msgstr ""
-
-msgid "Never"
-msgstr ""
-
-msgid "No runners found"
-msgstr ""
-
-msgid "Runners will appear here when they are registered."
-msgstr ""
-
-msgid "Update runner configuration and settings"
-msgstr ""
-
-msgid "Basic Configuration"
-msgstr ""
-
-msgid "Add tags to specify jobs that the runner can run."
-msgstr ""
-
-msgid "Separate multiple tags with a comma. For example,"
-msgstr ""
-
-msgid "Run untagged jobs"
-msgstr ""
-
-msgid "Use the runner for jobs without tags in addition to tagged jobs."
-msgstr ""
-
-msgid "Runner description"
-msgstr ""
-
-msgid "Advanced Configuration"
-msgstr ""
-
-msgid "Maintenance note"
-msgstr ""
-
-msgid "Only administrators can view this."
-msgstr ""
-
-msgid "Add notes such as the runner owner or what it should be used for."
-msgstr ""
-
-msgid "Stop the runner from accepting new jobs."
-msgstr ""
-
-msgid "Protected"
-msgstr ""
-
-msgid "Use the runner on pipelines for protected branches only."
-msgstr ""
-
-msgid "Maximum job timeout"
-msgstr ""
-
-msgid "Maximum amount of time the runner can run before it terminates."
-msgstr ""
-
-msgid "Enter the job timeout in seconds. Must be a minimum of 600 seconds."
-msgstr ""
-
-msgid "Update Runner"
-msgstr ""
-
-msgid "Are you sure you want to delete this runner?"
-msgstr ""
-
-msgid "Delete Runner"
-msgstr ""
-
-msgid "Manage instance, group, and project runners"
-msgstr ""
-
-msgid "New instance runner"
-msgstr ""
-
-msgid "Active"
-msgstr ""
-
-msgid "New"
-msgstr ""
-
-msgid "New Instance Runner"
-msgstr ""
-
-msgid ""
-"Create an instance runner to generate a command that registers the runner with"
-" all its configurations."
-msgstr ""
-
-msgid "Learn more"
-msgstr ""
-
-msgid "Advanced Configuration (optional)"
-msgstr ""
-
-msgid ""
-"If a project has a shorter job timeout period, the job timeout period of the i"
-"nstance runner is used instead."
-msgstr ""
-
-msgid "Create Runner"
-msgstr ""
-
-msgid "Register"
-msgstr ""
-
-msgid "Register Your Runner"
-msgstr ""
-
-msgid ""
-"Connect a runner to Gisia and start executing CI/CD pipelines. Complete the se"
-"tup by following these simple steps."
-msgstr ""
-
-msgid "Step 1: Start the Runner Container"
-msgstr ""
-
-msgid "Launch a Docker container running GitLab Runner."
-msgstr ""
-
-msgid "Step 2: Register with Gisia"
-msgstr ""
-
-msgid ""
-"Execute the registration command inside the container to link it to your Gisia"
-" instance."
-msgstr ""
-
-msgid "Important:"
-msgstr ""
-
-msgid "Keep the token"
-msgstr ""
-
-msgid ""
-"secure. This token will only be displayed once. Once the runner is registered,"
-" it cannot be retrieved again from the UI."
-msgstr ""
-
-msgid "View runners"
-msgstr ""
-
-msgid "Pause"
-msgstr ""
-
-msgid "Resume"
-msgstr ""
-
-msgid "Runner Information"
-msgstr ""
-
-msgid "Runner Type"
-msgstr ""
-
-msgid "Status"
-msgstr ""
-
-msgid "Activity"
-msgstr ""
-
-msgid "Last contact"
-msgstr ""
-
-msgid "Jobs run"
-msgstr ""
-
-msgid "Maximum timeout"
-msgstr ""
-
-msgid "%{seconds} seconds"
-msgstr ""
-
-msgid "Not set"
-msgstr ""
-
-msgid "Configuration"
-msgstr ""
-
-msgid "Settings"
-msgstr ""
-
-msgid "No tags"
-msgstr ""
-
-msgid "Recent Jobs"
-msgstr ""
-
-msgid "Started"
-msgstr ""
-
-msgid "View all %{count} jobs"
-msgstr ""
-
-msgid "Metrics"
-msgstr ""
-
-msgid "Configure usage statistics and telemetry settings"
-msgstr ""
-
-msgid "Version Check"
-msgstr ""
-
-msgid "Check if a newer version of Gisia is available."
-msgstr ""
-
-msgid "Enable version check"
-msgstr ""
-
-msgid ""
-"This Gisia instance periodically checks for newer versions. It will not upgrad"
-"e automatically."
-msgstr ""
-
-msgid "Save changes"
-msgstr ""
-
-msgid "Unblock User"
-msgstr ""
-
-msgid "Are you sure you want to block this user?"
-msgstr ""
-
-msgid "Block User"
-msgstr ""
-
-msgid "Banned"
-msgstr ""
-
-msgid "Blocked"
-msgstr ""
-
-msgid "Unblock"
-msgstr ""
-
-msgid "Block"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-msgid "It's you"
-msgstr ""
-
-msgid "No users found"
-msgstr ""
-
-msgid "Users will appear here when they are created."
-msgstr ""
-
-msgid "Edit %{username}"
-msgstr ""
-
-msgid "Update user information and permissions"
-msgstr ""
-
-msgid "Username"
-msgstr ""
-
-msgid "Email"
-msgstr ""
-
-msgid "Full Name"
-msgstr ""
-
-msgid "Password"
-msgstr ""
-
-msgid "Leave blank to keep current password"
-msgstr ""
-
-msgid "Password confirmation"
-msgstr ""
-
-msgid "Confirm new password"
-msgstr ""
-
-msgid "Leave password fields blank to keep the current password"
-msgstr ""
-
-msgid "Permissions & Status"
-msgstr ""
-
-msgid "Administrator"
-msgstr ""
-
-msgid "Grants full access to the admin area"
-msgstr ""
-
-msgid "Update User"
-msgstr ""
-
-msgid "New user"
-msgstr ""
-
-msgid "Total Users"
-msgstr ""
-
-msgid "Admins"
-msgstr ""
-
-msgid "Pending Approval"
-msgstr ""
-
-msgid "Active Users"
-msgstr ""
-
-msgid "Search by name, email, or username"
-msgstr ""
-
-msgid "New User"
-msgstr ""
-
-msgid "Create a new user account"
-msgstr ""
-
-msgid "Create User"
-msgstr ""
-
-msgid "Account Details"
-msgstr ""
-
-msgid "Last activity"
-msgstr ""
-
-msgid "Statistics"
-msgstr ""
-
-msgid "Yes"
-msgstr ""
-
-msgid "No"
-msgstr ""
-
-msgid "Confirmed"
-msgstr ""
-
-msgid "Recent Projects"
-msgstr ""
-
-msgid "Updated %{time} ago"
-msgstr ""
-
-msgid "No projects found."
-msgstr ""
-
-msgid "Choose who can see this group"
-msgstr ""
-
-msgid "Your work"
-msgstr ""
-
-msgid "Organize projects and collaborate with your team"
-msgstr ""
-
-msgid "Your Groups"
-msgstr ""
-
-msgid "New Group"
-msgstr ""
-
-msgid "Welcome"
-msgstr ""
-
-msgid "Welcome, %{username}!"
-msgstr ""
-
-msgid "Ready to get started with your projects and collaboration?"
-msgstr ""
-
-msgid "Quick Actions"
-msgstr ""
-
-msgid "Create a Project"
-msgstr ""
-
-msgid "Start building something amazing"
-msgstr ""
-
-msgid ""
-"Start by creating a new project to manage your code, track issues, and collabo"
-"rate with your team."
-msgstr ""
-
-msgid "Create Project"
-msgstr ""
-
-msgid "Create a Group"
-msgstr ""
-
-msgid "Organize and collaborate"
-msgstr ""
-
-msgid ""
-"Organize your projects by creating a group for your team, department, or organ"
-"ization."
-msgstr ""
-
-msgid "Create Group"
-msgstr ""
-
-msgid "Need help getting started?"
-msgstr ""
-
-msgid "Check out our guides and documentation to make the most of your experience."
-msgstr ""
-
-msgid "Documentation"
-msgstr ""
-
-msgid "Get Help"
-msgstr ""
-
-msgid "Unpin"
-msgstr ""
-
-msgid "Pin"
-msgstr ""
-
-msgid "Are you sure you want to delete this project?"
-msgstr ""
-
-msgid "No projects yet"
-msgstr ""
-
-msgid "Get started by creating your first project in this group"
-msgstr ""
-
-msgid "Manage and collaborate on your projects"
-msgstr ""
-
-msgid "Your Projects"
-msgstr ""
-
-msgid "New Project"
-msgstr ""
-
-msgid "User"
-msgstr ""
-
-msgid "Select a user"
-msgstr ""
-
-msgid "Role"
-msgstr ""
-
-msgid "Expiration date (optional)"
-msgstr ""
-
-msgid "Update Member"
-msgstr ""
-
-msgid "Add Member"
+msgid "Sign Out"
 msgstr ""
 
 msgid "Source"
 msgstr ""
 
-msgid "Expiration"
+msgid "Source Branch"
 msgstr ""
 
-msgid "Direct member"
+msgid "Stale"
 msgstr ""
 
-msgid "No expiration"
+msgid "Start building something amazing"
 msgstr ""
 
-msgid "Are you sure you want to remove this member?"
+msgid "Start by creating a new project to manage your code, track issues, and collaborate with your team."
 msgstr ""
 
-msgid "No members found."
-msgstr ""
-
-msgid "Members Settings"
-msgstr ""
-
-msgid "Manage group members and their roles"
-msgstr ""
-
-msgid "Instance"
-msgstr ""
-
-msgid "Inherited"
-msgstr ""
-
-msgid "No runners available"
-msgstr ""
-
-msgid "Create a group runner to run jobs for all projects in this group."
-msgstr ""
-
-msgid "Edit Group Runner"
-msgstr ""
-
-msgid "Runners Settings"
-msgstr ""
-
-msgid "Runners available to this group — instance, inherited, and its own"
-msgstr ""
-
-msgid "New group runner"
-msgstr ""
-
-msgid "Shared runners"
-msgstr ""
-
-msgid "Enable instance runners for all projects in this group"
-msgstr ""
-
-msgid "Instance runners are disabled by a parent group and cannot be enabled here."
-msgstr ""
-
-msgid ""
-"When disabled, projects in this group and its subgroups cannot use instance ru"
-"nners."
-msgstr ""
-
-msgid "New Group Runner"
-msgstr ""
-
-msgid ""
-"Create a group runner to run jobs for all projects in this group and its subgr"
-"oups."
-msgstr ""
-
-msgid "Register Group Runner"
-msgstr ""
-
-msgid "Branch:"
-msgstr ""
-
-msgid "No files found"
-msgstr ""
-
-msgid "This directory appears to be empty."
-msgstr ""
-
-msgid "History"
-msgstr ""
-
-msgid "Form saved failed"
-msgstr ""
-
-msgid "Project Path"
-msgstr ""
-
-msgid "Workflow Labels"
-msgstr ""
-
-msgid "Labels will be automatically removed from closed issues"
-msgstr ""
-
-msgid "Select a Namespace"
-msgstr ""
-
-msgid "Choose who can see this project"
-msgstr ""
-
-msgid "Tag:"
-msgstr ""
-
-msgid "Branches for Project:"
-msgstr ""
-
-msgid "Search branches"
-msgstr ""
-
-msgid "e.g., feature, main, develop..."
-msgstr ""
-
-msgid "default"
-msgstr ""
-
-msgid "protected"
-msgstr ""
-
-msgid "Browse"
-msgstr ""
-
-msgid "Commits"
-msgstr ""
-
-msgid "No branches found"
-msgstr ""
-
-msgid "No branches match your search for \"%{search}\". Try a different search term."
-msgstr ""
-
-msgid "This repository doesn't have any branches yet."
-msgstr ""
-
-msgid "CI Lint"
-msgstr ""
-
-msgid "Branch"
-msgstr ""
-
-msgid "Validate"
-msgstr ""
-
-msgid "CI configuration is valid."
-msgstr ""
-
-msgid "Warnings"
-msgstr ""
-
-msgid "CI configuration is invalid."
-msgstr ""
-
-msgid "Repository"
-msgstr ""
-
-msgid "committed by"
-msgstr ""
-
-msgid "Changed files"
-msgstr ""
-
-msgid "committed %{time} ago"
-msgstr ""
-
-msgid "branch history"
-msgstr ""
-
-msgid "No commits found"
-msgstr ""
-
-msgid "No commits found for this file path."
-msgstr ""
-
-msgid "This branch doesn't have any commits yet."
-msgstr ""
-
-msgid "Update your project details"
-msgstr ""
-
-msgid "The repository for this project is empty"
-msgstr ""
-
-msgid ""
-"You can get started by cloning the repository or start adding files to your pr"
-"oject."
-msgstr ""
-
-msgid "AI Skills"
-msgstr ""
-
-msgid "You'll need a personal access token —"
-msgstr ""
-
-msgid "create one here"
-msgstr ""
-
-msgid "Send this to your bot to enable project operations"
-msgstr ""
-
-msgid "Copy"
-msgstr ""
-
-msgid "Command line instructions"
-msgstr ""
-
-msgid "Git global setup"
-msgstr ""
-
-msgid "Create a new repository"
-msgstr ""
-
-msgid "Push an existing folder"
-msgstr ""
-
-msgid "Push an existing Git repository"
-msgstr ""
-
-msgid "closed %{time} ago by"
-msgstr ""
-
-msgid "opened %{time} ago by"
-msgstr ""
-
-msgid "Edit issue"
-msgstr ""
-
-msgid "Open"
-msgstr ""
-
-msgid "Closed"
-msgstr ""
-
-msgid "New issue"
-msgstr ""
-
-msgid "Search or filter issues..."
-msgstr ""
-
-msgid "Confidential"
-msgstr ""
-
-msgid "due %{date}"
-msgstr ""
-
-msgid "Track tasks, bugs, and feature requests with ease"
-msgstr ""
-
-msgid "Organize your workflow and track progress effectively."
-msgstr ""
-
-msgid "New Issue"
-msgstr ""
-
-msgid "opened by"
-msgstr ""
-
-msgid "Updated by"
-msgstr ""
-
-msgid "Close"
-msgstr ""
-
-msgid "Reopen"
-msgstr ""
-
-msgid "No description provided."
-msgstr ""
-
-msgid "Closed by"
-msgstr ""
-
-msgid "Due date"
-msgstr ""
-
-msgid "Jobs for Project:"
-msgstr ""
-
-msgid "Retry"
+msgid "Started"
 msgstr ""
 
 msgid "Started %{time} ago by"
 msgstr ""
 
-msgid "Job output"
+msgid "Statistics"
 msgstr ""
 
-msgid "Download"
-msgstr ""
-
-msgid "No output available for this job yet"
-msgstr ""
-
-msgid "Merged"
-msgstr ""
-
-msgid "opened %{time} ago"
-msgstr ""
-
-msgid "Are you sure you want to merge this merge request?"
-msgstr ""
-
-msgid "Merge"
-msgstr ""
-
-msgid "Are you sure you want to close this merge request?"
-msgstr ""
-
-msgid "Commits (%{count})"
-msgstr ""
-
-msgid "Pipelines (%{count})"
-msgstr ""
-
-msgid "Diffs (%{count})"
-msgstr ""
-
-msgid "Overview"
-msgstr ""
-
-msgid "These branches already have an open merge request:"
-msgstr ""
-
-msgid "Unable to save merge request"
-msgstr ""
-
-msgid "Source Branch"
-msgstr ""
-
-msgid "Target Branch"
-msgstr ""
-
-msgid "Title"
-msgstr ""
-
-msgid "Enter merge request title"
-msgstr ""
-
-msgid "Describe the changes in this merge request"
-msgstr ""
-
-msgid "Create Merge Request"
-msgstr ""
-
-msgid "Update Merge Request"
-msgstr ""
-
-msgid "Summary comment (optional)"
-msgstr ""
-
-msgid "%{count} pending comment"
-msgid_plural "%{count} pending comments"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Discard"
-msgstr ""
-
-msgid "Are you sure you want to discard all pending comments?"
-msgstr ""
-
-msgid "Submit review"
-msgstr ""
-
-msgid "Edit Merge Request"
-msgstr ""
-
-msgid "Update the details of your merge request."
-msgstr ""
-
-msgid "New merge request"
-msgstr ""
-
-msgid "updated %{time} ago"
-msgstr ""
-
-msgid "No assignees"
-msgstr ""
-
-msgid "No merge requests yet"
-msgstr ""
-
-msgid ""
-"Create your first merge request to start collaborating and reviewing code chan"
-"ges."
-msgstr ""
-
-msgid "New Merge Request"
-msgstr ""
-
-msgid ""
-"Create a new merge request by selecting source and target projects and branche"
-"s."
-msgstr ""
-
-msgid "Run pipeline"
-msgstr ""
-
-msgid "Jobs (%{count})"
+msgid "Status"
 msgstr ""
 
 msgid "Status %{status}"
 msgstr ""
 
-msgid "%{time} ago"
+msgid "Step 1: Start the Runner Container"
 msgstr ""
 
-msgid "For Merge Request"
+msgid "Step 2: Register with Gisia"
 msgstr ""
 
-msgid "For %{ref}"
+msgid "Stop the runner from accepting new jobs."
 msgstr ""
 
-msgid "Upstream"
+msgid "SubgroupCreationlevel|Maintainers"
 msgstr ""
 
-msgid "in"
+msgid "SubgroupCreationlevel|Owners"
 msgstr ""
 
-msgid "Downstream"
+msgid "Submit review"
 msgstr ""
 
-msgid "Pipelines for Project:"
+msgid "Success"
 msgstr ""
 
-msgid "Search by SHA"
+msgid "Summary comment (optional)"
 msgstr ""
 
-msgid "e.g., abc123..."
+msgid "System Statistics"
 msgstr ""
 
-msgid "Branch or tag"
+msgid "System default (automatic)"
 msgstr ""
 
-msgid "Search branches and tags…"
-msgstr ""
-
-msgid "CI/CD Settings"
-msgstr ""
-
-msgid "Configure pipeline settings and CI/CD options"
-msgstr ""
-
-msgid "Labels"
-msgstr ""
-
-msgid "Create and manage project labels"
-msgstr ""
-
-msgid "New Label"
-msgstr ""
-
-msgid "Manage project members and their roles"
-msgstr ""
-
-msgid "Merge Options"
-msgstr ""
-
-msgid "Control merge behavior for merge requests in this project."
-msgstr ""
-
-msgid ""
-"When enabled, all commits from a merge request will be squashed into a single "
-"commit on merge."
-msgstr ""
-
-msgid "Enable squash merge"
-msgstr ""
-
-msgid ""
-"When enabled, the source branch will be automatically deleted after a merge re"
-"quest is merged."
-msgstr ""
-
-msgid "Delete source branch after merge"
-msgstr ""
-
-msgid "Save"
-msgstr ""
-
-msgid "Merge Request Settings"
-msgstr ""
-
-msgid "Configure merge request behavior for this project"
-msgstr ""
-
-msgid "General pipelines"
-msgstr ""
-
-msgid "Configure general pipeline settings and behavior."
-msgstr ""
-
-msgid "Pipeline Configuration"
-msgstr ""
-
-msgid "Auto-cancel pending pipelines"
-msgstr ""
-
-msgid ""
-"When a new pipeline is created on a branch, older pipelines on the same branch"
-" will be cancelled."
-msgstr ""
-
-msgid "CI/CD configuration file"
-msgstr ""
-
-msgid ""
-"Path to the CI/CD configuration file. Leave empty to use the default '.gitlab-"
-"ci.yml'."
-msgstr ""
-
-msgid "Git strategy"
-msgstr ""
-
-msgid "Git clone"
-msgstr ""
-
-msgid "Clone the repository from scratch for every job."
-msgstr ""
-
-msgid "Git fetch"
-msgstr ""
-
-msgid "Re-use the project workspace and fetch changes."
-msgstr ""
-
-msgid "Timeout"
-msgstr ""
-
-msgid "seconds"
-msgstr ""
-
-msgid "Per-job timeout in seconds. Must be at least 60 seconds."
-msgstr ""
-
-msgid "Branch pattern"
-msgstr ""
-
-msgid "Required access level"
-msgstr ""
-
-msgid "Developer"
-msgstr ""
-
-msgid "Maintainer"
-msgstr ""
-
-msgid "Owner"
-msgstr ""
-
-msgid "Allow push"
-msgstr ""
-
-msgid "Force push"
-msgstr ""
-
-msgid "Allow merge"
-msgstr ""
-
-msgid "Push"
-msgstr ""
-
-msgid "Force Push"
-msgstr ""
-
-msgid "Remove protection from %{name}?"
-msgstr ""
-
-msgid "Protected Branches"
-msgstr ""
-
-msgid "Restrict pushes and merges to important branches."
-msgstr ""
-
-msgid "Add Protection Rule"
-msgstr ""
-
-msgid "Protect important branches by restricting who can push to them and how"
-msgstr ""
-
-msgid "Select branch..."
-msgstr ""
-
-msgid "Custom pattern..."
-msgstr ""
-
-msgid "Additional permissions"
-msgstr ""
-
-msgid "Users can push commits"
-msgstr ""
-
-msgid "Allow rewriting history"
-msgstr ""
-
-msgid "Can merge pull requests"
-msgstr ""
-
-msgid "Protect Branch"
-msgstr ""
-
-msgid "Protected Branches (%{count})"
-msgstr ""
-
-msgid "No protected branches configured"
-msgstr ""
-
-msgid "Add protection rules above to secure important branches"
-msgstr ""
-
-msgid "Protected Tags"
-msgstr ""
-
-msgid "Restrict who can create tags in this repository."
-msgstr ""
-
-msgid "Restrict who can create tags matching these patterns"
+msgid "System overview and administration"
 msgstr ""
 
 msgid "Tag pattern"
 msgstr ""
 
-msgid "Select tag..."
+msgid "Tag:"
 msgstr ""
 
-msgid "Allowed to create"
+msgid "Tags"
 msgstr ""
 
-msgid "Protect Tag"
+msgid "Tags for Project:"
 msgstr ""
 
-msgid "Protected Tags (%{count})"
+msgid "Target Branch"
 msgstr ""
 
-msgid "Create"
+msgid "The default branch for this project has been changed. Please update your bookmarks."
 msgstr ""
 
-msgid "No protected tags configured"
+msgid "The description of the variable's value or usage"
 msgstr ""
 
-msgid "Add protection rules above to control tag creation"
+msgid "The group path is used in URLs."
 msgstr ""
 
-msgid "Branch Defaults"
+msgid "The number of times an upload record could not find its file"
 msgstr ""
 
-msgid "Configure the default branch name for new repositories."
+msgid "The project path is used in URLs and repository cloning."
 msgstr ""
 
-msgid "Default branch name"
+msgid "The repository for this project is empty"
 msgstr ""
 
-msgid ""
-"Select the default branch from existing branches or leave empty for instance d"
-"efault."
+msgid "The value of the provided variable exceeds the %{count} character limit"
+msgstr ""
+
+msgid "There are no pending comments to publish"
+msgstr ""
+
+msgid "These branches already have an open merge request:"
+msgstr ""
+
+msgid "This Gisia instance periodically checks for newer versions. It will not upgrade automatically."
+msgstr ""
+
+msgid "This branch doesn't have any commits yet."
+msgstr ""
+
+msgid "This directory appears to be empty."
+msgstr ""
+
+msgid "This item is already linked."
+msgstr ""
+
+msgid "This repository doesn't have any branches yet."
+msgstr ""
+
+msgid "This repository doesn't have any tags yet."
+msgstr ""
+
+msgid "Thread to reply to cannot be found"
+msgstr ""
+
+msgid "Timeout"
+msgstr ""
+
+msgid "Timezone"
+msgstr ""
+
+msgid "Tip: send this to your bot to enable project operations"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Token name"
+msgstr ""
+
+msgid "Total Groups"
+msgstr ""
+
+msgid "Total Projects"
+msgstr ""
+
+msgid "Total Users"
+msgstr ""
+
+msgid "Track tasks, bugs, and feature requests with ease"
+msgstr ""
+
+msgid "Unable to save merge request"
+msgstr ""
+
+msgid "Unblock"
+msgstr ""
+
+msgid "Unblock User"
+msgstr ""
+
+msgid "Unpin"
+msgstr ""
+
+msgid "Update Group"
+msgstr ""
+
+msgid "Update Member"
+msgstr ""
+
+msgid "Update Merge Request"
+msgstr ""
+
+msgid "Update Project"
+msgstr ""
+
+msgid "Update Runner"
+msgstr ""
+
+msgid "Update User"
+msgstr ""
+
+msgid "Update group settings and information"
+msgstr ""
+
+msgid "Update runner configuration and settings"
+msgstr ""
+
+msgid "Update settings for %{name}"
+msgstr ""
+
+msgid "Update the details of your merge request."
+msgstr ""
+
+msgid "Update user information and permissions"
+msgstr ""
+
+msgid "Update your SSH key details"
+msgstr ""
+
+msgid "Update your account password"
+msgstr ""
+
+msgid "Update your personal information"
+msgstr ""
+
+msgid "Update your project details"
+msgstr ""
+
+msgid "Updated %{time} ago"
+msgstr ""
+
+msgid "Updated by"
+msgstr ""
+
+msgid "Upstream"
+msgstr ""
+
+msgid "Upstream Gitaly has been exhausted. Try again later"
+msgstr ""
+
+msgid "Usage Type"
 msgstr ""
 
 msgid "Use instance default"
 msgstr ""
 
-msgid ""
-"Repository has no branches yet. Enter a branch name or leave empty for instanc"
-"e default."
-msgstr ""
-
-msgid "Repository Settings"
-msgstr ""
-
-msgid "Configure repository defaults and settings"
-msgstr ""
-
-msgid "Create a project runner to run jobs for this project only."
-msgstr ""
-
-msgid "Edit Project Runner"
-msgstr ""
-
-msgid "Project Runners"
-msgstr ""
-
-msgid "Runners available to this project — instance, group, and its own"
-msgstr ""
-
-msgid "New project runner"
-msgstr ""
-
-msgid "Runner availability"
-msgstr ""
-
-msgid "Enable instance runners for this project"
-msgstr ""
-
 msgid "Use instance runners provided by the administrator to run jobs."
-msgstr ""
-
-msgid "Enable group runners for this project"
 msgstr ""
 
 msgid "Use runners provided by an ancestor group to run jobs."
 msgstr ""
 
-msgid "New Project Runner"
+msgid "Use the runner for jobs without tags in addition to tagged jobs."
 msgstr ""
 
-msgid ""
-"Create a runner dedicated to this project. It only picks up jobs from this pro"
-"ject."
+msgid "Use the runner on pipelines for protected branches only."
 msgstr ""
 
-msgid "Register Project Runner"
+msgid "User"
 msgstr ""
 
-msgid "Add Variable"
+msgid "User ID"
 msgstr ""
 
-msgid "Key"
+msgid "User Settings"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
+msgid "Users can push commits"
+msgstr ""
+
+msgid "Users will appear here when they are created."
+msgstr ""
+
+msgid "Using required encryption strategy when encrypted field is missing!"
+msgstr ""
+
+msgid "VS Code Extension Marketplace"
+msgstr ""
+
+msgid "Validate"
 msgstr ""
 
 msgid "Value"
@@ -1980,549 +2169,268 @@ msgstr ""
 msgid "Variable value"
 msgstr ""
 
-msgid ""
-"When masked, value must be at least 8 characters and only contain letters, dig"
-"its, and @:._+=/-~"
-msgstr ""
-
-msgid "Description (optional)"
-msgstr ""
-
-msgid "The description of the variable's value or usage"
-msgstr ""
-
-msgid "Flags"
-msgstr ""
-
-msgid "Protect variable"
-msgstr ""
-
-msgid "Export variable to pipelines running on protected branches and tags only"
-msgstr ""
-
-msgid "Masked"
-msgstr ""
-
 msgid "Variable will be masked in job logs"
-msgstr ""
-
-msgid "Add variable"
 msgstr ""
 
 msgid "Variables"
 msgstr ""
 
-msgid "Manage environment variables for CI/CD pipelines"
-msgstr ""
-
-msgid "Project Variables"
-msgstr ""
-
-msgid "Delete variable"
-msgstr ""
-
-msgid "Are you sure you want to delete the variable '%{key}'?"
-msgstr ""
-
-msgid "No variables defined"
-msgstr ""
-
 msgid "Variables store values like API keys and tokens for use in CI/CD pipelines"
 msgstr ""
 
-msgid "Add your first variable"
+msgid "Version Check"
 msgstr ""
 
-msgid "Webhooks"
+msgid "View"
 msgstr ""
 
-msgid "Send notifications to external applications in response to events"
+msgid "View all %{count} jobs"
 msgstr ""
 
-msgid "New Webhook"
-msgstr ""
-
-msgid "Project Info"
-msgstr ""
-
-msgid "Project ID:"
-msgstr ""
-
-msgid "Created on:"
-msgstr ""
-
-msgid "Visibility:"
-msgstr ""
-
-msgid "Tip: send this to your bot to enable project operations"
-msgstr ""
-
-msgid "Tags for Project:"
-msgstr ""
-
-msgid "Search tags"
-msgstr ""
-
-msgid "e.g., v1.0, release, beta..."
-msgstr ""
-
-msgid "release"
-msgstr ""
-
-msgid "No tags found"
-msgstr ""
-
-msgid "No tags match your search for \"%{search}\". Try a different search term."
-msgstr ""
-
-msgid "This repository doesn't have any tags yet."
-msgstr ""
-
-msgid "Plan"
-msgstr ""
-
-msgid "Board"
-msgstr ""
-
-msgid "Epics"
-msgstr ""
-
-msgid "Branches"
-msgstr ""
-
-msgid "CI/CD"
-msgstr ""
-
-msgid "General"
-msgstr ""
-
-msgid "User Settings"
-msgstr ""
-
-msgid "Profile"
-msgstr ""
-
-msgid "Personal Access Tokens"
-msgstr ""
-
-msgid "SSH Keys"
-msgstr ""
-
-msgid "submitted a review"
-msgstr ""
-
-msgid "Outdated"
-msgstr ""
-
-msgid "Are you sure you want to delete this pending comment?"
-msgstr ""
-
-msgid "Write a comment..."
-msgstr ""
-
-msgid "Comment"
-msgstr ""
-
-msgid "Add to review"
-msgstr ""
-
-msgid "Please correct the following errors:"
-msgstr ""
-
-msgid "SSH Key"
-msgstr ""
-
-msgid "Usage Type"
-msgstr ""
-
-msgid "Select usage type"
-msgstr ""
-
-msgid "Expires At"
-msgstr ""
-
-msgid "Create SSH Key"
-msgstr ""
-
-msgid "Save Changes"
-msgstr ""
-
-msgid "Edit SSH Key"
-msgstr ""
-
-msgid "Add SSH Key"
-msgstr ""
-
-msgid "Add a new SSH key for secure access"
-msgstr ""
-
-msgid "Update your SSH key details"
-msgstr ""
-
-msgid "Manage your SSH keys for secure access"
-msgstr ""
-
-msgid "Your Keys"
-msgstr ""
-
-msgid "Add Key"
-msgstr ""
-
-msgid "Last used %{time} ago"
-msgstr ""
-
-msgid "Expires %{date}"
-msgstr ""
-
-msgid "Are you sure?"
-msgstr ""
-
-msgid "No SSH keys found"
-msgstr ""
-
-msgid "Add your first SSH key to get started with secure access"
-msgstr ""
-
-msgid "Add Your First Key"
-msgstr ""
-
-msgid "New SSH Key"
-msgstr ""
-
-msgid "SSH Key Details"
+msgid "View runners"
 msgstr ""
 
 msgid "View your SSH key configuration and details"
 msgstr ""
 
-msgid "Key Information"
+msgid "Visibility"
 msgstr ""
 
-msgid "Fingerprint"
+msgid "Visibility Level"
 msgstr ""
 
-msgid "SHA256 Fingerprint"
-msgstr ""
-
-msgid "Last Used"
-msgstr ""
-
-msgid "Never used"
-msgstr ""
-
-msgid "User ID"
-msgstr ""
-
-msgid "Back to Keys"
-msgstr ""
-
-msgid "Are you sure you want to delete this SSH key?"
-msgstr ""
-
-msgid "Change Password"
-msgstr ""
-
-msgid "Update your account password"
-msgstr ""
-
-msgid "Current Password"
-msgstr ""
-
-msgid "New Password"
-msgstr ""
-
-msgid "At least 8 characters required"
-msgstr ""
-
-msgid "Confirm Password"
-msgstr ""
-
-msgid "Token name"
-msgstr ""
-
-msgid "Expiration date"
-msgstr ""
-
-msgid "(optional)"
-msgstr ""
-
-msgid "Scopes"
-msgstr ""
-
-msgid "Full access to the API, including read and write."
-msgstr ""
-
-msgid "Read-only access to the API."
-msgstr ""
-
-msgid "Create personal access token"
-msgstr ""
-
-msgid "Created %{date}"
-msgstr ""
-
-msgid "Expired"
-msgstr ""
-
-msgid "Revoked"
-msgstr ""
-
-msgid "Are you sure you want to revoke \"%{name}\"?"
-msgstr ""
-
-msgid "Revoke"
-msgstr ""
-
-msgid "No tokens found"
-msgstr ""
-
-msgid "Add your first personal access token to get started"
-msgstr ""
-
-msgid "Add Your First Token"
-msgstr ""
-
-msgid "Manage tokens for API and Git HTTP access"
-msgstr ""
-
-msgid "Your Tokens"
-msgstr ""
-
-msgid "Add Token"
-msgstr ""
-
-msgid "New Access Token"
-msgstr ""
-
-msgid "Add Access Token"
-msgstr ""
-
-msgid "Create a new personal access token"
-msgstr ""
-
-msgid "Please fix the following errors:"
-msgstr ""
-
-msgid "Edit Profile"
-msgstr ""
-
-msgid "Update your personal information"
-msgstr ""
-
-msgid "Avatar"
-msgstr ""
-
-msgid "PNG, JPG, GIF up to 200KB. Ideal size: 192x192 pixels."
-msgstr ""
-
-msgid "Changing your email address will require confirmation before taking effect."
-msgstr ""
-
-msgid "Timezone"
-msgstr ""
-
-msgid "Language"
-msgstr ""
-
-msgid "Your Profile"
-msgstr ""
-
-msgid "Sign Out"
-msgstr ""
-
-msgid "Profile Information"
-msgstr ""
-
-msgid "Member since %{date}"
-msgstr ""
-
-msgid "Incompatible options set!"
-msgstr ""
-
-msgid "Using required encryption strategy when encrypted field is missing!"
-msgstr ""
-
-msgid "encrypted: needs to be a :required, :optional or :migrating!"
-msgstr ""
-
-msgid ""
-"Pipelines|Invalid input specification: expected a hash-like object, got %{clas"
-"s_name}"
-msgstr ""
-
-msgid ""
-"The default branch for this project has been changed. Please update your bookm"
-"arks."
-msgstr ""
-
-msgid ""
-"MemberRole|The None role is assigned to the invited group users of a shared pr"
-"oject when project sharing is disabled in group setting."
-msgstr ""
-
-msgid ""
-"MemberRole|The Guest role is for users who need visibility into a project or g"
-"roup but should not have the ability to make changes, such as external stakeho"
-"lders."
-msgstr ""
-
-msgid ""
-"MemberRole|The Planner role is suitable for team members who need to manage pr"
-"ojects and track work items but do not need to contribute code."
-msgstr ""
-
-msgid ""
-"MemberRole|The Reporter role is suitable for team members who need to stay inf"
-"ormed about a project or group but do not actively contribute code."
-msgstr ""
-
-msgid ""
-"MemberRole|The Security Manager role is for security team members who need to "
-"view and manage security features for the group or project."
-msgstr ""
-
-msgid ""
-"MemberRole|The Developer role gives users access to contribute code while rest"
-"ricting sensitive administrative actions."
-msgstr ""
-
-msgid ""
-"MemberRole|The Maintainer role is primarily used for managing code reviews, ap"
-"provals, and administrative settings for projects. This role can also manage p"
-"roject memberships."
-msgstr ""
-
-msgid ""
-"MemberRole|The Owner role is typically assigned to the individual or team resp"
-"onsible for managing and maintaining the group or creating the project. This r"
-"ole has the highest level of administrative control, and can manage all aspect"
-"s of the group or project, including managing other Owners."
-msgstr ""
-
-msgid "DefaultBranchProtection|Not protected"
-msgstr ""
-
-msgid ""
-"DefaultBranchProtection|Both developers and maintainers can push new commits, "
-"force push, or delete the branch."
-msgstr ""
-
-msgid "DefaultBranchProtection|Protected against pushes"
-msgstr ""
-
-msgid ""
-"DefaultBranchProtection|Developers cannot push new commits, but are allowed to"
-" accept merge requests to the branch. Maintainers can push to the branch."
-msgstr ""
-
-msgid "DefaultBranchProtection|Partially protected"
-msgstr ""
-
-msgid ""
-"DefaultBranchProtection|Both developers and maintainers can push new commits, "
-"but cannot force push."
-msgstr ""
-
-msgid "DefaultBranchProtection|Fully protected"
-msgstr ""
-
-msgid ""
-"DefaultBranchProtection|Developers cannot push new commits, but maintainers ca"
-"n. No one can force push."
-msgstr ""
-
-msgid "DefaultBranchProtection|Fully protected after initial push"
-msgstr ""
-
-msgid ""
-"DefaultBranchProtection|Developers can push the initial commit to a repository"
-", but none afterward. Maintainers can always push. No one can force push."
-msgstr ""
-
-msgid "DefaultBranchProtection|Protected"
-msgstr ""
-
-msgid ""
-"DefaultBranchProtection|Once a repository is created this branch will be prote"
-"cted."
-msgstr ""
-
-msgid "ProjectCreationLevel|No one"
-msgstr ""
-
-msgid "ProjectCreationLevel|Administrators"
-msgstr ""
-
-msgid "ProjectCreationLevel|Owners"
-msgstr ""
-
-msgid "ProjectCreationLevel|Maintainers"
-msgstr ""
-
-msgid "ProjectCreationLevel|Developers"
-msgstr ""
-
-msgid "SubgroupCreationlevel|Owners"
-msgstr ""
-
-msgid "SubgroupCreationlevel|Maintainers"
-msgstr ""
-
-msgid "MemberRole|Default role: %{role}"
-msgstr ""
-
-msgid "INFO: Your SSH key has expired. Please generate a new key."
-msgstr ""
-
-msgid "INFO: Your SSH key expires soon. Please generate a new key."
-msgstr ""
-
-msgid "'%{lock_path}' is locked in Git LFS by @%{lock_user_name}"
-msgstr ""
-
-msgid "must be one of: %{values}"
-msgstr ""
-
-msgid "must be less than the limit of %{tag_limit} tags"
-msgstr ""
-
-msgid "Given inputs must be a hash"
-msgstr ""
-
-msgid ""
-"Given inputs not defined in the `spec` section of the included configuration f"
-"ile"
-msgstr ""
-
-msgid "Upstream Gitaly has been exhausted. Try again later"
-msgstr ""
-
-msgid " or "
-msgstr ""
-
-msgid ", or "
-msgstr ""
-
-msgid "DSA keys are considered deprecated."
-msgstr ""
-
-msgid "Key length should be at least 2048 bits."
-msgstr ""
-
-msgid "Project Templates"
-msgstr ""
-
-msgid "Potentially unwanted character detected: Unicode BiDi Control"
-msgstr ""
-
-msgid "VisibilityLevel|Private"
+msgid "Visibility:"
 msgstr ""
 
 msgid "VisibilityLevel|Internal"
+msgstr ""
+
+msgid "VisibilityLevel|Private"
 msgstr ""
 
 msgid "VisibilityLevel|Public"
 msgstr ""
 
 msgid "VisibilityLevel|Unknown"
+msgstr ""
+
+msgid "Warnings"
+msgstr ""
+
+msgid "Webhooks"
+msgstr ""
+
+msgid "Welcome"
+msgstr ""
+
+msgid "Welcome, %{username}!"
+msgstr ""
+
+msgid "When a new pipeline is created on a branch, older pipelines on the same branch will be cancelled."
+msgstr ""
+
+msgid "When disabled, projects in this group and its subgroups cannot use instance runners."
+msgstr ""
+
+msgid "When enabled, all commits from a merge request will be squashed into a single commit on merge."
+msgstr ""
+
+msgid "When enabled, the source branch will be automatically deleted after a merge request is merged."
+msgstr ""
+
+msgid "When masked, value must be at least 8 characters and only contain letters, digits, and @:._+=/-~"
+msgstr ""
+
+msgid "Workflow Labels"
+msgstr ""
+
+msgid "Write a comment..."
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "You are not authorized to perform this action."
+msgstr ""
+
+msgid "You are not authorized to use this namespace."
+msgstr ""
+
+msgid "You can get started by cloning the repository or start adding files to your project."
+msgstr ""
+
+msgid "You cannot write to this read-only GitLab instance."
+msgstr ""
+
+msgid "You have no permissions"
+msgstr ""
+
+msgid "You must have maintainer access to force delete a lock"
+msgstr ""
+
+msgid "You'll need a personal access token —"
+msgstr ""
+
+msgid "Your Groups"
+msgstr ""
+
+msgid "Your Keys"
+msgstr ""
+
+msgid "Your Profile"
+msgstr ""
+
+msgid "Your Projects"
+msgstr ""
+
+msgid "Your Tokens"
+msgstr ""
+
+msgid "Your account has been banned. Please contact an administrator."
+msgstr ""
+
+msgid "Your account is not active. Please contact an administrator."
+msgstr ""
+
+msgid "Your work"
+msgstr ""
+
+msgid "branch history"
+msgstr ""
+
+msgid "cannot be lower than inherited membership (%{level})"
+msgstr ""
+
+msgid "cannot be more permissive than the parent group"
+msgstr ""
+
+msgid "cannot be the namespace itself or one of its descendants"
+msgstr ""
+
+msgid "closed %{time} ago by"
+msgstr ""
+
+msgid "committed %{time} ago"
+msgstr ""
+
+msgid "committed by"
+msgstr ""
+
+msgid "create one here"
+msgstr ""
+
+msgid "default"
+msgstr ""
+
+msgid "due %{date}"
+msgstr ""
+
+msgid "e.g., abc123..."
+msgstr ""
+
+msgid "e.g., feature, main, develop..."
+msgstr ""
+
+msgid "e.g., v1.0, release, beta..."
+msgstr ""
+
+msgid "encrypted: needs to be a :required, :optional or :migrating!"
+msgstr ""
+
+msgid "image diff"
+msgstr ""
+
+msgid "in"
+msgstr ""
+
+msgid "is not a group or project runner"
+msgstr ""
+
+msgid "is too large. Maximum size allowed is %{size}"
+msgstr ""
+
+msgid "it is stored externally"
+msgstr ""
+
+msgid "it is stored in LFS"
+msgstr ""
+
+msgid "it is too large"
+msgstr ""
+
+msgid "merge request"
+msgid_plural "merge requests"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "must be a boolean value"
+msgstr ""
+
+msgid "must be a group namespace"
+msgstr ""
+
+msgid "must be a project namespace"
+msgstr ""
+
+msgid "must be a valid json schema"
+msgstr ""
+
+msgid "must be before %{expiry_date}"
+msgstr ""
+
+msgid "must be between 1 day and %{limit}"
+msgstr ""
+
+msgid "must be less than the limit of %{tag_limit} tags"
+msgstr ""
+
+msgid "must be one of: %{values}"
+msgstr ""
+
+msgid "opened %{time} ago"
+msgstr ""
+
+msgid "opened %{time} ago by"
+msgstr ""
+
+msgid "opened by"
+msgstr ""
+
+msgid "project_path must be the first element of the sub claim"
+msgstr ""
+
+msgid "protected"
+msgstr ""
+
+msgid "ref must include a valid prefix"
+msgstr ""
+
+msgid "release"
+msgstr ""
+
+msgid "rendered diff"
+msgstr ""
+
+msgid "seconds"
+msgstr ""
+
+msgid "secure. This token will only be displayed once. Once the runner is registered, it cannot be retrieved again from the UI."
+msgstr ""
+
+msgid "should use only one of: %{requirements}"
+msgstr ""
+
+msgid "source diff"
+msgstr ""
+
+msgid "submitted a review"
+msgstr ""
+
+msgid "updated %{time} ago"
+msgstr ""
+
+msgid "value at %{data_pointer} should use only one of: %{requirements}"
+msgstr ""
+
+msgid "view the blob"
 msgstr ""
