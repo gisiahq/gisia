@@ -69,6 +69,7 @@ curl -X POST "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>
 - `title` (required) — Label name
 - `color` (required) — Hex color code (e.g. `#e11d48`)
 - `description` (optional) — Label description
+- `rank` (optional) — Sort order; lower values appear first
 
 ---
 
@@ -86,6 +87,7 @@ curl -X PUT "<%= Gitlab.config.gitlab.url %>/api/v4/projects/<%= @project.id %>/
 - `title` (optional) — New label name
 - `color` (optional) — New hex color code
 - `description` (optional) — New description
+- `rank` (optional) — New sort order
 
 ---
 

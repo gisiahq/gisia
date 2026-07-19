@@ -20,8 +20,8 @@ curl <%= Gitlab.config.gitlab.url %>/api/v4/... \
 
 | Skill | Endpoint |
 |-------|----------|
-| Current User | `<%= Gitlab.config.gitlab.url %>/-/users/skill.md` |
-| Project (this file) | `<%= Gitlab.config.gitlab.url %>/<%= @project.full_path %>/-/skill.md` |
+| Current User | `<%= Gitlab.config.gitlab.url %>/-/users/skills.md` |
+| Project (this file) | `<%= Gitlab.config.gitlab.url %>/<%= @project.full_path %>/-/skills.md` |
 | Issues | `<%= Gitlab.config.gitlab.url %>/<%= @project.full_path %>/-/issues/skill.md` |
 | Epics | `<%= Gitlab.config.gitlab.url %>/<%= @project.full_path %>/-/epics/skill.md` |
 | Labels | `<%= Gitlab.config.gitlab.url %>/<%= @project.full_path %>/-/labels/skill.md` |
@@ -35,12 +35,12 @@ curl <%= Gitlab.config.gitlab.url %>/api/v4/... \
 
 **Save all skill files locally:**
 
-The `PRIVATE-TOKEN` header is required for private projects. For public projects, the project skill files (skill.md, issues.md, epics.md, labels.md) can be fetched without a token — omit the `-H` flag for those if the project is public. The users skill always requires a token.
+The `PRIVATE-TOKEN` header is required for private projects. For public projects, the project skill files (skills.md, issues.md, epics.md, labels.md) can be fetched without a token — omit the `-H` flag for those if the project is public. The users skill always requires a token.
 
 ```bash
 mkdir -p ~/.gisiabot/skills/<%= @project.full_path.gsub('/', '-') %>
-curl -s <%= Gitlab.config.gitlab.url %>/-/users/skill.md -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" > ~/.gisiabot/skills/users.md
-curl -s <%= Gitlab.config.gitlab.url %>/<%= @project.full_path %>/-/skill.md -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" > ~/.gisiabot/skills/<%= @project.full_path.gsub('/', '-') %>/skill.md
+curl -s <%= Gitlab.config.gitlab.url %>/-/users/skills.md -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" > ~/.gisiabot/skills/users.md
+curl -s <%= Gitlab.config.gitlab.url %>/<%= @project.full_path %>/-/skills.md -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" > ~/.gisiabot/skills/<%= @project.full_path.gsub('/', '-') %>/skills.md
 curl -s <%= Gitlab.config.gitlab.url %>/<%= @project.full_path %>/-/issues/skill.md -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" > ~/.gisiabot/skills/<%= @project.full_path.gsub('/', '-') %>/issues.md
 curl -s <%= Gitlab.config.gitlab.url %>/<%= @project.full_path %>/-/epics/skill.md -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" > ~/.gisiabot/skills/<%= @project.full_path.gsub('/', '-') %>/epics.md
 curl -s <%= Gitlab.config.gitlab.url %>/<%= @project.full_path %>/-/labels/skill.md -H "PRIVATE-TOKEN: YOUR_PERSONAL_ACCESS_TOKEN" > ~/.gisiabot/skills/<%= @project.full_path.gsub('/', '-') %>/labels.md

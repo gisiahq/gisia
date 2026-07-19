@@ -2,17 +2,15 @@
 
 module API
   module V4
-    module Projects
-      class LabelsController < ::API::V4::ProjectBaseController
+    module Groups
+      class LabelsController < ::API::V4::UserBaseController
+        before_action :find_group!
         before_action :set_label, only: [:show, :update, :destroy]
-        before_action :authorize_read_labels!, only: [:index]
-        before_action :authorize_admin_label!, only: [:create]
-        before_action :authorize_read_label!, only: [:show]
-        before_action :authorize_update_label!, only: [:update]
-        before_action :authorize_destroy_label!, only: [:destroy]
+        before_action :authorize_read_label!, only: [:index, :show]
+        before_action :authorize_admin_label!, only: [:create, :update, :destroy]
 
         def index
-          labels = @project.labels
+          labels = @namespace.labels
           labels = labels.search_by_title(params[:search]) if params[:search].present?
           @labels = paginate(labels.order(title: :asc))
         end
@@ -20,8 +18,7 @@ module API
         def show; end
 
         def create
-          @label = Label.new(create_params)
-          @label.namespace = @project.namespace
+          @label = @namespace.labels.build(create_params)
 
           if @label.save
             render :show, status: :created
@@ -45,28 +42,23 @@ module API
 
         private
 
-        def authorize_read_labels!
-          forbidden! unless current_user.can?(:read_label, @project)
-        end
+        def find_group!
+          ns = Namespace.without_project_namespaces.find_by_id_or_path(params[:group_id])
+          not_found! unless ns&.group_namespace?
 
-        def authorize_admin_label!
-          forbidden! unless current_user.can?(:admin_label, @project)
+          @namespace = ns
         end
 
         def authorize_read_label!
-          forbidden! unless current_user.can?(:read_label, @project)
+          forbidden! unless current_user.can?(:read_label, @namespace)
         end
 
-        def authorize_update_label!
-          forbidden! unless current_user.can?(:admin_label, @project)
-        end
-
-        def authorize_destroy_label!
-          forbidden! unless current_user.can?(:admin_label, @project)
+        def authorize_admin_label!
+          forbidden! unless current_user.can?(:admin_label, @namespace)
         end
 
         def set_label
-          @label = @project.labels.find_by(id: params[:id])
+          @label = @namespace.labels.find_by(id: params[:id])
           not_found! unless @label
         end
 
