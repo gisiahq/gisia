@@ -44,6 +44,15 @@
     background-color: #f7f6f2;
   }
 
+  .diff-line-range-selected::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-color: rgb(59 130 246 / 0.12);
+    z-index: 5;
+  }
+
   .trigger-pipeline {
     .ref-dropdown-group-header {
       @apply px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wide bg-gray-50 border-b border-gray-100;

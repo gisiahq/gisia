@@ -4,13 +4,15 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["menu"];
   connect() {
-    document.addEventListener("keydown", this.handleEscapeKey.bind(this))
-    document.addEventListener("click", this.handleOutsideClick.bind(this))
+    this.handleEscapeKey = this.handleEscapeKey.bind(this)
+    this.handleOutsideClick = this.handleOutsideClick.bind(this)
+    document.addEventListener("keydown", this.handleEscapeKey)
+    document.addEventListener("click", this.handleOutsideClick)
   }
 
   disconnect() {
-    document.removeEventListener("keydown", this.handleEscapeKey.bind(this))
-    document.removeEventListener("click", this.handleOutsideClick.bind(this))
+    document.removeEventListener("keydown", this.handleEscapeKey)
+    document.removeEventListener("click", this.handleOutsideClick)
   }
 
   toggleMenu(event) {
