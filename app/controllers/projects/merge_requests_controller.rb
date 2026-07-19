@@ -34,7 +34,7 @@ class Projects::MergeRequestsController < Projects::ApplicationController
 
     @label_options = project.available_labels.order(:title)
     @sort_scopes = @label_options.map(&:title).grep(/::/).map { |t| t.split('::').first }.uniq
-    @user_options = project.users.active.order(:username)
+    @user_options = project.team.users.active.order(:username)
 
     @pagination_params = params.permit(:status, :search, :author, :assignee, :reviewer, :sort, label: [])
   end
@@ -164,7 +164,7 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   end
 
   def search_users
-    @users = project.users.active.limit(10)
+    @users = project.team.users.active.limit(10)
 
     @users = if params[:ids]
                @users.where(id: params[:ids].split(',').map(&:to_i))
@@ -250,7 +250,7 @@ class Projects::MergeRequestsController < Projects::ApplicationController
     @merge_request ||= MergeRequest.new(source_project: project, target_project: project)
     @branches = project.repository.branch_names
     @projects = Project.all
-    @users = project.users.active
+    @users = project.team.users.active
   end
 
   def set_mr

@@ -24,7 +24,7 @@ class Projects::IssuesController < Projects::ApplicationController
 
     @label_options = @project.available_labels.order(:title)
     @sort_scopes = @label_options.map(&:title).grep(/::/).map { |t| t.split('::').first }.uniq
-    @user_options = @project.users.active.order(:username)
+    @user_options = @project.team.users.active.order(:username)
 
     @pagination_params = params.permit(:status, :search, :author, :assignee, :sort, label: [])
   end
@@ -129,7 +129,7 @@ class Projects::IssuesController < Projects::ApplicationController
   end
 
   def search_users
-    @users = @project.users.active.limit(10)
+    @users = @project.team.users.active.limit(10)
 
     @users = if params[:ids]
                @users.where(id: params[:ids].split(',').map(&:to_i))
