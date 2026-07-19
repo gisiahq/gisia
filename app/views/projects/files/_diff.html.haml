@@ -1,14 +1,15 @@
-%div{ class: 'flex', data: { controller: 'diff-navigator', diff_navigator_selected_file_index_value: @selected_file_index } }
+%div{ class: 'flex', data: { controller: 'diff-navigator file-review', diff_navigator_selected_file_index_value: @selected_file_index, file_review_storage_key_value: request.path } }
   %div{ class: 'w-64 bg-white border-r border-gray-200 flex flex-col' }
     %div{ class: 'p-4 border-b border-gray-200' }
       %h3{ class: 'text-sm font-medium text-gray-900' }
         = "Files changed (#{@diffs.diff_files.count})"
+        %span{ class: 'font-normal text-slate-500 hidden', data: { file_review_target: 'viewedCount' } }
 
     %div{ class: 'flex-1 overflow-y-auto' }
       %div{ class: 'py-2' }
         - @diffs.diff_files.each_with_index do |file, index|
           %button{ class: "w-full text-left px-4 py-2 hover:bg-gray-50 border-b border-gray-100 file-list-item #{index == (@selected_file_index || 0) ? 'bg-blue-50 border-blue-200' : 'hover:bg-gray-50'}",
-                   data: { action: 'click->diff-navigator#selectFile', file_index: index, file_id: diff_file_id(file), url: (@merge_request ? diffs_namespace_project_merge_request_path(@merge_request.target_project.namespace.parent.full_path, @merge_request.target_project.path, @merge_request, diff_anchor: diff_file_id(file)) : nil), diff_navigator_target: 'fileButton' } }
+                   data: { action: 'click->diff-navigator#selectFile', file_index: index, file_id: diff_file_id(file), url: (@merge_request ? diffs_namespace_project_merge_request_path(@merge_request.target_project.namespace.parent.full_path, @merge_request.target_project.path, @merge_request, diff_anchor: diff_file_id(file)) : nil), diff_navigator_target: 'fileButton', file_review_target: 'fileButton', file_identifier_hash: file.file_identifier_hash, code_review_id: file.code_review_id } }
             %div{ class: 'flex items-center justify-between' }
               %div{ class: 'flex items-center gap-2 flex-1 min-w-0' }
                 = icon 'file-text', class: 'w-4 h-4 text-slate-500 flex-shrink-0'
@@ -29,7 +30,7 @@
       %div{ class: "diff-file-container #{'hidden' if index != (@selected_file_index || 0)}", data: { file_index: index, file_id: diff_file_id(file), diff_navigator_target: 'diffContainer' } }
         %div{ class: 'bg-white border border-gray-200 m-4 rounded-lg overflow-hidden' }
           %div{ class: 'diff-file-header bg-gray-50 px-4 py-3 border-b border-gray-200' }
-            %div{ class: 'flex items-center justify-between' }
+            %div{ class: 'flex items-center justify-between w-full' }
               %div{ class: 'flex items-center gap-3' }
                 %div{ class: 'flex items-center gap-2' }
                   = icon 'file-text', class: 'w-4 h-4 text-slate-500'
@@ -47,6 +48,9 @@
                 - else
                   %span{ class: 'text-green-600' }+#{file.added_lines}
                   %span{ class: 'text-red-600' }-#{file.removed_lines}
+                %label{ class: 'flex items-center gap-1.5 text-sm text-slate-600 cursor-pointer select-none' }
+                  %input{ type: 'checkbox', class: 'rounded border-gray-300 text-blue-600 focus:ring-blue-500', data: { file_review_target: 'checkbox', action: 'change->file-review#toggle', file_identifier_hash: file.file_identifier_hash, code_review_id: file.code_review_id } }
+                  Viewed
 
           - unless file.too_large?
             - if file.diff.diff.present? && !file.diff.diff.strip.empty?
