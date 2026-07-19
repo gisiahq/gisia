@@ -1,0 +1,7 @@
+= turbo_stream.replace "expand-#{@file_id}-#{@gap_start}" do
+  - if @since > @gap_start
+    = render 'projects/diffs/expander', diff_file: @diff_file, expander: { gap_start: @gap_start, gap_end: @since - 1, offset: @offset, bottom: false, content: diff_expander_match_text(@gap_start, @since - 1, @offset) }
+  - @lines.each do |line|
+    = render 'projects/diffs/diff_line', line: line
+  - if @to < @gap_end
+    = render 'projects/diffs/expander', diff_file: @diff_file, expander: { gap_start: @to + 1, gap_end: @gap_end, offset: @offset, bottom: @bottom, content: diff_expander_match_text(@to + 1, @gap_end, @offset) }

@@ -17,13 +17,14 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   before_action :authenticate_user!, only: %i[new create edit update merge run_pipeline]
   before_action :require_project_member!, only: %i[new create edit update merge]
   before_action :define_new_vars, only: %i[new edit]
-  before_action :set_mr, only: %i[show commits diffs pipelines run_pipeline edit update merge search_links search_labels link_labels unlink_label]
+  before_action :set_mr, only: %i[show commits diffs expand_diff_lines pipelines run_pipeline edit update merge search_links search_labels link_labels unlink_label]
   before_action :set_counts, only: [:index]
   before_action :authorize_create_merge_request!, only: %i[new create]
-  before_action :authorize_read_merge_request!, only: %i[show commits diffs pipelines run_pipeline search_links search_labels]
+  before_action :authorize_read_merge_request!, only: %i[show commits diffs expand_diff_lines pipelines run_pipeline search_links search_labels]
   before_action :authorize_create_pipeline!, only: [:run_pipeline]
   before_action :authorize_update_merge_request!, only: %i[edit update merge link_labels unlink_label]
   before_action :set_notification_author, only: [:update]
+  before_action :set_expand_diff_vars, only: [:expand_diff_lines]
   before_action :check_mr_open, only: [:edit]
 
   def index
@@ -119,29 +120,26 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   end
 
   def diffs
-    @diff_version = @merge_request.merge_request_diffs.viewable.find_by(id: params[:diff_id]) if params[:diff_id].present?
-
-    @diffs = if @diff_version && params[:start_sha].present?
-      comparison = MergeRequests::MergeRequestDiffComparison.new(@diff_version).compare_with(params[:start_sha])
-      comparison ? comparison.diffs : @diff_version.diffs
-    elsif @diff_version
-      @diff_version.diffs
-    else
-      @merge_request.diffs
-    end
-
-    @grouped_diff_discussions = @merge_request.notes.grouped_diff_discussions(@diffs.diff_refs)
-
-    @draft_notes = current_user ? @merge_request.draft_notes.authored_by(current_user).order(:id).to_a : []
-    @grouped_draft_notes = @draft_notes.select(&:on_diff?).group_by { |draft| draft.line_code_in_diffs(@diffs.diff_refs) }
-    @grouped_draft_notes.delete(nil)
-    @grouped_draft_replies = @draft_notes.select { |draft| draft.discussion_id.present? }.group_by(&:discussion_id)
+    load_diffs_context
 
     file_sha = params[:diff_anchor]&.split('_')&.first
     @selected_file_index = if file_sha.present?
       @diffs.diff_files.find_index { |f| Digest::SHA1.hexdigest(f.file_path) == file_sha } || 0
     else
       0
+    end
+  end
+
+  def expand_diff_lines
+    load_diffs_context
+
+    @diff_file = @diffs.diff_files.find { |f| Digest::SHA1.hexdigest(f.file_path) == @file_id }
+    return head :not_found unless @diff_file
+
+    @lines = Diffs::ExpandService.new(@diff_file, since: @since, to: @to, offset: @offset).execute
+
+    respond_to do |format|
+      format.turbo_stream
     end
   end
 
@@ -255,6 +253,42 @@ class Projects::MergeRequestsController < Projects::ApplicationController
 
   def set_mr
     @merge_request = project.merge_requests.includes(:assignees, :reviewers).find_by!(iid: params[:iid])
+  end
+
+  def load_diffs_context
+    @diff_version = @merge_request.merge_request_diffs.viewable.find_by(id: params[:diff_id]) if params[:diff_id].present?
+
+    @diffs = if @diff_version && params[:start_sha].present?
+      comparison = MergeRequests::MergeRequestDiffComparison.new(@diff_version).compare_with(params[:start_sha])
+      comparison ? comparison.diffs : @diff_version.diffs
+    elsif @diff_version
+      @diff_version.diffs
+    else
+      @merge_request.diffs
+    end
+
+    @grouped_diff_discussions = @merge_request.notes.grouped_diff_discussions(@diffs.diff_refs)
+
+    @draft_notes = current_user ? @merge_request.draft_notes.authored_by(current_user).order(:id).to_a : []
+    @grouped_draft_notes = @draft_notes.select(&:on_diff?).group_by { |draft| draft.line_code_in_diffs(@diffs.diff_refs) }
+    @grouped_draft_notes.delete(nil)
+    @grouped_draft_replies = @draft_notes.select { |draft| draft.discussion_id.present? }.group_by(&:discussion_id)
+  end
+
+  def expand_diff_params
+    @expand_diff_params ||= params.permit(:file_id, :since, :to, :offset, :gap_start, :gap_end, :bottom, :diff_id, :start_sha)
+  end
+
+  def set_expand_diff_vars
+    @file_id = expand_diff_params[:file_id]
+    @gap_start = expand_diff_params[:gap_start].to_i
+    @gap_end = expand_diff_params[:gap_end].to_i
+    @offset = expand_diff_params[:offset].to_i
+    @bottom = expand_diff_params[:bottom] == 'true'
+    @since = [expand_diff_params[:since].to_i, @gap_start].max
+    @to = [expand_diff_params[:to].to_i, @gap_end].min
+
+    head :bad_request if @gap_start < 1 || @to < @since
   end
 
   def set_counts

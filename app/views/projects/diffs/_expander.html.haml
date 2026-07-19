@@ -1,0 +1,22 @@
+- file_id = diff_file_id(diff_file)
+- gap_start = expander[:gap_start]
+- gap_end = expander[:gap_end]
+- gap_size = gap_end - gap_start + 1
+- base_params = { file_id: file_id, gap_start: gap_start, gap_end: gap_end, offset: expander[:offset], bottom: expander[:bottom], diff_id: params[:diff_id], start_sha: params[:start_sha] }.compact
+- expand_path = ->(since, to) { expand_diff_lines_namespace_project_merge_request_path(@merge_request.project.namespace.parent.full_path, @merge_request.project.path, @merge_request, base_params.merge(since: since, to: to)) }
+- button_class = 'flex items-center justify-center w-20 h-5 text-gray-500 hover:bg-blue-100 hover:text-blue-600'
+%div{ class: 'bg-gray-50 border-t border-b border-gray-300 flex items-stretch min-h-5', id: "expand-#{file_id}-#{gap_start}" }
+  %div{ class: 'w-20 border-r border-gray-300 flex-shrink-0 flex flex-col bg-gray-100' }
+    - if gap_size <= 20
+      = link_to expand_path.call(gap_start, gap_end), class: "#{button_class} flex-1", title: "Show all #{gap_size} hidden lines", data: { turbo_stream: true } do
+        = icon 'arrows-out-line-vertical', class: 'w-3.5 h-3.5'
+    - else
+      - if gap_start > 1
+        = link_to expand_path.call(gap_start, [gap_end, gap_start + 19].min), class: button_class, title: 'Show next 20 lines', data: { turbo_stream: true } do
+          = icon 'caret-up', class: 'w-3.5 h-3.5'
+      = link_to expand_path.call(gap_start, gap_end), class: button_class, title: "Show all #{gap_size} hidden lines", data: { turbo_stream: true } do
+        = icon 'arrows-out-line-vertical', class: 'w-3.5 h-3.5'
+      - unless expander[:bottom]
+        = link_to expand_path.call([gap_start, gap_end - 19].max, gap_end), class: button_class, title: 'Show previous 20 lines', data: { turbo_stream: true } do
+          = icon 'caret-down', class: 'w-3.5 h-3.5'
+  %div{ class: 'flex-1 px-2 flex items-center text-gray-600 font-semibold text-sm leading-5' }= expander[:content]

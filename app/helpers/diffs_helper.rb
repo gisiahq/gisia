@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
 module DiffsHelper
-  def parse_diff_file(diff_file)
-    Diffs::ParseService.new(diff_file).execute
+  def parse_diff_file(diff_file, expandable: false)
+    Diffs::ParseService.new(diff_file, expandable: expandable).execute
+  end
+
+  def diff_expander_match_text(gap_start, gap_end, offset)
+    size = gap_end - gap_start + 1
+    "@@ -#{gap_start - offset},#{size} +#{gap_start},#{size} @@"
   end
 
   def diff_line_class(line)

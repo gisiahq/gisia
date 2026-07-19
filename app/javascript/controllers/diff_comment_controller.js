@@ -4,21 +4,23 @@ export default class extends Controller {
   static targets = ["commentForm"]
 
   connect() {
-    this.setupCommentButtons()
+    this.handleCommentButtonClick = this.handleCommentButtonClick.bind(this)
+    this.element.addEventListener('click', this.handleCommentButtonClick)
   }
 
-  setupCommentButtons() {
-    // Add click handlers to all comment buttons
-    this.element.querySelectorAll('[data-line-code]').forEach(button => {
-      if (button.tagName === 'BUTTON' && button.title === 'Add comment') {
-        button.addEventListener('click', this.showCommentForm.bind(this))
-      }
-    })
+  disconnect() {
+    this.element.removeEventListener('click', this.handleCommentButtonClick)
   }
 
-  showCommentForm(event) {
+  handleCommentButtonClick(event) {
+    const button = event.target.closest('button[data-line-code][title="Add comment"]')
+    if (!button) return
+
+    this.showCommentForm(event, button)
+  }
+
+  showCommentForm(event, button) {
     event.preventDefault()
-    const button = event.currentTarget
     const lineCode = button.dataset.lineCode
     const lineType = button.dataset.lineType
 

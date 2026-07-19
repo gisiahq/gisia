@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+# ======================================================
+# Contains code from GitLab FOSS (MIT Licensed)
+# Copyright (c) GitLab Inc.
+# See .licenses/Gisia/others/gitlab-foss.dep.yml for full license
+#
+# Modifications and additions copyright (c) 2025-present Liuming Tan
+# Licensed under AGPLv3 - see LICENSE file in this repository
+# ======================================================
+
 module Diffs
   class ParseService
     DIFF_LINE_TYPES = {
@@ -9,9 +18,10 @@ module Diffs
       no_newline: '\\'
     }.freeze
 
-    def initialize(diff_file)
+    def initialize(diff_file, expandable: false)
       @diff_file = diff_file
       @raw_diff = extract_raw_diff(diff_file)
+      @expandable = expandable
     end
 
     def execute
@@ -22,7 +32,7 @@ module Diffs
 
     private
 
-    attr_reader :diff_file, :raw_diff
+    attr_reader :diff_file, :raw_diff, :expandable
 
     def parse_diff_lines
       lines = []
@@ -33,8 +43,10 @@ module Diffs
         line = line.chomp
 
         if hunk_header?(line)
-          old_line, new_line = extract_line_numbers(line)
-          lines << create_hunk_header_line(line)
+          hunk_old, hunk_new = extract_line_numbers(line)
+          lines << create_hunk_boundary_line(line, new_line || 1, hunk_new - 1, hunk_new - hunk_old)
+          old_line = hunk_old
+          new_line = hunk_new
           next
         end
 
@@ -55,6 +67,9 @@ module Diffs
         end
       end
 
+      bottom_expander = create_bottom_expander_line(old_line, new_line)
+      lines << bottom_expander if bottom_expander
+
       lines
     end
 
@@ -68,6 +83,52 @@ module Diffs
       return [1, 1] unless match
 
       [match[1].to_i, match[2].to_i]
+    end
+
+    def create_hunk_boundary_line(line, gap_start, gap_end, offset)
+      if expandable && gap_end >= gap_start
+        create_expander_line(line, gap_start, gap_end, offset, false)
+      else
+        create_hunk_header_line(line)
+      end
+    end
+
+    def create_expander_line(content, gap_start, gap_end, offset, bottom)
+      {
+        type: 'expander',
+        content: content,
+        gap_start: gap_start,
+        gap_end: gap_end,
+        offset: offset,
+        bottom: bottom,
+        old_line: nil,
+        new_line: nil,
+        line_code: nil,
+        discussable: false,
+        rich_text: content
+      }
+    end
+
+    def create_bottom_expander_line(old_line, new_line)
+      return unless expandable && new_line && total_new_lines
+      return if total_new_lines < new_line
+
+      offset = new_line - old_line
+      size = total_new_lines - new_line + 1
+      content = "@@ -#{new_line - offset},#{size} +#{new_line},#{size} @@"
+      create_expander_line(content, new_line, total_new_lines, offset, true)
+    end
+
+    def total_new_lines
+      return @total_new_lines if defined?(@total_new_lines)
+
+      @total_new_lines = begin
+        blob = diff_file.respond_to?(:new_blob) ? diff_file.new_blob : nil
+        if blob
+          blob.load_all_data!
+          blob.data.lines.size
+        end
+      end
     end
 
     def create_hunk_header_line(line)
