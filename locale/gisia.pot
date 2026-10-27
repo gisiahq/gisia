@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gisia 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-01 13:31+0800\n"
-"PO-Revision-Date: 2026-09-01 13:31+0800\n"
+"POT-Creation-Date: 2026-10-27 15:19+0800\n"
+"PO-Revision-Date: 2026-10-27 15:19+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -433,6 +433,20 @@ msgid ""
 msgstr ""
 
 msgid "InviteUserToOrganization|already belongs to another organization"
+msgstr ""
+
+msgid "Failed to find users for %{missing}"
+msgstr ""
+
+msgid ""
+"Too many references. Quick actions are limited to at most %{max_count} user re"
+"ferences"
+msgstr ""
+
+msgid "Too many users found. Quick actions are limited to at most %{max_count} users"
+msgstr ""
+
+msgid "Something went wrong"
 msgstr ""
 
 msgid "is too large. Maximum size allowed is %{size}"
@@ -1259,6 +1273,22 @@ msgid "Log in"
 msgstr ""
 
 msgid "Resend unlock instructions"
+msgstr ""
+
+msgid "Page not found"
+msgstr ""
+
+msgid ""
+"The page you're looking for doesn't exist, or you don't have permission to vie"
+"w it."
+msgstr ""
+
+msgid "Go to home page"
+msgstr ""
+
+msgid ""
+"The page you're looking for doesn't exist, or it may be private. If you have a"
+"ccess, log in to continue."
 msgstr ""
 
 msgid "User Settings"
@@ -2566,6 +2596,147 @@ msgid ""
 msgstr ""
 
 msgid "Upstream Gitaly has been exhausted. Try again later"
+msgstr ""
+
+msgid "Problem with %{name} command: %{message}."
+msgstr ""
+
+msgid "Could not apply %{name} command."
+msgstr ""
+
+msgid "Could not apply %{name} command. %{message}."
+msgstr ""
+
+msgid "Reopen this %{quick_action_target}"
+msgstr ""
+
+msgid "Reopens this %{quick_action_target}."
+msgstr ""
+
+msgid "Reopened this %{quick_action_target}."
+msgstr ""
+
+msgid "Close this %{quick_action_target}"
+msgstr ""
+
+msgid "Closes this %{quick_action_target}."
+msgstr ""
+
+msgid "Closed this %{quick_action_target}."
+msgstr ""
+
+msgid "Change title"
+msgstr ""
+
+msgid "Changes the title to \"%{title_param}\"."
+msgstr ""
+
+msgid "Changed the title to \"%{title_param}\"."
+msgstr ""
+
+msgid "Add labels"
+msgstr ""
+
+msgid "Adds %{labels} %{label_text}."
+msgstr ""
+
+msgid "Remove all or specific labels"
+msgstr ""
+
+msgid "Removes %{label_references} %{label_text}."
+msgstr ""
+
+msgid "Removes all labels."
+msgstr ""
+
+msgid "Replace all labels"
+msgstr ""
+
+msgid "Add a to-do item"
+msgstr ""
+
+msgid "Adds a to-do item."
+msgstr ""
+
+msgid "Added a to-do item."
+msgstr ""
+
+msgid "Mark to-do item as done"
+msgstr ""
+
+msgid "Marks to-do item as done."
+msgstr ""
+
+msgid "Marked to-do item as done."
+msgstr ""
+
+msgid "Subscribe"
+msgstr ""
+
+msgid "Subscribes to notifications."
+msgstr ""
+
+msgid "Subscribed to notifications."
+msgstr ""
+
+msgid "Unsubscribe"
+msgstr ""
+
+msgid "Unsubscribes from notifications."
+msgstr ""
+
+msgid "Unsubscribed from notifications."
+msgstr ""
+
+msgid "Toggle emoji reaction"
+msgstr ""
+
+msgid "Toggles :%{name}: emoji reaction."
+msgstr ""
+
+msgid "Toggled :%{name}: emoji reaction."
+msgstr ""
+
+msgid "Add %{shrug}"
+msgstr ""
+
+msgid "Add %{tableflip}"
+msgstr ""
+
+msgid "Set severity"
+msgstr ""
+
+msgid "Sets the severity"
+msgstr ""
+
+msgid "Severity updated to %{severity}."
+msgstr ""
+
+msgid "No severity matches the provided parameter"
+msgstr ""
+
+msgid "Turn on confidentiality"
+msgstr ""
+
+msgid "Makes this %{type} confidential."
+msgstr ""
+
+msgid "Replaced all labels with %{label_references} %{label_text}."
+msgstr ""
+
+msgid "Added %{label_references} %{label_text}."
+msgstr ""
+
+msgid "Removed %{label_references} %{label_text}."
+msgstr ""
+
+msgid "Removed all labels."
+msgstr ""
+
+msgid "item"
+msgstr ""
+
+msgid "Made this %{type} confidential."
 msgstr ""
 
 msgid " or "

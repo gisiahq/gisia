@@ -22,7 +22,7 @@ namespace :gettext do
     puts "POT file updated: #{pot_file_path}"
 
     Dir.glob(Rails.root.join('locale/*/gisia.po')).each do |po_file|
-      GetText::Tools::MsgMerge.run(po_file, pot_file_path, '--output', po_file, '--no-obsolete-entries')
+      GetText::Tools::MsgMerge.run(po_file, pot_file_path, '--output', po_file, '--no-obsolete-entries', '--no-fuzzy-matching')
       puts "Synced: #{po_file}"
     end
   end
