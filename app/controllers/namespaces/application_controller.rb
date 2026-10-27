@@ -23,7 +23,7 @@ class Namespaces::ApplicationController < ApplicationController
     return if @namespace&.user_namespace?
     return if @namespace&.public?
 
-    head :not_found unless current_user
+    render_404 unless current_user
   end
 
   def authorize_namespace_access!

@@ -15,7 +15,7 @@ class ApplicationController < BaseActionController
   protect_from_forgery with: :exception, prepend: true
 
   allow_browser versions: :modern
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:route_not_found]
   before_action :enforce_user_active!
   before_action :set_current_organization
   around_action :set_locale
@@ -27,6 +27,14 @@ class ApplicationController < BaseActionController
         response.headers['X-GitLab-Custom-Error'] = '1'
       end
     end
+  end
+
+  def not_found
+    render_404
+  end
+
+  def route_not_found
+    not_found
   end
 
   private
@@ -80,7 +88,11 @@ class ApplicationController < BaseActionController
 
   def render_404
     respond_to do |format|
-      format.html { render file: Rails.root.join("public/404.html"), status: :not_found, layout: false }
+      format.html do
+        store_location_for(:user, request.fullpath) if current_user.nil? && request.get?
+
+        render 'errors/not_found', layout: 'application', status: :not_found
+      end
       format.js { render json: '', status: :not_found, content_type: 'application/json' }
       format.any { head :not_found }
     end

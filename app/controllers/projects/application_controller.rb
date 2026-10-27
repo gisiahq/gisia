@@ -29,7 +29,7 @@ class Projects::ApplicationController < ApplicationController
   def authenticate_unless_public!
     return if @project&.public?
 
-    head :not_found unless current_user
+    render_404 unless current_user
   end
 
   def authorize_project_access!
@@ -38,7 +38,7 @@ class Projects::ApplicationController < ApplicationController
     return if @project&.internal? && current_user
     return if @project && @project.team.member?(current_user)
 
-    head :not_found
+    render_404
   end
 
   def project

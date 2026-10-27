@@ -52,4 +52,6 @@ Rails.application.routes.draw do
   draw :project
   draw :namespace
   draw :git_http
+
+  get '*unmatched_route', to: 'application#route_not_found', format: false
 end
