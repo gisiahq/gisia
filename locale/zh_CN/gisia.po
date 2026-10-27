@@ -1273,12 +1273,15 @@ msgstr "重新发送解锁邮件"
 msgid "Page not found"
 msgstr ""
 
+msgid "Error 404"
+msgstr ""
+
 msgid ""
 "The page you're looking for doesn't exist, or you don't have permission to vie"
 "w it."
 msgstr ""
 
-msgid "Go to home page"
+msgid "Go to homepage"
 msgstr ""
 
 msgid ""

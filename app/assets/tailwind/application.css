@@ -9,6 +9,19 @@
 @theme {
   --font-inter: "Inter", sans-serif, "Apple Color Emoji";
   --color-mint-500: oklch(0.72 0.11 178);
+
+  --animate-fade-up: fade-up 400ms ease-out both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 @layer base {

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+  <defs>
+    <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f3f4f6" stop-opacity="0"/>
+      <stop offset="1" stop-color="#cbd5e1" stop-opacity="0.6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1440" height="900" fill="url(#haze)"/>
+  <g transform="translate(0 420)">
+  <circle cx="1080" cy="170" r="70" fill="#e2e8f0" opacity="0.7"/>
+  <path d="M0 300 C 180 250 320 270 480 290 C 640 310 760 240 940 250 C 1120 260 1260 300 1440 270 L1440 480 L0 480 Z" fill="#cbd5e1"/>
+  <path d="M0 360 C 160 320 300 330 460 350 C 620 370 780 310 960 320 C 1140 330 1300 370 1440 340 L1440 480 L0 480 Z" fill="#94a3b8"/>
+  <g fill="#64748b">
+    <path d="M300 352 v-118 a9 9 0 0 1 18 0 v118 z"/>
+    <path d="M300 306 h-14 a6 6 0 0 1 -6 -6 v-34 a6 6 0 0 1 12 0 v28 h8 z"/>
+    <path d="M318 288 h12 v-30 a6 6 0 0 1 12 0 v36 a6 6 0 0 1 -6 6 h-18 z"/>
+    <path d="M1180 330 v-84 a7 7 0 0 1 14 0 v84 z"/>
+    <path d="M1180 296 h-10 a5 5 0 0 1 -5 -5 v-24 a5 5 0 0 1 10 0 v19 h5 z"/>
+    <path d="M1194 282 h9 v-16 a5 5 0 0 1 10 0 v21 a5 5 0 0 1 -5 5 h-14 z"/>
+  </g>
+  <path d="M0 420 C 200 380 360 400 540 415 C 720 430 900 390 1080 400 C 1260 410 1360 430 1440 420 L1440 480 L0 480 Z" fill="#64748b"/>
+  </g>
+</svg>
